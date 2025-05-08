@@ -1,0 +1,94 @@
+[build-system]
+requires = [
+    "setuptools >= 69.5.1",
+    "setuptools_scm[toml] >= 7.1.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/rock_physics_open/version.py"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.dll", "*.so", "*.ini", "*.h5", "*.pkl"]
+
+[project]
+name = "rock_physics_open"
+description = "Equinor Rock Physics Module"
+authors = [
+    { name = "Harald Flesche", email = "hfle@equinor.com" },
+    { name = "Eivind Jahren", email = "ejah@equinor.com" },
+    { name = "Jimmy Zurcher", email = "jiz@equinor.com" },
+]
+maintainers = [
+    { name = "Harald Flesche", email = "hfle@equinor.com" },
+    { name = "Eirik Ola Aksnes", email = "eoaksnes@equinor.com" },
+    { name = "Christopher Collin Løkken", email = "chcl@equinor.com" },
+    { name = "Sivert Utne", email = "sutn@equinor.com" },
+]
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["energy", "subsurface", "seismic", "rock physics", "scientific", "engineering"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.11",
+    "Natural Language :: English",
+]
+dynamic = ["version"]
+dependencies = [
+    "numpy >= 1.26.4",
+    "pandas >= 2.0.2",
+    "matplotlib >= 3.7.1",
+    "scipy >= 1.10.1, < 2",
+    "scikit-learn >= 1.2.2",
+    "sympy >= 1.13.3", # TODO: remove? (only used 1 place in span_wagner co2 equations)
+    "tmatrix >= 1.0.0",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest >= 8.3.5",
+    "pytest-cov >= 6.1.1",
+    "ruff >= 0.11.6",
+    "pre-commit >= 4.2.0",
+]
+
+[project.urls]
+Repository = "https://github.com/equinor/rock-physics-open"
+Homepage = "https://github.com/equinor/rock-physics-open"
+
+[tool.ruff]
+lint.select = [
+    "C",   # Complexity
+    "E",   # Errors
+    "F",   # Flake (unused variables etc.)
+    "I",   # Imports
+    "NPY", # Numpy
+    "PIE", # Python idioms and style
+    "PLR1711", # Redundant Return
+    "PT",  # PyTest
+    "Q",   # Quotes
+    "RET", # Return statements
+    "RSE", # Raising exceptions
+    "SIM", # Code simplification
+    "W",   # Warnings
+]
+lint.ignore = [
+    "C901",   # Complex Code (too many branches/statements)
+    "E501",   # Line Too Long
+]
+line-length = 88
+
+[tool.ruff.lint.isort]
+combine-as-imports = true

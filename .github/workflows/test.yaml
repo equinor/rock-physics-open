@@ -1,0 +1,60 @@
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            artifact: "Windows-MSVC",
+            cc: "cl", cxx: "cl",
+            os: windows-latest,
+          }
+          - {
+            artifact: "Windows-MinGW",
+            cc: "gcc", cxx: "g++",
+            os: windows-latest,
+          }
+          - {
+            artifact: "Linux",
+            cc: "gcc", cxx: "g++",
+            os: ubuntu-latest,
+          }
+          - {
+            artifact: "Mac",
+            cc: "clang", cxx: "clang++",
+            os: macos-latest,
+          }
+
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.artifact }} (${{ matrix.config.os }}, ${{ matrix.config.cc }}/${{ matrix.config.cxx }})
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
+
+    - name: Upgrade Pip
+      run: pip install --upgrade pip
+
+    - name: Show Machine Information
+      run: |
+        pip install py-cpuinfo
+        python -m cpuinfo
+
+    - name: Install Dependencies
+      run: pip install .[tests]
+
+    - name: Test
+      if: ${{ matrix.config.artifact == 'Windows-MSVC' }}
+      run: pytest
+
+    - name: Test ( -m "not use_graphics" )
+      if: ${{ matrix.config.artifact != 'Windows-MSVC' }}
+      run: pytest -m "not use_graphics"
