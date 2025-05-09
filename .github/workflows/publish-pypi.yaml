@@ -19,7 +19,7 @@ jobs:
           python-version: 3.11
 
       - name: Build wheels
-        run: pip wheel -w wheelhouse .
+        run: pip wheel --no-deps -w wheelhouse .
 
       - name: Upload wheels to workflow assets
         uses: actions/upload-artifact@v4
