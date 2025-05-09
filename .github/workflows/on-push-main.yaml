@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Check release please output
         run: |
-          echo "Release please output: ${{ needs.release-please.outputs }}"
+          echo "Release please output: ${{ needs.release-please.outputs.release_created }}"
   publish-latest:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
