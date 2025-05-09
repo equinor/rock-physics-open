@@ -1,3 +1,5 @@
+name: release-please
+
 on:
   workflow_call:
     outputs:
