@@ -33,7 +33,7 @@ definition of equations and other utilities.
 
 ## Installation
 
-This module can be installed through [PyPi](https://pypi.org/project/rock-physics-open/) with:
+This module can be installed through [PyPI](https://pypi.org/project/rock-physics-open/) with:
 
 ```sh
 pip install rock-physics-open
