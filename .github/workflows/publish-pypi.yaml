@@ -5,11 +5,8 @@ on:
 
 jobs:
   build:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    name: Build wheels
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -19,13 +16,15 @@ jobs:
           python-version: 3.11
 
       - name: Build wheels
-        run: pip wheel --no-deps -w wheelhouse .
+        run: |
+          pip install build
+          python -m build
 
       - name: Upload wheels to workflow assets
         uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: wheelhouse/*.whl
+          name: distribution
+          path: dist/
 
   publish:
     name: Publish release to PyPI
@@ -40,10 +39,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: cibw-*
-          path: wheelhouse
+          name: distribution
+          path: dist/
           merge-multiple: true
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: wheelhouse
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

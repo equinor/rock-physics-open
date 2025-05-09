@@ -8,19 +8,14 @@ on:
 jobs:
   lint-and-format:
     uses: ./.github/workflows/lint-and-format.yaml
+
   test:
     uses: ./.github/workflows/test.yaml
+
   release-please:
     needs: test
     uses: ./.github/workflows/release-please.yaml
 
-  check-was-released:
-    needs: release-please
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check release please output
-        run: |
-          echo "Release please output: ${{ needs.release-please.outputs }}"
   publish-latest:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
