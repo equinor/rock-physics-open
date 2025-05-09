@@ -1,5 +1,9 @@
 on:
   workflow_call:
+    outputs:
+      release_created:
+        description: "If true, a release PR has been merged"
+        value: ${{ jobs.release-please.outputs.release_created }}
   workflow_dispatch:
 
 permissions:
@@ -15,3 +19,5 @@ jobs:
           release-type: python
           config-file: .github/release-please-config.json
           token: ${{secrets.GITHUB_TOKEN}}
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}

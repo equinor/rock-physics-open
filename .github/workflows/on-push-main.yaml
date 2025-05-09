@@ -13,3 +13,8 @@ jobs:
   release-please:
     needs: test
     uses: ./.github/workflows/release-please.yaml
+
+  publish-latest:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    uses: ./.github/workflows/publish-pypi.yaml
