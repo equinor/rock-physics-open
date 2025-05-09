@@ -20,6 +20,7 @@ jobs:
         id: release
         with:
           config-file: .github/release-please-config.json
+          manifest-file: .github/release-please-manifest.json
           token: ${{secrets.GITHUB_TOKEN}}
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
