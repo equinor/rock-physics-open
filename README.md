@@ -44,7 +44,7 @@ Alternatively, you can update the dependencies in your `pyproject.toml` file:
 <!-- x-release-please-start-version -->
 ```toml
 dependencies = [
-    "rock_physics_open == 0.1.0",
+    "rock_physics_open == 0.1.1",
 ]
 ```
 <!-- x-release-please-end-version -->
