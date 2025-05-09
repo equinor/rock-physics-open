@@ -18,7 +18,6 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-          release-type: python
           config-file: .github/release-please-config.json
           token: ${{secrets.GITHUB_TOKEN}}
     outputs:
