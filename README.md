@@ -51,7 +51,7 @@ dependencies = [
 
 <!-- External Links -->
 [scm-compliance]: https://developer.equinor.com/governance/scm-policy/
-[scm-compliance-badge]: https://scm-compliance-api.radix.equinor.com/repos/equinor/7ace9d61-dd9d-46b6-901d-f0f008fef142/badge
+[scm-compliance-badge]: https://scm-compliance-api.radix.equinor.com/repos/equinor/rock-physics-open/badge
 [license]: https://www.gnu.org/licenses/lgpl-3.0
 [license-badge]: https://img.shields.io/badge/License-LGPL_v3-blue.svg
 [on-push-main-action]: https://github.com/equinor/rock-physics-open/actions/workflows/on-push-main.yaml
