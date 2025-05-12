@@ -10,19 +10,19 @@ from .oil_bubble_point import bp_standing
 
 
 def oil_properties(
-    temp: np.ndarray | float,
-    pres: np.ndarray | float,
+    temperature: np.ndarray | float,
+    pressure: np.ndarray | float,
     rho0: np.ndarray | float,
     gor: np.ndarray | float,
-    gr: np.ndarray | float,
+    gas_gravity: np.ndarray | float,
 ) -> np.ndarray | float:
     """
-    :param temp: Temperature (Celsius) of oil.
-    :param pres: Pressure (Pa) of oil
+    :param temperature: Temperature (Celsius) of oil.
+    :param pressure: Pressure (Pa) of oil
     :param rho0: Density of the oil without dissolved gas at 15.6 degrees Celsius and
                  atmospheric pressure. (kg/m^3)
     :param gor: The volume ratio of gas to oil [l/l]
-    :param gr: Gas Gravity, molar mass of gas relative to air molar mas.
+    :param gas_gravity: Gas Gravity, molar mass of gas relative to air molar mas.
     :return: vel_oil, den_oil, k_oil
     """
     # Since live_oil with gas_oil_ratio=0.0 is not equal to dead oil
@@ -41,8 +41,8 @@ def oil_properties(
         window = np.clip((np.abs(x) - length / 2) / (length / 2), 0, 1)
         return 1 - window
 
-    loil_den, loil_vel = live_oil(temp, pres, rho0, gor, gr)
-    doil_den, doil_vel = dead_oil(temp, pres, rho0)
+    loil_den, loil_vel = live_oil(temperature, pressure, rho0, gor, gas_gravity)
+    doil_den, doil_vel = dead_oil(temperature, pressure, rho0)
     window = triangular_window(gor)
     den_oil = doil_den * window + (1 - window) * loil_den
     vel_oil = doil_vel * window + (1 - window) * loil_vel
