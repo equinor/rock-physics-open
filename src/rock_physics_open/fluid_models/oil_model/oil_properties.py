@@ -41,7 +41,9 @@ def oil_properties(
         window = np.clip((np.abs(x) - length / 2) / (length / 2), 0, 1)
         return 1 - window
 
-    loil_den, loil_vel = live_oil(temperature, pressure, rho0, gas_oil_ratio, gas_gravity)
+    loil_den, loil_vel = live_oil(
+        temperature, pressure, rho0, gas_oil_ratio, gas_gravity
+    )
     doil_den, doil_vel = dead_oil(temperature, pressure, rho0)
     window = triangular_window(gas_oil_ratio)
     den_oil = doil_den * window + (1 - window) * loil_den
