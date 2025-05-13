@@ -13,7 +13,7 @@ def oil_properties(
     temperature: np.ndarray | float,
     pressure: np.ndarray | float,
     rho0: np.ndarray | float,
-    gor: np.ndarray | float,
+    gas_oil_ratio: np.ndarray | float,
     gas_gravity: np.ndarray | float,
 ) -> np.ndarray | float:
     """
