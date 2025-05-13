@@ -21,7 +21,7 @@ def oil_properties(
     :param pressure: Pressure (Pa) of oil
     :param rho0: Density of the oil without dissolved gas at 15.6 degrees Celsius and
                  atmospheric pressure. (kg/m^3)
-    :param gor: The volume ratio of gas to oil [l/l]
+    :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: Gas Gravity, molar mass of gas relative to air molar mas.
     :return: vel_oil, den_oil, k_oil
     """
@@ -41,9 +41,9 @@ def oil_properties(
         window = np.clip((np.abs(x) - length / 2) / (length / 2), 0, 1)
         return 1 - window
 
-    loil_den, loil_vel = live_oil(temperature, pressure, rho0, gor, gas_gravity)
+    loil_den, loil_vel = live_oil(temperature, pressure, rho0, gas_oil_ratio, gas_gravity)
     doil_den, doil_vel = dead_oil(temperature, pressure, rho0)
-    window = triangular_window(gor)
+    window = triangular_window(gas_oil_ratio)
     den_oil = doil_den * window + (1 - window) * loil_den
     vel_oil = doil_vel * window + (1 - window) * loil_vel
     k_oil = vel_oil**2 * den_oil
