@@ -69,6 +69,7 @@ tests = [
 [project.urls]
 Repository = "https://github.com/equinor/rock-physics-open"
 Homepage = "https://github.com/equinor/rock-physics-open"
+Changelog = "https://github.com/equinor/rock-physics-open/blob/main/CHANGELOG.md"
 
 [tool.ruff]
 lint.select = [
