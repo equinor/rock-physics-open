@@ -16,7 +16,50 @@ jobs:
     needs: test
     uses: ./.github/workflows/release-please.yaml
 
-  publish-pypi:
-    needs: release-please
+  build:
+    name: Build for publishing
     if: ${{ needs.release-please.outputs.release_created }}
-    uses: ./.github/workflows/publish-pypi.yaml
+    needs: release-please
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Build
+        run: |
+          pip install build
+          python -m build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: distribution
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/rock-physics-open
+    permissions:
+      id-token: write  # required for Trusted Publishing to PyPI
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: distribution
+          path: dist/
+          merge-multiple: true
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
