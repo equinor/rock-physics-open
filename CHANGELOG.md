@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.3](https://github.com/equinor/rock-physics-open/compare/v0.1.2...v0.1.3) (2025-05-13)
+
+
+### Bug Fixes
+
+* remove local version for scm ([d299b64](https://github.com/equinor/rock-physics-open/commit/d299b64c6cc6a75e0a17dabf105e0446be42a81d))
+* initiate standardization of names for input parameters ([#25](https://github.com/equinor/rock-physics-open/issues/25)) ([3d505e3](https://github.com/equinor/rock-physics-open/commit/3d505e39e5e8130dcb9a16bf67fa22c96d47768a))
+* standardize names of input parameters ([#27](https://github.com/equinor/rock-physics-open/issues/27)) ([55126fd](https://github.com/equinor/rock-physics-open/commit/55126fd8e2f3d51c9baad3fb5f55a6a2e0499c38))
+
 ## [0.1.2](https://github.com/equinor/rock-physics-open/compare/v0.1.1...v0.1.2) (2025-05-09)
 
 
