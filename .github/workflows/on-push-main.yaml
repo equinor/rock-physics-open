@@ -1,6 +1,7 @@
 name: push to main branch
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -18,7 +19,7 @@ jobs:
 
   build:
     name: Build for publishing
-    if: ${{ needs.release-please.outputs.release_created }}
+    if: true
     needs: release-please
     runs-on: ubuntu-latest
     steps:
