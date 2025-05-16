@@ -17,7 +17,6 @@ def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
     -------
     name of snapshot file
     """
-    # Get the stack trace
     trace = inspect.stack()
     for frame in trace[step:]:
         if not any(
