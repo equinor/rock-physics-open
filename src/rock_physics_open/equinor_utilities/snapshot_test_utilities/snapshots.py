@@ -23,11 +23,20 @@ def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
 
     # Find the first frame that is not part of the debugger
     for frame in trace[step:]:
-        if not any(keyword in frame.filename for keyword in
-                   ["pydev", "ipython-input", "interactiveshell", "async_helpers"]):  # Skip debugger-related frames
+        if not any(
+            keyword in frame.filename
+            for keyword in [
+                "pydev",
+                "ipython-input",
+                "interactiveshell",
+                "async_helpers",
+            ]
+        ):  # Skip debugger-related frames
             dir_name = Path(frame.filename).parent.joinpath("snapshots")
             file_name = "_".join((Path(frame.filename).stem, frame.function + ".npz"))
-            return os.path.join(dir_name, file_name) if include_snapshot_dir else file_name
+            return (
+                os.path.join(dir_name, file_name) if include_snapshot_dir else file_name
+            )
 
     # Fallback to the original step if no valid frame is found
     frame = trace[step]
