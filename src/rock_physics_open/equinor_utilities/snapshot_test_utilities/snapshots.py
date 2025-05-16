@@ -1,5 +1,4 @@
 import inspect
-import os
 from pathlib import Path
 
 import numpy as np
@@ -18,22 +17,24 @@ def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
     -------
     name of snapshot file
     """
-    # Get the stack trace
     trace = inspect.stack()
-
-    # Find the first frame that is not part of the debugger
     for frame in trace[step:]:
-        if not any(keyword in frame.filename for keyword in
-                   ["pydev", "ipython-input", "interactiveshell", "async_helpers"]):  # Skip debugger-related frames
-            dir_name = Path(frame.filename).parent.joinpath("snapshots")
-            file_name = "_".join((Path(frame.filename).stem, frame.function + ".npz"))
-            return os.path.join(dir_name, file_name) if include_snapshot_dir else file_name
+        if not any(
+            keyword in frame.filename
+            for keyword in [
+                "pydev",
+                "ipython-input",
+                "interactiveshell",
+                "async_helpers",
+            ]
+        ):
+            break
+    else:
+        frame = trace[step]
 
-    # Fallback to the original step if no valid frame is found
-    frame = trace[step]
-    dir_name = Path(frame.filename).parent.joinpath("snapshots")
-    file_name = "_".join((Path(frame.filename).stem, frame.function + ".npz"))
-    return os.path.join(dir_name, file_name) if include_snapshot_dir else file_name
+    dir_name = Path(frame.filename).parent / "snapshots"
+    file_name = f"{Path(frame.filename).stem}_{frame.function}.npz"
+    return str(dir_name / file_name) if include_snapshot_dir else file_name
 
 
 def store_snapshot(snapshot_name: str, *args: np.ndarray) -> bool:
