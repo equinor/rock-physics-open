@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/equinor/rock-physics-open/compare/v0.1.3...v0.1.4) (2025-05-20)
+
+
+### Bug Fixes
+
+* make get_snapshot_name more robust in search for calling function ([#31](https://github.com/equinor/rock-physics-open/issues/31)) ([e9e9ebd](https://github.com/equinor/rock-physics-open/commit/e9e9ebd8d9d101fa2a2bdd924f6f12be73476de7))
+
 ## [0.1.3](https://github.com/equinor/rock-physics-open/compare/v0.1.2...v0.1.3) (2025-05-13)
 
 
