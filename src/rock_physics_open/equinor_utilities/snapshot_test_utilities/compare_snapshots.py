@@ -11,18 +11,19 @@ from rock_physics_open.equinor_utilities.various_utilities import disp_result_st
 
 from .snapshots import get_snapshot_name
 
-DISPLAY_RESULTS = False
-
 
 def compare_snapshots(
     test_results: Union[np.ndarray, tuple, DataFrame],
     saved_results: tuple,
+    name_arr=None,
+    display_results: bool = False,
 ) -> bool:
     test_results = _validate_input(test_results, saved_results)
 
-    if DISPLAY_RESULTS:
+    if display_results:
         title = str(inspect.stack()[1].function)
-        name_arr = [f"arr_{i}" for i in range(len(test_results))]
+        if not name_arr:
+            name_arr = [f"arr_{i}" for i in range(len(test_results))]
         disp_result_stats(title, test_results, name_arr)
 
     r_tol = 0.01

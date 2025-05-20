@@ -1,5 +1,4 @@
 import inspect
-import os
 from pathlib import Path
 
 import numpy as np
@@ -9,7 +8,6 @@ INITIATE = False
 
 def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
     """
-
     Parameters
     ----------
     step: number of steps in the trace to collect information from
@@ -18,15 +16,25 @@ def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
     Returns
     -------
     name of snapshot file
-
     """
-    # Get filename and function name of calling function
     trace = inspect.stack()
-    dir_name = Path(trace[step].filename).parent.joinpath("snapshots")
-    file_name = "_".join(
-        (Path(trace[step].filename).stem, trace[step].function + ".npz")
-    )
-    return os.path.join(dir_name, file_name) if include_snapshot_dir else file_name
+    for frame in trace[step:]:
+        if not any(
+            keyword in frame.filename
+            for keyword in [
+                "pydev",
+                "ipython-input",
+                "interactiveshell",
+                "async_helpers",
+            ]
+        ):
+            break
+    else:
+        frame = trace[step]
+
+    dir_name = Path(frame.filename).parent / "snapshots"
+    file_name = f"{Path(frame.filename).stem}_{frame.function}.npz"
+    return str(dir_name / file_name) if include_snapshot_dir else file_name
 
 
 def store_snapshot(snapshot_name: str, *args: np.ndarray) -> bool:
