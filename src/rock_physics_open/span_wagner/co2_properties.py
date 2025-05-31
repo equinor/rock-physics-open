@@ -1,5 +1,6 @@
+import importlib
+
 import numpy as np
-import pkg_resources
 import scipy.optimize
 from scipy.interpolate import RegularGridInterpolator
 
@@ -420,11 +421,16 @@ def carbon_dioxide_density(absolute_temperature, pressure, interpolate=False, **
             absolute_temperature, pressure, **kwargs
         )
     assert interpolate is True
-    fp = pkg_resources.resource_filename(
-        "rock_physics.fluid_models.gas_model.span_wagner.tables",
-        "carbon_dioxide_density.npz",
+
+    ref = (
+        importlib.resources.files(
+            "rock_physics.fluid_models.gas_model.span_wagner.tables"
+        )
+        / "carbon_dioxide_density.npz"
     )
-    interpolator = load_lookup_table_interpolator(fp)
+    with importlib.resources.as_file(ref) as fp:
+        interpolator = load_lookup_table_interpolator(fp)
+
     return interpolator(absolute_temperature, pressure)
 
 
