@@ -9,6 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        python-version: ["3.11", "3.12"]
         config:
           - {
             artifact: "Windows-MSVC",
@@ -32,7 +33,7 @@ jobs:
           }
 
     runs-on: ${{ matrix.config.os }}
-    name: ${{ matrix.config.artifact }} (${{ matrix.config.os }}, ${{ matrix.config.cc }}/${{ matrix.config.cxx }})
+    name: ${{ matrix.config.artifact }} (${{ matrix.config.os }}, ${{ matrix.config.cc }}/${{ matrix.config.cxx }}) - ${{ matrix.python-version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -40,7 +41,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: 3.11
+        python-version: ${{ matrix.python-version }}
 
     - name: Upgrade Pip
       run: pip install --upgrade pip
