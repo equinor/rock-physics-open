@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/equinor/rock-physics-open/compare/v0.1.3...v0.2.0) (2025-06-02)
+
+
+### Features
+
+* add support for Python 3.12 ([1de7cb3](https://github.com/equinor/rock-physics-open/commit/1de7cb318cbd0b8e01e54de1f8e9842ae32a4e17))
+
+
+### Bug Fixes
+
+* make get_snapshot_name more robust in search for calling function ([#31](https://github.com/equinor/rock-physics-open/issues/31)) ([e9e9ebd](https://github.com/equinor/rock-physics-open/commit/e9e9ebd8d9d101fa2a2bdd924f6f12be73476de7))
+
 ## [0.1.3](https://github.com/equinor/rock-physics-open/compare/v0.1.2...v0.1.3) (2025-05-13)
 
 
