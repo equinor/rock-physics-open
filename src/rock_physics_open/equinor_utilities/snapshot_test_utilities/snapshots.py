@@ -6,7 +6,13 @@ import numpy as np
 INITIATE = False
 
 
-def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
+def get_snapshot_name(
+    step: int = 1,
+    include_filename: bool = True,
+    include_function_name: bool = True,
+    include_extension: bool = True,
+    include_snapshot_dir=True,
+) -> str:
     """
     Parameters
     ----------
@@ -20,7 +26,7 @@ def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
     trace = inspect.stack()
     for frame in trace[step:]:
         if not any(
-            keyword in frame.filename
+            keyword in frame.function
             for keyword in [
                 "pydev",
                 "ipython-input",
@@ -33,8 +39,12 @@ def get_snapshot_name(step: int = 1, include_snapshot_dir=True) -> str:
         frame = trace[step]
 
     dir_name = Path(frame.filename).parent / "snapshots"
-    file_name = f"{Path(frame.filename).stem}_{frame.function}.npz"
-    return str(dir_name / file_name) if include_snapshot_dir else file_name
+    file_name = Path(frame.filename).stem if include_filename else ""
+    function_name = frame.function if include_function_name else ""
+    extension = ".npz" if include_extension else ""
+    parts = [part for part in [file_name, function_name] if part]
+    base_name = "_".join(parts) + extension
+    return str(dir_name / base_name) if include_snapshot_dir else base_name
 
 
 def store_snapshot(snapshot_name: str, *args: np.ndarray) -> bool:
