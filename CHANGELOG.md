@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/equinor/rock-physics-open/compare/v0.2.0...v0.2.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* Test/robust snapshot ([#35](https://github.com/equinor/rock-physics-open/issues/35)) ([4d169d7](https://github.com/equinor/rock-physics-open/commit/4d169d7b0e2e464a6e50e8583213bc029f20bc2a))
+
 ## [0.2.0](https://github.com/equinor/rock-physics-open/compare/v0.1.3...v0.2.0) (2025-06-02)
 
 
