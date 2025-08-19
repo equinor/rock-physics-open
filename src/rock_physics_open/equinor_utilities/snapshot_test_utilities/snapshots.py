@@ -5,6 +5,34 @@ import numpy as np
 
 INITIATE = False
 
+SYSTEM_AND_DEBUG_FCN = [
+    "pydev",
+    "ipython-input",
+    "interactiveshell",
+    "async_helpers",
+    "handle_snapshots",
+    "run_code",
+    "run_ast_nodes",
+    "run_cell_async",
+    "_pseudo_sync_runner",
+    "_run_cell",
+    "run_cell",
+    "add_exec",
+    "do_add_exec",
+    "add_exec",
+    "ipython_exec_code",
+    "console_exec",
+    "do_it",
+    "process_internal_commands",
+    "_do_wait_suspend",
+    "do_wait_suspend",
+    "compare_snapshots",
+    "handle_snapshots",
+    "wrapper",
+    "run_tests",
+    "<module>",
+]
+
 
 def get_snapshot_name(
     step: int = 1,
@@ -18,6 +46,9 @@ def get_snapshot_name(
     ----------
     step: number of steps in the trace to collect information from
     include_snapshot_dir: absolute directory name included in snapshot name
+    include_filename: whether to include filename in snapshot name
+    include_function_name: whether to include function name in snapshot name
+    include_extension: whether to include extension in snapshot name
 
     Returns
     -------
@@ -25,20 +56,12 @@ def get_snapshot_name(
     """
     trace = inspect.stack()
     for frame in trace[step:]:
-        if not any(
-            keyword in frame.function
-            for keyword in [
-                "pydev",
-                "ipython-input",
-                "interactiveshell",
-                "async_helpers",
-            ]
-        ):
+        if not any(keyword in frame.function for keyword in SYSTEM_AND_DEBUG_FCN):
             break
     else:
         frame = trace[step]
 
-    dir_name = Path(frame.filename).parent / "snapshots"
+    dir_name = Path(frame.filename).parents[1] / "data" / "snapshots"
     file_name = Path(frame.filename).stem if include_filename else ""
     function_name = frame.function if include_function_name else ""
     extension = ".npz" if include_extension else ""
