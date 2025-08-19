@@ -32,12 +32,16 @@ def compare_snapshots(
 
     for i, (test_item, saved_item) in enumerate(zip(test_results, saved_results)):
         try:
+            if name_arr:
+                err_msg = f"saved and generated result for {name_arr[i]} differ"
+            else:
+                err_msg = f"saved result for variable {i} differ"
             np.testing.assert_allclose(
                 test_item,
                 saved_item,
                 rtol=r_tol,
                 equal_nan=equal_nan,
-                err_msg=f"saved and generated result for variable {i} differ",
+                err_msg=err_msg,
             )
         except AssertionError as error:
             open_mode = "w" if no_difference_found else "a"
@@ -46,9 +50,14 @@ def compare_snapshots(
             log_file = re.sub("npz", "log", get_snapshot_name(step=2))
 
             with open(log_file, open_mode) as file:
-                file.write(f"Test filepath: {str(inspect.stack()[1].filename)} \n")
-                file.write(f"Test function: {str(inspect.stack()[1].function)} \n")
-                file.write(f"Test variable number: {i} \n")
+                file.write(
+                    f"Test function: "
+                    f"{get_snapshot_name(include_extension=False, include_snapshot_dir=False, include_filename=False)} \n"
+                )
+                if name_arr:
+                    file.write(f"Test variable: {name_arr[i]} \n")
+                else:
+                    file.write(f"Test variable number: {i} \n")
 
                 for line in str(error).splitlines():
                     mismatched_elements_index = (
@@ -72,7 +81,7 @@ def compare_snapshots(
                         file.write(line + "\n")
                         continue
 
-                    reg_index = re.search(r"\d+ differ", line)
+                    reg_index = re.search(r"differ", line)
 
                     if reg_index:
                         if isinstance(test_item, np.ndarray):
@@ -91,7 +100,7 @@ def compare_snapshots(
                             tab = "\t"
                             for difference in differences:
                                 file.write(
-                                    f"{tab}[{difference[0]:4}]=> {difference[1]:.4g} != {difference[2]:.4g}\n"
+                                    f"{tab}[{difference[0]:4}]=> {difference[1]:.8g} != {difference[2]:.8g}\n"
                                 )
                             file.write(f"{'_' * 40}\n")
     return no_difference_found
