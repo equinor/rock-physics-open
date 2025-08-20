@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.2](https://github.com/equinor/rock-physics-open/compare/v0.2.1...v0.2.2) (2025-08-20)
+
+
+### Bug Fixes
+
+* improve get_snapshot_name - better detection of function and directory name ([4103f56](https://github.com/equinor/rock-physics-open/commit/4103f560bdebebdcd7c055f419fd0f02416bbee5))
+* improve output and fix bug in regex ([ae560aa](https://github.com/equinor/rock-physics-open/commit/ae560aa208957a4bc8aa9132c7385b30fa3996a8))
+* simplify data file copying ([a7da331](https://github.com/equinor/rock-physics-open/commit/a7da3315c9639aa25880c694aae137f4efeb6344))
+
 ## [0.2.1](https://github.com/equinor/rock-physics-open/compare/v0.2.0...v0.2.1) (2025-08-14)
 
 
