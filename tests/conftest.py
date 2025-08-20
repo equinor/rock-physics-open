@@ -1,5 +1,5 @@
-import shutil
 from pathlib import Path
+from shutil import copytree
 
 import pytest
 
@@ -13,8 +13,6 @@ def testdata() -> Path:
 def setup_rock_physics_open_test_data(testdata, tmp_path_factory):
     start_dir = tmp_path_factory.mktemp("data")
 
-    copy_files = testdata.glob("*")
-    for file in copy_files:
-        shutil.copy2(Path(testdata) / file.name, start_dir / file.name)
+    copytree(testdata, start_dir, dirs_exist_ok=True)
 
     return start_dir
