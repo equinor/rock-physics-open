@@ -33,6 +33,7 @@ maintainers = [
     { name = "Eirik Ola Aksnes", email = "eoaksnes@equinor.com" },
     { name = "Christopher Collin Løkken", email = "chcl@equinor.com" },
     { name = "Sivert Utne", email = "sutn@equinor.com" },
+    { name = "Einar Wigum Arbo", email = "earb@equinor.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.11"
