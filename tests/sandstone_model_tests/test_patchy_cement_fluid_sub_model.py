@@ -15,12 +15,9 @@ from rock_physics_open.sandstone_models import (
     patchy_cement_model_weight,
     patchy_cement_pressure_fluid_substitution,
 )
-from tests import config
+from tests.conftest import TESTDATA_DIR
 
-TEST_DIR = config.TESTDATA_DIR
-os.chdir(TEST_DIR)
-
-dataset = pd.read_csv("test_well.csv")
+dataset = pd.read_csv(TESTDATA_DIR / "test_well.csv")
 
 vp_old = dataset["VP"].to_numpy()
 vs_old = dataset["VS"].to_numpy()
