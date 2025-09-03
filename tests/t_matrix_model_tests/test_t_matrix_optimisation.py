@@ -17,11 +17,10 @@ from rock_physics_open.t_matrix_models.curvefit_t_matrix_min import (
     curve_fit_2_inclusion_sets,
 )
 from rock_physics_open.t_matrix_models.opt_subst_utilities import gen_opt_routine
-from tests import config
+from tests.conftest import TESTDATA_DIR
 
-TEST_DIR = config.TESTDATA_DIR
-os.chdir(TEST_DIR)
-inp_df = pd.read_csv("tmatrix_test_data.csv")
+inp_df = pd.read_csv(TESTDATA_DIR / "tmatrix_test_data.csv")
+
 k_min = inp_df["K_MIN"].to_numpy() * 1.0e9
 mu_min = inp_df["MU_MIN"].to_numpy() * 1.0e9
 rho_min = inp_df["RHO_MIN"].to_numpy() * 1000.0

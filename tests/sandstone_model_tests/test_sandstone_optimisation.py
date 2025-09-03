@@ -15,10 +15,10 @@ from rock_physics_open.sandstone_models import (
     friable_model_optimisation,
     patchy_cement_model_optimisation,
 )
-from tests.config import TESTDATA_DIR
+from tests.conftest import TESTDATA_DIR
 
-os.chdir(TESTDATA_DIR)
-data_df = pd.read_csv("sandstone_optimisation.csv")
+data_df = pd.read_csv(TESTDATA_DIR / "sandstone_optimisation.csv")
+
 vp = data_df["VP"].to_numpy()
 vs = data_df["VS"].to_numpy()
 rhob = data_df["RHOB"].to_numpy()

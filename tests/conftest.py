@@ -3,10 +3,13 @@ from shutil import copytree
 
 import pytest
 
+ROOT_DIR = Path(__file__).parent.resolve()
+TESTDATA_DIR = ROOT_DIR.joinpath("data")
+
 
 @pytest.fixture(scope="session")
 def testdata() -> Path:
-    return Path(__file__).parent / "data"
+    return TESTDATA_DIR
 
 
 @pytest.fixture(scope="session", autouse=True, name="data_dir")
