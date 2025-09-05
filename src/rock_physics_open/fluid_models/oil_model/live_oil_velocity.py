@@ -11,10 +11,10 @@ def live_oil_velocity(
     Substitute Equation 22 in Equation 20 of Batzle & Wang [1].
 
     :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. (g/cc)
-    :param pressure: Pressure (MPa) of oil
+        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
+    :param pressure: Pressure [Pa] of oil
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
-    :param temperature: Temperature (Celsius) of oil.
+    :param temperature: Temperature [°C] of oil.
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :return: Primary wave velocity of live oil [m/s].
     """
