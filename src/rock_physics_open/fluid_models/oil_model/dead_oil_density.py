@@ -10,17 +10,19 @@ def pressure_adjusted_dead_oil_density(
 
     Uses equation 18 from Batzle & Wang [1].
 
-    :param reference_density: The density (g/cc) of the dead oil at 15.6 degrees Celsius
+    :param reference_density: The density [kg/m^3] of the dead oil at 15.6 degrees Celsius
         and atmospheric pressure.
-    :param pressure: Pressure (MPa) to adjust to.
+    :param pressure: Pressure [Pa] to adjust to.
     :return: Density of oil at given pressure and 21 degrees Celsius (~70 degrees
-    Farenheit).
+    Farenheit). [kg/m^3]
     """
-    return (
-        reference_density
-        + (0.00277 * pressure - 1.71 * 10**-7 * pressure**3)
-        * (reference_density - 1.15) ** 2
-        + 3.49 * 10**-4 * pressure
+    pressure_mpa = pressure / 1e6
+    density_gcc = reference_density / 1000.0
+    return 1000.0 * (
+        density_gcc
+        + (0.00277 * pressure_mpa - 1.71e-7 * pressure_mpa**3)
+        * (density_gcc - 1.15) ** 2
+        + 3.49e-4 * pressure_mpa
     )
 
 
@@ -33,11 +35,14 @@ def temperature_adjusted_dead_oil_density(
 
     Uses equation 19 from Batzle & Wang [1].
 
-    :param density_at_21c: The density (g/cc) of the dead oil at 21 degrees Celsius
-    :param temperature: Temperature (Celsius) of oil.
-    :return: Density of oil at given temperature.
+    :param density_at_21c: The density [kg/m^3] of the dead oil at 21 degrees Celsius
+    :param temperature: Temperature [°C] of oil.
+    :return: Density of oil at given temperature. [kg/m^3]
     """
-    return density_at_21c / (0.972 + 3.81 * (10**-4) * (temperature + 17.78) ** 1.175)
+    density_at_21c_gcc = density_at_21c / 1000.0
+    return (
+        1000.0 * density_at_21c_gcc / (0.972 + 3.81e-4 * (temperature + 17.78) ** 1.175)
+    )
 
 
 def dead_oil_density(
@@ -51,10 +56,10 @@ def dead_oil_density(
     Uses equation 18 & 19 from Batzle & Wang [1].
 
     :param reference_density: Density of oil at 15.6 degrees Celsius and atmospheric
-        pressure. (g/cc)
-    :param pressure: Pressure (MPa) of oil
-    :param temperature: Temperature (Celsius) of oil.
-    :return: density of dead oil at given conditions.
+        pressure [kg/m^3]
+    :param pressure: Pressure [Pa] of oil
+    :param temperature: Temperature [°C] of oil.
+    :return: density of dead oil at given conditions (kg/m^3).
     """
     density_p = pressure_adjusted_dead_oil_density(pressure, reference_density)
     return temperature_adjusted_dead_oil_density(temperature, density_p)

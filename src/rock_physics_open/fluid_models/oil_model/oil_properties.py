@@ -17,13 +17,13 @@ def oil_properties(
     gas_gravity: np.ndarray | float,
 ) -> np.ndarray | float:
     """
-    :param temperature: Temperature (Celsius) of oil.
-    :param pressure: Pressure (Pa) of oil
+    :param temperature: Temperature [°C] of oil.
+    :param pressure: Pressure [Pa] of oil
     :param rho0: Density of the oil without dissolved gas at 15.6 degrees Celsius and
-                 atmospheric pressure. (kg/m^3)
+                 atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: Gas Gravity, molar mass of gas relative to air molar mas.
-    :return: vel_oil, den_oil, k_oil
+    :return: vel_oil [m/s], den_oil [kg/m^3], k_oil [Pa]
     """
     # Since live_oil with gas_oil_ratio=0.0 is not equal to dead oil
     # we use an apodization function to interpolate between the two
@@ -41,10 +41,11 @@ def oil_properties(
         window = np.clip((np.abs(x) - length / 2) / (length / 2), 0, 1)
         return 1 - window
 
-    loil_den, loil_vel = live_oil(
-        temperature, pressure, rho0, gas_oil_ratio, gas_gravity
-    )
-    doil_den, doil_vel = dead_oil(temperature, pressure, rho0)
+    (
+        loil_vel,
+        loil_den,
+    ) = live_oil(temperature, pressure, rho0, gas_oil_ratio, gas_gravity)
+    doil_vel, doil_den = dead_oil(temperature, pressure, rho0)
     window = triangular_window(gas_oil_ratio)
     den_oil = doil_den * window + (1 - window) * loil_den
     vel_oil = doil_vel * window + (1 - window) * loil_vel
@@ -59,20 +60,16 @@ def dead_oil(
 ) -> tuple[np.ndarray | float, np.ndarray | float]:
     """
     :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. kg/m3
+        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Pressure (Pa) of oil
-    :param temperature: Temperature (Celsius) of oil.
-    :return: dead_oil_density, dead_oil_velocity
+    :param pressure: Pressure [Pa] of oil
+    :param temperature: Temperature [°C] of oil.
+    :return: dead_oil_density [kg/m^3], dead_oil_velocity [m/s]
     """
-    dead_oil_den = 1000 * dead_oil_density(
-        temperature, pressure * 1e-6, reference_density / 1000
-    )
-    dead_oil_vel = dead_oil_velocity(
-        temperature, pressure * 1e-6, reference_density / 1000
-    )
-    return dead_oil_den, dead_oil_vel
+    dead_oil_den = dead_oil_density(temperature, pressure, reference_density)
+    dead_oil_vel = dead_oil_velocity(temperature, pressure, reference_density)
+    return dead_oil_vel, dead_oil_den
 
 
 def live_oil(
@@ -84,12 +81,12 @@ def live_oil(
 ) -> tuple[np.ndarray | float, np.ndarray | float]:
     """
     :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. (kg/m^3)
+        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Pressure (Pa) of oil
-    :param temperature: Temperature (Celsius) of oil.
-    :return: live_oil_density, live_oil_velocity
+    :param pressure: Pressure [Pa] of oil
+    :param temperature: Temperature [°C] of oil.
+    :return: live_oil_density , live_oil_velocity
     """
     if np.any(
         pressure
@@ -99,18 +96,51 @@ def live_oil(
             "Pressure is below bubble point of oil, estimated elastic properties can be inaccurate",
             stacklevel=1,
         )
-    live_oil_den = 1000 * live_oil_density(
+    live_oil_den = live_oil_density(
         temperature,
-        pressure * 1e-6,
-        reference_density / 1000,
+        pressure,
+        reference_density,
         gas_oil_ratio,
         gas_gravity,
     )
     live_oil_vel = live_oil_velocity(
         temperature,
-        pressure * 1e-6,
-        reference_density / 1000,
+        pressure,
+        reference_density,
         gas_oil_ratio,
         gas_gravity,
     )
-    return live_oil_den, live_oil_vel
+    return (
+        live_oil_vel,
+        live_oil_den,
+    )
+
+
+def oil_viscosity(
+    temperature: np.ndarray | float,
+    pressure: np.ndarray | float,
+    reference_density: np.ndarray | float,
+) -> np.ndarray | float:
+    """
+    Calculate dead oil viscosity. If dissolved gas is present in the oil, the reference density
+    should be substituted by live oil density.
+
+    Equations 25a, 25b, 26a & 26b in Batzle and Wang 1992
+
+    Based on Beggs and Robinson 1975
+
+    :param temperature: Temperature [°C] of oil
+    :param pressure: Pressure [Pa] of oil
+    :param reference_density: Density of the oil without dissolved gas
+    """
+    # Change unit in pressure to MPa
+    pressure_mpa = pressure / 1.0e6
+    # Change unit in density to g/cc
+    density_gcc = reference_density / 1000.0
+
+    y_factor = 10 ** (5.693 - 2.863 / density_gcc)
+    eta_t = -1.0 + 10 ** (0.505 * y_factor * (17.8 + temperature) ** -1.163)
+    i_factor = 10 ** (
+        18.6 * (0.1 * np.log10(eta_t) + (np.log10(eta_t) + 2) ** -0.1 - 0.985)
+    )
+    return eta_t + 0.145 * pressure_mpa * i_factor

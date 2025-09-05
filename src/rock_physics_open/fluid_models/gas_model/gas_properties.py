@@ -4,7 +4,7 @@ from scipy.constants import gas_constant
 
 from rock_physics_open.equinor_utilities.conversions import celsius_to_kelvin
 
-AIR_WEIGHT = 28.8  # g/mol
+AIR_WEIGHT = 28.8 * 1.0e-3  # kg/mol
 
 
 def gas_properties(
@@ -20,10 +20,11 @@ def gas_properties(
     :param model: for future use
     :return: vel_gas [m/s], den_gas [kg/m^3], k_gas [Pa], eta_gas [cP]
     """
-    den_gas = gas_density(celsius_to_kelvin(temperature), pressure * 1e-6, gas_gravity)
-    k_gas = gas_bulk_modulus(
-        celsius_to_kelvin(temperature), pressure * 1e-6, gas_gravity
-    )
+
+    den_gas = gas_density(celsius_to_kelvin(temperature), pressure, gas_gravity)
+
+    k_gas = gas_bulk_modulus(celsius_to_kelvin(temperature), pressure, gas_gravity)
+
     vel_gas = (k_gas / den_gas) ** 0.5
 
     eta_gas = lee_gas_viscosity(celsius_to_kelvin(temperature), pressure, gas_gravity)
@@ -33,9 +34,9 @@ def gas_properties(
 
 def molecular_weight(gas_gravity: np.ndarray | float) -> np.ndarray | float:
     """
-    calculates molecluar weight of a gas from gas gravity.
+    calculates molecular weight of a gas from gas gravity.
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :return: The volume of the gas in g/mol.
+    :return: The volume of the gas in kg/mol.
     """
     return gas_gravity * AIR_WEIGHT
 
@@ -47,9 +48,10 @@ def molar_volume(
     """
     calculates molar volume using the ideal gas law.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in MPa.
-    :return: The volume of the gas in cc/mol.
+    :param pressure: Confining pressure in Pa.
+    :return: The volume of the gas in m^3/mol.
     """
+
     return gas_constant * absolute_temperature / pressure
 
 
@@ -62,8 +64,8 @@ def ideal_gas_density(
     calculates molar volume using the ideal gas law.
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in MPa.
-    :return: The density of the gas in g/cc
+    :param pressure: Confining pressure in Pa.
+    :return: The density of the gas in kg/m^3
     """
     return molecular_weight(gas_gravity) / molar_volume(absolute_temperature, pressure)
 
@@ -89,13 +91,11 @@ def ideal_gas(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
     :param pressure: Confining pressure in Pa.
-    :return: ideal_gas_density, ideal_gas_velocity
+    :return: ideal_gas_velocity [m/s], ideal_gas_density [kg/m^3],
     """
-    ideal_gas_den = 1000 * ideal_gas_density(
-        absolute_temperature, pressure * 1e6, gas_gravity
-    )
+    ideal_gas_den = ideal_gas_density(absolute_temperature, pressure, gas_gravity)
     ideal_gas_vel = ideal_gas_primary_velocity(absolute_temperature, gas_gravity)
-    return ideal_gas_den, ideal_gas_vel
+    return ideal_gas_vel, ideal_gas_den
 
 
 def pseudoreduced_temperature(
@@ -132,13 +132,13 @@ def pseudoreduced_pressure(
     Tech., 22, 889-892.
 
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Confining pressure in MPa.
-    :return: Pseudoreduced pressure in MPa.
+    :param pressure: Confining pressure in Pa.
+    :return: Pseudoreduced pressure in Pa.
     """
     return pressure / (4.892 - 0.4048 * gas_gravity)
 
 
-def compressability_factor(
+def compressibility_factor(
     absolute_temperature: np.ndarray | float,
     pressure: np.ndarray | float,
     gas_gravity: np.ndarray | float,
@@ -149,11 +149,13 @@ def compressability_factor(
 
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in MPa.
-    :return: The density of the gas in g/cc
+    :param pressure: Confining pressure in Pa.
+    :return: Gas compressibility - unitless
     """
     tpr = pseudoreduced_temperature(absolute_temperature, gas_gravity)
-    ppr = pseudoreduced_pressure(pressure, gas_gravity)
+
+    # Pseudoreduced pressure has unit MPa in equation
+    ppr = pseudoreduced_pressure(pressure, gas_gravity) * 1.0e-6
 
     return (
         (0.03 + 0.00527 * (3.5 - tpr) ** 3) * ppr
@@ -162,7 +164,7 @@ def compressability_factor(
         - 0.52
         + 0.109
         * (3.85 - tpr) ** 2
-        / exp((0.45 + 8 * (0.56 - 1 / tpr) ** 2) * ppr**1.2 / tpr)
+        / exp((0.45 + 8.0 * (0.56 - 1 / tpr) ** 2) * ppr**1.2 / tpr)
     )
 
 
@@ -176,18 +178,17 @@ def gas_density(
 
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in MPa.
-    :return: The density of the gas in g/cc
+    :param pressure: Confining pressure in Pa.
+    :return: The density of the gas in kg/m^3
     """
-    ideal_gas_den, ideal_gas_vel = ideal_gas(
-        absolute_temperature, pressure * 1e-6, gas_gravity
-    )
-    return ideal_gas_den / compressability_factor(
+
+    _, ideal_gas_den = ideal_gas(absolute_temperature, pressure, gas_gravity)
+    return ideal_gas_den / compressibility_factor(
         absolute_temperature, pressure, gas_gravity
     )
 
 
-def compressability_rate_per_pseudoreduced_pressure(
+def compressibility_rate_per_pseudoreduced_pressure(
     absolute_temperature: np.ndarray | float,
     pressure: np.ndarray | float,
     gas_gravity: np.ndarray | float,
@@ -201,7 +202,9 @@ def compressability_rate_per_pseudoreduced_pressure(
     :return: The density of the gas in g/cc
     """
     tpr = pseudoreduced_temperature(absolute_temperature, gas_gravity)
-    ppr = pseudoreduced_pressure(pressure, gas_gravity)
+
+    # Pseudoreduced pressure is expected to be in MPa in the expression
+    ppr = pseudoreduced_pressure(pressure, gas_gravity) * 1.0e-6
 
     return (
         0.03
@@ -226,15 +229,16 @@ def gas_bulk_modulus(
 
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in MPa.
-    :return: The bulk modulus of the gas in MPa.
+    :param pressure: Confining pressure in Pa.
+    :return: The bulk modulus of the gas in Pa.
     """
-    z = compressability_factor(absolute_temperature, pressure, gas_gravity)
-    dz_dppr = compressability_rate_per_pseudoreduced_pressure(
+    z = compressibility_factor(absolute_temperature, pressure, gas_gravity)
+    dz_dppr = compressibility_rate_per_pseudoreduced_pressure(
         absolute_temperature, pressure, gas_gravity
     )
 
-    ppr = pseudoreduced_pressure(pressure, gas_gravity)
+    # Set ppr in unit MPa in order to use it in calculation of gamma_0
+    ppr = pseudoreduced_pressure(pressure, gas_gravity) * 1.0e-6
 
     # Equation 11b
     gamma_0 = (
@@ -245,6 +249,44 @@ def gas_bulk_modulus(
     )
 
     return gamma_0 * pressure / (1 - dz_dppr * ppr / z)
+
+
+def gas_viscosity(
+    absolute_temperature: np.ndarray | float,
+    pressure: np.ndarray | float,
+    gas_gravity: np.ndarray | float,
+) -> np.ndarray | float:
+    """
+    The gas viscosity of hydrocarbon gas, using equations 12 and 13 of Batzle & Wang [1].
+
+    :param absolute_temperature: The absolute temperature of the gas in kelvin.
+    :param pressure: Confining pressure in Pa.
+    :param gas_gravity: molar mass of gas relative to air mas.
+    :return: The gas viscosity of the gas in cP.
+    """
+    temp_pr = pseudoreduced_temperature(absolute_temperature, gas_gravity)
+
+    # Pseudoreduced pressure should be in unit MPa
+    pres_pr = pseudoreduced_pressure(pressure, gas_gravity) * 1.0e-6
+
+    eta_1 = 0.0001 * (
+        temp_pr * (28.0 + 48.0 * gas_gravity - 5.0 * gas_gravity**2)
+        - 6.47 * gas_gravity**-2
+        + 35.0 * gas_gravity**-1
+        + 1.14 * gas_gravity
+        - 15.55
+    )
+    return eta_1 * (
+        0.001
+        * pres_pr
+        * (
+            (1057.0 - 8.08 * temp_pr) / pres_pr
+            + (796.0 * pres_pr**0.5 - 704.0)
+            / (((temp_pr - 1.0) ** 0.7) * (pres_pr + 1.0))
+            - 3.24 * temp_pr
+            - 38.0
+        )
+    )
 
 
 def lee_gas_viscosity(

@@ -21,7 +21,6 @@ from rock_physics_open.fluid_models.brine_model.brine_properties import (
 )
 
 pres = 23.0e6 * np.linspace(0.8, 1.2, 101)
-pres_mpa = pres * 1.0e-6
 temp = 100.0 * np.linspace(0.8, 1.2, 101)
 sal = 35000.0 * np.ones(101)
 nacl = 80.0 * np.ones(101)
@@ -49,7 +48,7 @@ def test_water_properties():
 
 
 def test_water_density():
-    args = water_density(temp, pres_mpa)
+    args = water_density(temp, pres)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         store_snapshot(get_snapshot_name(), args)
@@ -58,7 +57,7 @@ def test_water_density():
 
 
 def test_water_velocity():
-    args = water_primary_velocity(temp, pres_mpa)
+    args = water_primary_velocity(temp, pres)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         store_snapshot(get_snapshot_name(), args)
@@ -67,7 +66,7 @@ def test_water_velocity():
 
 
 def test_brine_density():
-    args = brine_density(temp, pres_mpa, sal)
+    args = brine_density(temp, pres, sal)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         store_snapshot(get_snapshot_name(), args)
@@ -76,7 +75,7 @@ def test_brine_density():
 
 
 def test_brine_velocity():
-    args = brine_primary_velocity(temp, pres_mpa, sal)
+    args = brine_primary_velocity(temp, pres, sal)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         store_snapshot(get_snapshot_name(), args)
@@ -90,11 +89,11 @@ def test_water_brine_properties_float():
     """
     for results in [
         water(temp[0], pres[0]),
-        water_density(temp[0], pres_mpa[0]),
-        water_primary_velocity(temp[0], pres_mpa[0]),
+        water_density(temp[0], pres[0]),
+        water_primary_velocity(temp[0], pres[0]),
         brine_properties(temp[0], pres[0], sal[0]),
-        brine_density(temp[0], pres_mpa[0], sal[0]),
-        brine_primary_velocity(temp[0], pres_mpa[0], sal[0]),
+        brine_density(temp[0], pres[0], sal[0]),
+        brine_primary_velocity(temp[0], pres[0], sal[0]),
     ]:
         if hasattr(results, "__iter__"):
             assert all(isinstance(arg, float) for arg in results)
