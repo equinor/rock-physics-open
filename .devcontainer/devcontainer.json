@@ -1,0 +1,68 @@
+// Definition for the devcontainer used by GitHub Codespaces.
+{
+  "name": "Full-stack devcontainer (Backend & Frontend)",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "remoteEnv": {
+    "COMPOSE_BAKE": "true"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Set formatter for specific filetypes and enable format on save
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml",
+          "editor.formatOnSave": true
+        },
+        "[json][jsonc]": {
+          "editor.defaultFormatter": "vscode.json-language-features",
+          "editor.formatOnSave": true
+        },
+        "[dockercompose]": {
+          "editor.defaultFormatter": "ms-azuretools.vscode-containers",
+          "editor.formatOnSave": true
+        },
+        "[github-actions-workflow][github-workflow][yaml]": {
+          "editor.defaultFormatter": "redhat.vscode-yaml",
+          "editor.formatOnSave": true
+        },
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "explicit"
+          }
+        },
+        "[typescriptreact][typescript][javascript][javascriptreact][css]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "biomejs.biome",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports.biome": "explicit",
+            "source.fixAll.biome": "explicit"
+          }
+        },
+        // Python specific settings
+        "notebook.formatOnSave.enabled": true,
+        "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+      },
+      // Extensions that is handy to have in the devcontainer
+      "extensions": [
+        "biomejs.biome",
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "detachhead.basedpyright",
+        "tamasfe.even-better-toml",
+        "docker.docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "ms-azuretools.vscode-containers",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-norwegian-bokmal",
+        "streetsidesoftware.code-spell-checker-scientific-terms",
+        "github.vscode-github-actions",
+        "DavidAnson.vscode-markdownlint"
+      ]
+    }
+  }
+}

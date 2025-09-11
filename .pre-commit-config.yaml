@@ -13,12 +13,29 @@ repos:
       - id: check-toml
       - id: check-yaml
       - id: check-json
+        exclude: ".devcontainer|.vscode"
       - id: trailing-whitespace
       - id: end-of-file-fixer
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.7
+  - repo: local
     hooks:
       - id: ruff
-        args: [--fix]
+        name: "Python: lint"
+        entry: uv run ruff check --fix
+        language: system
+        files: .*\.py$
+        pass_filenames: false
+
       - id: ruff-format
+        name: "Python: format"
+        entry: uv run ruff format
+        language: system
+        pass_filenames: false
+        files: .*\.py$
+
+      - id: basedpyright
+        name: "Python: static type checking"
+        entry: uv run basedpyright
+        language: system
+        pass_filenames: false
+        files: .*\.py$

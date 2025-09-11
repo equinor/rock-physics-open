@@ -1,8 +1,38 @@
+from typing import Any, overload
+
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 
-def dim_check_vector(args, force_type=None):
+@overload
+def dim_check_vector(
+    args: list[Any] | tuple[Any, ...],
+    force_type: np.dtype | None = ...,
+) -> list[npt.NDArray[Any] | pd.DataFrame]:
+    """Overload for when the input is a list or tuple."""
+
+
+@overload
+def dim_check_vector(
+    args: pd.DataFrame,
+    force_type: np.dtype | None = ...,
+) -> pd.DataFrame:
+    """Overload for when the input is a pandas DataFrame."""
+
+
+@overload
+def dim_check_vector(
+    args: npt.NDArray[Any],
+    force_type: np.dtype | None = ...,
+) -> npt.NDArray[Any]:
+    """Overload for when the input is a numpy array."""
+
+
+def dim_check_vector(
+    args: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
+    force_type: np.dtype | None = None,
+) -> npt.NDArray[Any] | pd.DataFrame | list[npt.NDArray[Any] | pd.DataFrame]:
     """
     Check that all inputs are of the same (one-dimensional) size. Raise ValueError in case there are several lengths
     present in the inputs. All inputs will be checked and possibly expanded to common length. Only the first dimension
@@ -23,8 +53,8 @@ def dim_check_vector(args, force_type=None):
     single_types = (np.ndarray, pd.DataFrame)
     iterable_types = (list, tuple)
     allowed_types = single_types + iterable_types
-    if not isinstance(args, allowed_types):
-        raise ValueError("dim_check_vector: unknown input type: {}".format(type(args)))
+    if not isinstance(args, allowed_types):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+        raise ValueError("dim_check_vector: unknown input type: {}".format(type(args)))  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
 
     # Single array or dataframe is just returned
     if isinstance(args, single_types):
@@ -56,13 +86,13 @@ def dim_check_vector(args, force_type=None):
         args = [np.array(item, ndmin=1) if np.isscalar(item) else item for item in args]
 
     # Can now test for length - must either be a scalar or have the same length
-    max_length = np.max([item.shape[0] for item in args])
+    max_length: int = np.max([item.shape[0] for item in args])
     if not np.all([item.shape[0] == max_length or item.shape[0] == 1 for item in args]):
         raise ValueError(
             "dim_check_vector: Unequal array lengths in input to dim_check_vector"
         )
 
-    output_arg = []
+    output_arg: list[npt.NDArray[Any] | pd.DataFrame] = []
     for item in args:
         if item.shape[0] == max_length:
             output_arg.append(item)

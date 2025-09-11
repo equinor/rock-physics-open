@@ -60,18 +60,23 @@ dependencies = [
     "tmatrix >= 1.0.0",
 ]
 
-[project.optional-dependencies]
-tests = [
-    "pytest >= 8.3.5",
-    "pytest-cov >= 6.1.1",
-    "ruff >= 0.11.6",
-    "pre-commit >= 4.2.0",
-]
 
 [project.urls]
 Repository = "https://github.com/equinor/rock-physics-open"
 Homepage = "https://github.com/equinor/rock-physics-open"
 Changelog = "https://github.com/equinor/rock-physics-open/blob/main/CHANGELOG.md"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.31.4",
+    "matplotlib-stubs>=0.3.3",
+    "pandas-stubs>=2.3.2.250827",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "ruff>=0.12.11",
+    "scipy-stubs>=1.16.1.1",
+]
 
 [tool.ruff]
 lint.select = [
@@ -106,3 +111,25 @@ markers = [
     "use_graphics", # marks test as dependent on display (deselect with '-m "not use_graphics")]
 ]
 addopts = ["--color=yes", "--strict-markers"]
+
+[tool.basedpyright]
+pythonVersion = "3.11"
+include = [
+    # Currently only enabling on general utilities and the corresponding tests
+    "src/rock_physics_open/equinor_utilities/gen_utilities/*.py",
+    "tests/gen_utilities_tests/*.py",
+]
+exclude = ["src/**/version.py"]
+allowedUntypedLibraries = [
+    "pandas",
+    "sklearn",
+    "tkinter",
+    "sympy",
+    "matplotlib.pyplot",
+    "matplotlib",
+    "pyplot",
+    "plt",
+]
+reportAny = false
+reportExplicitAny = false
+reportMissingTypeStubs = false

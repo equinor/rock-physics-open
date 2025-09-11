@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 
@@ -16,6 +17,36 @@ class TestDimCheckVector:
         np.testing.assert_equal(b_out, b_ref)
         np.testing.assert_equal(c_out, c_ref)
 
+    def test_dim_check_vector_single_np_array(self):
+        """Test that a single numpy array is returned as is."""
+        a = np.ones(11)
+        a_out = dim_check_vector(a)
+        np.testing.assert_equal(a_out, a)
+
+    def test_dim_check_vector_single_np_array_force(self):
+        """Test that a single numpy array is returned as is."""
+        a = np.ones(11).astype(float)
+        dtype = np.dtype(int)
+        a_out = dim_check_vector(a, force_type=dtype)
+        np.testing.assert_equal(a_out, a)
+        assert a_out.dtype == dtype
+
+    def test_dim_check_vector_single_df(self):
+        """Test that a single pandas dataframe is returned as is."""
+        a = np.ones((11, 3))
+        a_df = pd.DataFrame(a)
+        a_out = dim_check_vector(a_df)
+        pd.testing.assert_frame_equal(a_out, a_df)
+
+    def test_dim_check_vector_single_df_force(self):
+        """Test that a single pandas dataframe is returned as is."""
+        a = np.ones((11, 3))
+        a_df = pd.DataFrame(a).astype(float)
+        dtype = np.dtype(int)
+        a_out = dim_check_vector(a_df, force_type=dtype)
+        pd.testing.assert_frame_equal(left=a_out, right=a_df, check_dtype=False)
+        assert all(a_out.dtypes == dtype)
+
     def test_dim_check_vector_force(self):
         a = np.ones(11)
         b = 42
@@ -27,6 +58,9 @@ class TestDimCheckVector:
         np.testing.assert_equal(a_out, a_ref)
         np.testing.assert_equal(b_out, b_ref)
         np.testing.assert_equal(c_out, c_ref)
-        assert a_out.dtype == a_ref.dtype
-        assert b_out.dtype != b_ref.dtype
-        assert c_out.dtype != c_ref.dtype
+        if isinstance(a_out, np.ndarray):
+            assert a_out.dtype == a_ref.dtype
+        if isinstance(b_out, np.ndarray):
+            assert b_out.dtype != b_ref.dtype
+        if isinstance(c_out, np.ndarray):
+            assert c_out.dtype != c_ref.dtype

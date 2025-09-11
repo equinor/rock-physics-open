@@ -4,7 +4,6 @@
 .venv
 venv/
 .tool-versions
-.python-version
 
 build/
 __pycache__/

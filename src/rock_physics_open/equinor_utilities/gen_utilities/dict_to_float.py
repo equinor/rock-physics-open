@@ -1,4 +1,9 @@
-def dict_value_to_float(input_dict):
+from typing import Any
+
+
+def dict_value_to_float(
+    input_dict: dict[str, Any],
+) -> dict[str, float | list[float]]:
     """
     Convert dictionary strings to floating point numbers. Each value can have multiple floats.
 

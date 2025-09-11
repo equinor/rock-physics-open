@@ -44,4 +44,4 @@ class TestRho:
 
         with pytest.warns(UserWarning, match="phi out of range in 1 sample"):
             r_m = rho_m(frac_cem, phi, rho_cem, rho_min)
-            assert np.isnan(r_m[0])
+        assert np.isnan(r_m[0])
