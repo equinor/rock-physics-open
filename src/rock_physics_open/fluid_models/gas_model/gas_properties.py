@@ -199,7 +199,7 @@ def compressibility_rate_per_pseudoreduced_pressure(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param absolute_temperature: The absolute temperature of the gas in kelvin.
     :param pressure: Confining pressure in MPa.
-    :return: The density of the gas in g/cc
+    :return: Derivative of the compressibility factor (unitless) with respect to pseudoreduced pressure
     """
     tpr = pseudoreduced_temperature(absolute_temperature, gas_gravity)
 
