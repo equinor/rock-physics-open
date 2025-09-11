@@ -68,7 +68,7 @@ def brine_primary_velocity(
 
     :param salinity: Salinity of solution as [ppm] of sodium chloride
     :param pressure: Pressure [Pa]
-    :param temperature: Temperature (Celsius)
+    :param temperature: Temperature [°C]
     :return: velocity of solution in m/s.
     """
     # Change unit for salinity from ppm to fraction
