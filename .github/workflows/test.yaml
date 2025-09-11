@@ -16,29 +16,25 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} / ${{ matrix.python-version }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
 
-    - name: Setup Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
 
-    - name: Upgrade Pip
-      run: pip install --upgrade pip
+      - name: Show Machine Information
+        run: uvx --from py-cpuinfo cpuinfo
 
-    - name: Show Machine Information
-      run: |
-        pip install py-cpuinfo
-        python -m cpuinfo
+      - name: Install dependencies
+        run: uv sync --locked --all-extras --dev
 
-    - name: Install Dependencies
-      run: pip install .[tests]
+      - name: Test
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: uv run pytest
 
-    - name: Test
-      if: ${{ matrix.os == 'windows-latest' }}
-      run: pytest
-
-    - name: Test ( -m "not use_graphics" )
-      if: ${{ matrix.os != 'windows-latest' }}
-      run: pytest -m "not use_graphics"
+      - name: Test ( -m "not use_graphics" )
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: uv run pytest -m "not use_graphics"

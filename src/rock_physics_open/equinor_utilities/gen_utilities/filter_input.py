@@ -1,14 +1,20 @@
 from sys import byteorder
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 WRONG_BYTEORDER = ">" if byteorder == "little" else "<"
 
 
 def filter_input_log(
-    args, working_int=None, negative=False, no_zero=False, positive=True
-):
+    args: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
+    working_int: npt.NDArray[Any] | None = None,
+    negative: bool = False,
+    no_zero: bool = False,
+    positive: bool = True,
+) -> tuple[npt.NDArray[np.bool_], list[npt.NDArray[Any] | pd.DataFrame]]:
     """
     Check for valid input values in numpy arrays or pandas data frames. Default behaviour is to
     identify missing values - assumed to be NaN and Inf. Other conditions
@@ -40,9 +46,8 @@ def filter_input_log(
     type_error = "filter_input_log: unknown input data type: {}".format(type(args))
     size_error = "filter_input_log: inputs of different length"
 
-    if not isinstance(args, (list, tuple, np.ndarray, pd.DataFrame)):
-        raise ValueError(type_error)
-
+    if not isinstance(args, (list, tuple, np.ndarray, pd.DataFrame)):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+        raise ValueError(type_error)  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
     # Make sure that 'args' is iterable
     if isinstance(args, (np.ndarray, pd.DataFrame)):
         args = [args]
@@ -70,7 +75,7 @@ def filter_input_log(
     # https://github.com/pandas-dev/pandas/issues/32432
     # idx = ~logs.any(bool_only=True, axis=1)
     # Need to do it the cumbersome way for the time being
-    bool_col = logs.dtypes.apply(lambda dtype: dtype == "bool")
+    bool_col = logs.dtypes == "bool"
     if any(bool_col):
         idx = ~logs.loc[:, logs.columns[bool_col]].any(axis=1)
         logs.drop(columns=logs.columns[bool_col], inplace=True)
