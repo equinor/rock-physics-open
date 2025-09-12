@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 import pytest
 
 from rock_physics_open.equinor_utilities.std_functions import rho_b, rho_m
 
 
-class RhoTest(unittest.TestCase):
+class TestRho:
     def test_rhob(self):
         phi = np.linspace(0.0, 0.25, 10)
         rho_fluid = 1000 * np.ones_like(phi)

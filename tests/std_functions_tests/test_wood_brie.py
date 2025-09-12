@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.std_functions import brie, wood
 
 
-class WoodBrieTestCase(unittest.TestCase):
+class TestWoodBrie:
     def setup(self):
         s_gas = np.array([1.0, 0.0, 0.0])
         s_brine = np.array([0.0, 1.0, 0.0])
@@ -77,7 +75,3 @@ class WoodBrieTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(k_w, k_w_ref)
         np.testing.assert_almost_equal(k_b / 1e9, k_b_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

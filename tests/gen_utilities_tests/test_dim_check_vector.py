@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 
 
-class DimCheckVectorTestCase(unittest.TestCase):
+class TestDimCheckVector:
     def test_dim_check_vector_ok(self):
         a = np.ones(11)
         b = 42
@@ -32,7 +30,3 @@ class DimCheckVectorTestCase(unittest.TestCase):
         assert a_out.dtype == a_ref.dtype
         assert b_out.dtype != b_ref.dtype
         assert c_out.dtype != c_ref.dtype
-
-
-if __name__ == "__main__":
-    unittest.main()

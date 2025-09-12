@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import (
@@ -10,7 +8,7 @@ from rock_physics_open.equinor_utilities.std_functions import (
 )
 
 
-class HashinShtrikmanTest(unittest.TestCase):
+class TestHashinShtrikman:
     def setup_hs(self):
         k1 = np.ones(11) * 36.6e9
         mu1 = np.ones(11) * 44.0e9

@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.gen_utilities import filter_input_log
 
 
-class FilterInputTestCase(unittest.TestCase):
+class TestFilterInput:
     def test_filter_input(self):
         a = np.ones(11).astype(float)
         a[4] = np.nan
@@ -87,7 +85,3 @@ class FilterInputTestCase(unittest.TestCase):
         np.testing.assert_equal(idx, idx_ref)
         np.testing.assert_equal(a_out, a_ref)
         np.testing.assert_equal(b_out, b_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

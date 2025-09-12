@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.classification_functions import gen_class_stats
 
 
-class ClassStatsTestCase(unittest.TestCase):
+class TestClassStats:
     def test_class_stats(self):
         rg = default_rng(234769238476)
         obs = rg.random((100, 2))
@@ -41,7 +39,3 @@ class ClassStatsTestCase(unittest.TestCase):
         np.testing.assert_almost_equal(prior_prob, prior_prob_ref)
         np.testing.assert_equal(class_counts, class_count_ref)
         np.testing.assert_equal(class_id, class_id_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

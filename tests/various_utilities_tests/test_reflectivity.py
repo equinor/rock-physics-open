@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 import pytest
 from numpy.random import default_rng
@@ -7,8 +5,9 @@ from numpy.random import default_rng
 from rock_physics_open.equinor_utilities.various_utilities import reflectivity
 
 
-class ReflectivityTestCase(unittest.TestCase):
-    def setUp(self):
+class TestReflectivity:
+    @pytest.fixture(autouse=True)
+    def setup(self):
         rg = default_rng(5947037623874)
         self.vp = 3500 * (1.0 + 0.2 * rg.random(11))
         self.vs = 1200 * (1.0 + 0.4 * rg.random(11))
@@ -73,7 +72,3 @@ class ReflectivityTestCase(unittest.TestCase):
                 k=self.k,
                 model="AkiRichards",
             )
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.various_utilities import pressure
 
 
-class PressureTestCase(unittest.TestCase):
+class TestPressure:
     def test_pressure(self):
         rg = default_rng(987654321)
         rho = 2650 * (0.8 + 0.2 * rg.random(11))
@@ -93,7 +91,3 @@ class PressureTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(p_lith, p_lith_ref)
         np.testing.assert_almost_equal(p_eff, p_eff_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import moduli, velocity
 
 
-class ModuliVelocityTestCase(unittest.TestCase):
+class TestModuliVelocity:
     def test_moduli(self):
         vp = np.linspace(0.8, 1.2, 11) * 3500.0
         vs = np.linspace(0.8, 1.2, 11) * 1200.0
@@ -91,7 +89,3 @@ class ModuliVelocityTestCase(unittest.TestCase):
         np.testing.assert_almost_equal(vs, vs_ref)
         np.testing.assert_almost_equal(ai, ai_ref)
         np.testing.assert_almost_equal(vp_vs, vp_vs_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

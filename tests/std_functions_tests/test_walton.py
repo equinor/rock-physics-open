@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import walton_smooth
 
 
-class WaltonTestCase(unittest.TestCase):
+class TestWalton:
     def test_walton_smooth(self):
         k = np.ones(11) * 36.8e9
         mu = np.ones(11) * 44.0e9
@@ -84,7 +82,3 @@ class WaltonTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(k_dry / 1.0e9, k_dry_ref)
         np.testing.assert_almost_equal(mu_dry / 1.0e9, mu_dry_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

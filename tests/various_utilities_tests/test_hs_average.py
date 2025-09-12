@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.various_utilities import hs_average
 
 
-class HSTestCase(unittest.TestCase):
+class TestHS:
     def test_hashin_shtrikman_average(self):
         rg = default_rng(42)
         f = rg.random(10)
@@ -47,7 +45,3 @@ class HSTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(vp, vp_ref)
         np.testing.assert_almost_equal(vs, vs_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

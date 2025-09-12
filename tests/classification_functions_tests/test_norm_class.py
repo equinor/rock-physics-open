@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.classification_functions import norm_class
 
 
-class NormClassTestCase(unittest.TestCase):
+class TestNormClass:
     def test_norm_class(self):
         rg = default_rng(234769238476)
         obs = rg.random((11, 2))
@@ -130,7 +128,3 @@ class NormClassTestCase(unittest.TestCase):
         np.testing.assert_equal(norm_class_arr, norm_class_ref)
         np.testing.assert_almost_equal(norm_dist, norm_dist_ref)
         np.testing.assert_almost_equal(norm_pp, norm_pp_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()
