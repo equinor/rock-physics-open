@@ -9,31 +9,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
         python-version: ["3.11", "3.12", "3.13"]
-        config:
-          - {
-            artifact: "Windows-MSVC",
-            cc: "cl", cxx: "cl",
-            os: windows-latest,
-          }
-          - {
-            artifact: "Windows-MinGW",
-            cc: "gcc", cxx: "g++",
-            os: windows-latest,
-          }
-          - {
-            artifact: "Linux",
-            cc: "gcc", cxx: "g++",
-            os: ubuntu-latest,
-          }
-          - {
-            artifact: "Mac",
-            cc: "clang", cxx: "clang++",
-            os: macos-latest,
-          }
-
-    runs-on: ${{ matrix.config.os }}
-    name: ${{ matrix.config.artifact }} (${{ matrix.config.os }}, ${{ matrix.config.cc }}/${{ matrix.config.cxx }}) - ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -55,9 +34,9 @@ jobs:
       run: pip install .[tests]
 
     - name: Test
-      if: ${{ matrix.config.artifact == 'Windows-MSVC' }}
+      if: ${{ matrix.os == 'windows-latest' }}
       run: pytest
 
     - name: Test ( -m "not use_graphics" )
-      if: ${{ matrix.config.artifact != 'Windows-MSVC' }}
+      if: ${{ matrix.os != 'windows-latest' }}
       run: pytest -m "not use_graphics"
