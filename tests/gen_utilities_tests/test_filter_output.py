@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.gen_utilities import filter_output
 
 
-class FilterOutputTestCase(unittest.TestCase):
+class TestFilterOutput:
     def test_filter_output(self):
         a_inp = np.linspace(0, 1, 11)
         b_inp = np.linspace(0, 1, 11) * 2
@@ -19,7 +17,3 @@ class FilterOutputTestCase(unittest.TestCase):
         a_out, b_out = filter_output(idx, (a_inp, b_inp))
         np.testing.assert_equal(a_out, a_ref)
         np.testing.assert_equal(b_out, b_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.classification_functions import lin_class
 
 
-class LinClassTestCase(unittest.TestCase):
+class TestLinClass:
     def test_lin_class(self):
         rg = default_rng(234769238476)
         obs = rg.random((11, 2))
@@ -37,7 +35,3 @@ class LinClassTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(lin_class_arr, lin_class_ref)
         np.testing.assert_almost_equal(lin_dist, lin_dist_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

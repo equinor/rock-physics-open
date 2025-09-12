@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.classification_functions import mahal_class
 
 
-class MahalClassTestCase(unittest.TestCase):
+class TestMahalClass:
     def test_mahal_class(self):
         rg = default_rng(234769238476)
         obs = rg.random((11, 2))
@@ -128,7 +126,3 @@ class MahalClassTestCase(unittest.TestCase):
         np.testing.assert_almost_equal(mahal_class_arr, mahal_class_ref)
         np.testing.assert_almost_equal(mahal_dist, mahal_dist_ref)
         np.testing.assert_almost_equal(mahal_pp, mahal_pp_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

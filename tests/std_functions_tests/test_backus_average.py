@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import backus_average
 
 
-class BackusAverageTest(unittest.TestCase):
+class TestBackusAverage:
     def test_back_ave(self):
         vp1i = np.ones(10) * 3500.0
         vp2i = np.ones(10) * 2800.0

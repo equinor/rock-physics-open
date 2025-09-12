@@ -1,12 +1,10 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.various_utilities import min_3_voigt_reuss_hill
 
 
-class Min3VRHTestCase(unittest.TestCase):
+class TestMin3VRH:
     def test_3_mineral_voigt_reuss_hill(self):
         rg = default_rng(260363)
         f1 = 0.33 * rg.random(11)
@@ -72,7 +70,3 @@ class Min3VRHTestCase(unittest.TestCase):
         np.testing.assert_almost_equal(vp, vp_ref)
         np.testing.assert_almost_equal(vs, vs_ref)
         np.testing.assert_almost_equal(rho, rho_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

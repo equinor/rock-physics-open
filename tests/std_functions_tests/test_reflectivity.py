@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
@@ -13,7 +11,7 @@ theta = np.ones(11)
 k = 1.9
 
 
-class ReflectivityTestCase(unittest.TestCase):
+class TestReflectivity:
     def test_aki_richards(self):
         r_aki_rich = aki_richards(vp, vs, rho, theta, k=2.0)
         r_aki_rich_ref = np.array(
@@ -51,7 +49,3 @@ class ReflectivityTestCase(unittest.TestCase):
             ]
         )
         np.testing.assert_almost_equal(r_sm_gi, r_sm_gi_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

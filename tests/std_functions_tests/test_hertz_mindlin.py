@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import hertz_mindlin
 
 
-class HertzMindlinTestCase(unittest.TestCase):
+class TestHertzMindlin:
     def test_hertz_mindlin(self):
         k1 = np.ones(11) * 36.6e9
         mu1 = np.ones(11) * 44.0e9
@@ -46,7 +44,3 @@ class HertzMindlinTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(k_dry / 1e9, k_dry_ref)
         np.testing.assert_almost_equal(mu_dry / 1e9, mu_dry_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

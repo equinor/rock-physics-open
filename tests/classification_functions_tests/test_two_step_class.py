@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
@@ -8,7 +6,7 @@ from rock_physics_open.equinor_utilities.classification_functions import (
 )
 
 
-class TwoStepClassTestCase(unittest.TestCase):
+class TestTwoStepClass:
     def test_mahal_class_thresh(self):
         rg = default_rng(238476)
         obs = rg.random((11, 2))
@@ -50,7 +48,3 @@ class TwoStepClassTestCase(unittest.TestCase):
         np.testing.assert_almost_equal(prior_prob, prior_prob_ref)
         np.testing.assert_almost_equal(class_cov, class_cov_ref)
         np.testing.assert_almost_equal(mean_class_id, class_mean_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

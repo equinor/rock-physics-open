@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 from numpy.random import default_rng
 
@@ -9,7 +7,7 @@ from rock_physics_open.equinor_utilities.various_utilities import (
 )
 
 
-class TimeShiftTestCase(unittest.TestCase):
+class TestTimeShift:
     def test_time_shift_ps(self):
         rg = default_rng(672190547)
         tvd = np.linspace(1900.0, 2100.0, 11)
@@ -61,7 +59,3 @@ class TimeShiftTestCase(unittest.TestCase):
         twt_ref = 2.0 * owt_ref
         np.testing.assert_almost_equal(owt_pp_shift, owt_ref)
         np.testing.assert_almost_equal(twt_pp_shift, twt_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

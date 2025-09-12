@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import (
@@ -16,7 +14,7 @@ mu2 = np.ones(11) * 32.0e9
 f1 = np.linspace(0, 1, 11)
 
 
-class VoigtReussHillTestCase(unittest.TestCase):
+class TestVoigtReussHill:
     def test_voigt(self):
         k_v, mu_v = voigt(k1, mu1, k2, mu2, f1)
         k_v_ref = np.array(
@@ -132,7 +130,3 @@ class VoigtReussHillTestCase(unittest.TestCase):
         )
         np.testing.assert_almost_equal(k_m_vrh / 1.0e9, k_m_vrh_ref)
         np.testing.assert_almost_equal(mu_m_vrh / 1.0e9, mu_m_vrh_ref)
-
-
-if __name__ == "__main__":
-    unittest.main()

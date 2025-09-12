@@ -1,5 +1,3 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import (
@@ -9,7 +7,7 @@ from rock_physics_open.equinor_utilities.std_functions import (
 )
 
 
-class GassmannTest(unittest.TestCase):
+class TestGassmann:
     def setup_gassmann(self):
         k_brine = np.array([2.8e9, 2.8e9, 2.8e9])
         phie = np.array([0.0, 0.35, 0.1])

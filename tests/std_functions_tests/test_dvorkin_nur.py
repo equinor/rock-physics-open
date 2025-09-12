@@ -1,11 +1,9 @@
-import unittest
-
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import dvorkin_contact_cement
 
 
-class DvorkinNurTest(unittest.TestCase):
+class TestDvorkinNur:
     def test_dvorkin_nur(self):
         frac_cem = np.linspace(0.01, 0.1, 10)
         por0_sst = 0.4 * np.ones(10)
