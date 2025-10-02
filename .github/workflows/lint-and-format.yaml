@@ -1,4 +1,6 @@
 name: lint-and-format
+permissions:
+  contents: read
 
 on:
   workflow_call:
