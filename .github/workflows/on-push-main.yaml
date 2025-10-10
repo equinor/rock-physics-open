@@ -1,5 +1,8 @@
 name: push to main branch
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -14,6 +17,10 @@ jobs:
 
   release-please:
     needs: test
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     uses: ./.github/workflows/release-please.yaml
 
   build:
@@ -21,8 +28,6 @@ jobs:
     if: ${{ needs.release-please.outputs.release_created }}
     needs: release-please
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -53,7 +58,7 @@ jobs:
       name: pypi
       url: https://pypi.org/p/rock-physics-open
     permissions:
-      id-token: write  # required for Trusted Publishing to PyPI
+      id-token: write # required for Trusted Publishing to PyPI
 
     steps:
       - name: Download Artifact
