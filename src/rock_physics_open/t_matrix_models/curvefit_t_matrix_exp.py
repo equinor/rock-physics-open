@@ -1,10 +1,9 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
+from rock_physics_open.equinor_utilities.optimisation_utilities import opt_param_info
 from rock_physics_open.equinor_utilities.std_functions import hashin_shtrikman_average
 from rock_physics_open.t_matrix_models import t_matrix_porosity_c_alpha_v
-
-from .opt_subst_utilities import opt_param_info
 
 
 def curvefit_t_matrix_exp(

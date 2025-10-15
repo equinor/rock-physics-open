@@ -1,9 +1,13 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.optimisation_utilities import (
+    gen_opt_routine,
+    opt_param_info,
+    save_opt_params,
+)
 
 from .curvefit_t_matrix_exp import curvefit_t_matrix_exp
-from .opt_subst_utilities import gen_opt_routine, opt_param_info, save_opt_params
 from .t_matrix_parameter_optimisation_min import DEF_VP_VS_RATIO
 
 

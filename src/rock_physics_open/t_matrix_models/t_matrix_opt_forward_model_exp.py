@@ -1,9 +1,13 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.optimisation_utilities import (
+    gen_mod_routine,
+    load_opt_params,
+    opt_param_info,
+)
 
 from .curvefit_t_matrix_exp import curvefit_t_matrix_exp
-from .opt_subst_utilities import gen_mod_routine, load_opt_params, opt_param_info
 
 
 def run_t_matrix_forward_model_with_opt_params_exp(

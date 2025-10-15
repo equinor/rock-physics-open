@@ -1,9 +1,12 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.optimisation_utilities import (
+    gen_opt_routine,
+    save_opt_params,
+)
 
 from .curvefit_t_matrix_min import curve_fit_2_inclusion_sets
-from .opt_subst_utilities import gen_opt_routine, save_opt_params
 
 # Trade-off between calcite, dolomite and quartz, vs is weighted by this in order to make it count as much as vp
 # in the optimisation

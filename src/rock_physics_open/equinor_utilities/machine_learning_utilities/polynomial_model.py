@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import Any, Dict, Union
-import numpy as np
+
 import pickle
+from typing import Any
+
+import numpy as np
 
 from .base_pressure_model import BasePressureModel
 
@@ -20,7 +22,7 @@ class PolynomialPressureModel(BasePressureModel):
         self,
         weights: list[float],
         model_max_pressure: float | None = None,
-        description: str = ""
+        description: str = "",
     ):
         """
         Initialize polynomial pressure model.
@@ -105,16 +107,16 @@ class PolynomialPressureModel(BasePressureModel):
         # Calculate velocity using polynomial pressure correction
         return vel * polynomial_expr(p_eff) / polynomial_expr(p_in_situ)
 
-    def todict(self) -> Dict[str, Any]:
+    def todict(self) -> dict[str, Any]:
         """Convert model to dictionary."""
         return {
             "weights": self._weights,
             "model_max_pressure": self._model_max_pressure,
-            "description": self._description
+            "description": self._description,
         }
 
     @classmethod
-    def load(cls, file: Union[str, bytes]) -> "PolynomialPressureModel":
+    def load(cls, file: str | bytes) -> "PolynomialPressureModel":
         """Load polynomial model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)
@@ -122,5 +124,5 @@ class PolynomialPressureModel(BasePressureModel):
         return cls(
             weights=d["weights"],
             model_max_pressure=d["model_max_pressure"],
-            description=d["description"]
+            description=d["description"],
         )

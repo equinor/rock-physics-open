@@ -213,6 +213,93 @@ def patchy_cement_model_cem_frac(
         vpvs : Saturated rock velocity ratio [ratio].
     """
 
+    k_dry, mu, _ = patchy_cement_model_dry(
+        k_min,
+        mu_min,
+        rho_min,
+        k_cem,
+        mu_cem,
+        rho_cem,
+        phi,
+        p_eff,
+        frac_cem,
+        phi_c,
+        coord_num_func,
+        n,
+        shear_red,
+    )
+    k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
+        k_cem, mu_cem, k_min, mu_min, FRAC_CEM_UP, bound="lower"
+    )
+
+    k = std_functions.gassmann(k_dry, phi, k_fl, k_zero)
+
+    rhob = phi * rho_fl + (1 - phi - frac_cem) * rho_min + frac_cem * rho_cem
+
+    vp, vs, ai, vpvs = std_functions.velocity(k, mu, rhob)
+
+    return vp, vs, rhob, ai, vpvs
+
+
+def patchy_cement_model_dry(
+    k_min,
+    mu_min,
+    rho_min,
+    k_cem,
+    mu_cem,
+    rho_cem,
+    phi,
+    p_eff,
+    frac_cem,
+    phi_c,
+    coord_num_func,
+    n,
+    shear_red,
+):
+    """
+    Patchy cement model for sands that are a combination of friable model and constant cement model. No fluid or
+    pressure substitution. In this implementation of the patchy cement model the given cement fraction for the constant
+    cement model defines the upper bound, and the effective pressure for the friable model defines the lower bound
+
+    Parameters
+    ----------
+    k_min : np.ndarray
+        Mineral bulk modulus [Pa].
+    mu_min : np.ndarray
+        Mineral shear modulus [Pa].
+    rho_min : np.ndarray
+        Mineral bulk density [kg/m^3].
+    k_cem : np.ndarray
+        Sandstone cement bulk modulus [Pa].
+    mu_cem : np.ndarray
+        Sandstone cement shear modulus [Pa].
+    rho_cem : np.ndarray
+        Cement bulk density [kg/m^3].
+    phi : np.ndarray
+        Total porosity [fraction].
+    p_eff : np.ndarray
+        Effective pressure [Pa].
+    frac_cem : float
+        Upper bound cement volume fraction [fraction].
+    shear_red : float
+        Shear reduction factor for sandstone [fraction].
+    phi_c : float
+        Critical porosity [fraction].
+    n : float
+        Coordination number [unitless].
+    coord_num_func : str
+        Indication if coordination number should be calculated from porosity or kept constant, either "ConstVal" or
+        "PoreBased" [default]
+
+    Returns
+    -------
+    tuple
+        k:dry, mu, rho_dry : (np.ndarray, np.ndarray, np.ndarray).
+        k_dry: dry rock bulk modulus [Pa],
+        mu : dry rock shear modulus [Pa],
+        rho_dry : dry rock density [kg/m3].,
+    """
+
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
         k_cem, mu_cem, k_min, mu_min, FRAC_CEM_UP, bound="lower"
     )
@@ -277,10 +364,6 @@ def patchy_cement_model_cem_frac(
     k_dry = k_fri + weight_k * (k_up - k_fri)
     mu = mu_fri + weight_mu * (mu_up - mu_fri)
 
-    k = std_functions.gassmann(k_dry, phi, k_fl, k_zero)
+    rho_dry = (1 - phi - frac_cem) * rho_min + frac_cem * rho_cem
 
-    rhob = phi * rho_fl + (1 - phi - frac_cem) * rho_min + frac_cem * rho_cem
-
-    vp, vs, ai, vpvs = std_functions.velocity(k, mu, rhob)
-
-    return vp, vs, rhob, ai, vpvs
+    return k_dry, mu, rho_dry

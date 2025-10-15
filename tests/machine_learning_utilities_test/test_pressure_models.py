@@ -1,3 +1,4 @@
+# ruff: noqa: UP034
 """
 Comprehensive pytest test suite for pressure sensitivity models.
 
@@ -11,23 +12,30 @@ pytest test_pressure_models.py -k "exponential"     # Run tests matching pattern
 
 """
 
-import pytest
-import numpy as np
-import tempfile
 import os
+import tempfile
 from unittest.mock import patch
 
+import numpy as np
+import pytest
+
 # Import all model classes
-from rock_physics_open.equinor_utilities.machine_learning_utilities.exponential_model import ExponentialPressureModel
-from rock_physics_open.equinor_utilities.machine_learning_utilities.polynomial_model import PolynomialPressureModel
-from rock_physics_open.equinor_utilities.machine_learning_utilities.sigmoidal_model import SigmoidalPressureModel
+from rock_physics_open.equinor_utilities.machine_learning_utilities.exponential_model import (
+    ExponentialPressureModel,
+)
 from rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models import (
     FriableDryBulkModulusPressureModel,
-    FriableDryShearModulusPressureModel
+    FriableDryShearModulusPressureModel,
 )
 from rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models import (
     PatchyCementDryBulkModulusPressureModel,
-    PatchyCementDryShearModulusPressureModel
+    PatchyCementDryShearModulusPressureModel,
+)
+from rock_physics_open.equinor_utilities.machine_learning_utilities.polynomial_model import (
+    PolynomialPressureModel,
+)
+from rock_physics_open.equinor_utilities.machine_learning_utilities.sigmoidal_model import (
+    SigmoidalPressureModel,
 )
 
 
@@ -39,7 +47,7 @@ def exponential_model():
         a_factor=0.5,
         b_factor=1e7,
         model_max_pressure=5e7,
-        description="Test exponential model"
+        description="Test exponential model",
     )
 
 
@@ -49,7 +57,7 @@ def polynomial_model():
     return PolynomialPressureModel(
         weights=[1.0, 2e-8, -1e-16],
         model_max_pressure=5e7,
-        description="Test polynomial model"
+        description="Test polynomial model",
     )
 
 
@@ -65,7 +73,7 @@ def sigmoidal_model():
         p_eff_x_scaling=1e-7,
         p_eff_bias=1000.0,
         model_max_pressure=5e7,
-        description="Test sigmoidal model"
+        description="Test sigmoidal model",
     )
 
 
@@ -77,7 +85,7 @@ def friable_bulk_model():
         coord_num_func="Porosity",
         shear_red=1.0,
         model_max_pressure=5e7,
-        description="Test friable bulk model"
+        description="Test friable bulk model",
     )
 
 
@@ -90,7 +98,7 @@ def friable_shear_model():
         n=8.0,
         shear_red=0.8,
         model_max_pressure=5e7,
-        description="Test friable shear model"
+        description="Test friable shear model",
     )
 
 
@@ -103,7 +111,7 @@ def patchy_bulk_model():
         coord_num_func="Porosity",
         shear_red=1.0,
         model_max_pressure=5e7,
-        description="Test patchy bulk model"
+        description="Test patchy bulk model",
     )
 
 
@@ -116,44 +124,54 @@ def patchy_shear_model():
         coord_num_func="Porosity",
         shear_red=1.0,
         model_max_pressure=5e7,
-        description="Test patchy shear model"
+        description="Test patchy shear model",
     )
 
 
 @pytest.fixture
 def exp_poly_valid_input():
     """Valid input for exponential and polynomial models."""
-    return np.array([
-        [3000.0, 2e7, 1e7],
-        [3200.0, 2.5e7, 1.2e7]
-    ])
+    return np.array([[3000.0, 2e7, 1e7], [3200.0, 2.5e7, 1.2e7]])
 
 
 @pytest.fixture
 def sigmoidal_valid_input():
     """Valid input for sigmoidal model."""
-    return np.array([
-        [0.2, 2e7, 1e7],
-        [0.25, 2.5e7, 1.2e7]
-    ])
+    return np.array([[0.2, 2e7, 1e7], [0.25, 2.5e7, 1.2e7]])
 
 
 @pytest.fixture
 def friable_valid_input():
     """Valid input for friable models."""
-    return np.array([
-        [0.2, 3.7e10, 4.4e10, 2e7, 1e7],
-        [0.25, 3.8e10, 4.5e10, 2.5e7, 1.2e7]
-    ])
+    return np.array(
+        [[0.2, 3.7e10, 4.4e10, 2e7, 1e7], [0.25, 3.8e10, 4.5e10, 2.5e7, 1.2e7]]
+    )
 
 
 @pytest.fixture
 def patchy_valid_input():
     """Valid input for patchy cement models."""
-    return np.array([
-        [0.2, 3.7e10, 4.4e10, 2650, 7.7e10, 3.2e10, 2200, 2e7, 1e7],
-        [0.25, 3.8e10, 4.5e10, 2670, 7.8e10, 3.3e10, 2220, 2.5e7, 1.2e7]
-    ])
+    return np.array(
+        [
+            [0.2, 3.7e10, 4.4e10, 2650, 7.7e10, 3.2e10, 2200, 2e7, 1e7],
+            [0.25, 3.8e10, 4.5e10, 2670, 7.8e10, 3.3e10, 2220, 2.5e7, 1.2e7],
+        ]
+    )
+
+
+# Invalid data fixtures for error testing
+@pytest.fixture
+def invalid_input_data():
+    """Provide various invalid input formats for testing."""
+    rng = np.random.default_rng(42)
+    return {
+        "wrong_type": [[1, 2, 3], [4, 5, 6]],  # List instead of ndarray
+        "wrong_dimensions": np.array([1, 2, 3, 4, 5]),  # 1D instead of 2D
+        "wrong_columns_exp": rng.random((10, 4)),  # 4 columns instead of 3
+        "wrong_columns_friable": rng.random((10, 3)),  # 3 columns instead of 5
+        "wrong_columns_patchy": rng.random((10, 6)),  # 6 columns instead of 9
+        "empty_array": np.empty((0, 3)),  # Empty array
+    }
 
 
 # Test ExponentialPressureModel
@@ -178,7 +196,7 @@ class TestExponentialPressureModel:
             ("wrong_type", "Input must be numpy ndarray."),
             ("wrong_dimensions", "Input must be \\(n,3\\)"),
             ("wrong_columns_exp", "Input must be \\(n,3\\)"),
-            ("empty_array", None)  # Empty array might be valid
+            ("empty_array", None),  # Empty array might be valid
         ]
 
         for case_name, expected_error in test_cases:
@@ -219,7 +237,7 @@ class TestExponentialPressureModel:
 
     def test_save_load(self, exponential_model):
         """Test save and load functionality."""
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pkl') as tmp:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pkl") as tmp:
             tmp_path = tmp.name
 
         try:
@@ -281,8 +299,12 @@ class TestSigmoidalPressureModel:
 class TestFriablePressureModels:
     """Test cases for Friable pressure models."""
 
-    @patch('rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry')
-    def test_bulk_model_predict_abs(self, mock_friable, friable_bulk_model, friable_valid_input):
+    @patch(
+        "rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry"
+    )
+    def test_bulk_model_predict_abs(
+        self, mock_friable, friable_bulk_model, friable_valid_input
+    ):
         """Test bulk modulus prediction."""
         # Mock the friable_model_dry function
         mock_friable.return_value = (np.array([1e10, 1.2e10]), np.array([0.8e10, 1e10]))
@@ -291,8 +313,12 @@ class TestFriablePressureModels:
         assert len(result) == 2
         mock_friable.assert_called()
 
-    @patch('rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry')
-    def test_shear_model_predict_abs(self, mock_friable, friable_shear_model, friable_valid_input):
+    @patch(
+        "rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry"
+    )
+    def test_shear_model_predict_abs(
+        self, mock_friable, friable_shear_model, friable_valid_input
+    ):
         """Test shear modulus prediction."""
         # Mock the friable_model_dry function
         mock_friable.return_value = (np.array([1e10, 1.2e10]), np.array([0.8e10, 1e10]))
@@ -320,28 +346,36 @@ class TestFriablePressureModels:
 class TestPatchyCementPressureModels:
     """Test cases for Patchy Cement pressure models."""
 
-    @patch('rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry')
-    def test_bulk_model_predict_abs(self, mock_patchy, patchy_bulk_model, patchy_valid_input):
+    @patch(
+        "rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry"
+    )
+    def test_bulk_model_predict_abs(
+        self, mock_patchy, patchy_bulk_model, patchy_valid_input
+    ):
         """Test bulk modulus prediction."""
         # Mock the patchy_cement_model_dry function
         mock_patchy.return_value = (
             np.array([1.5e10, 1.7e10]),  # k_dry
             np.array([1.2e10, 1.4e10]),  # mu
-            np.array([2400, 2420])       # rho
+            np.array([2400, 2420]),  # rho
         )
 
         result = patchy_bulk_model.predict_abs(patchy_valid_input, case="in_situ")
         assert len(result) == 2
         mock_patchy.assert_called()
 
-    @patch('rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry')
-    def test_shear_model_predict_abs(self, mock_patchy, patchy_shear_model, patchy_valid_input):
+    @patch(
+        "rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry"
+    )
+    def test_shear_model_predict_abs(
+        self, mock_patchy, patchy_shear_model, patchy_valid_input
+    ):
         """Test shear modulus prediction."""
         # Mock the patchy_cement_model_dry function
         mock_patchy.return_value = (
             np.array([1.5e10, 1.7e10]),  # k_dry
             np.array([1.2e10, 1.4e10]),  # mu
-            np.array([2400, 2420])       # rho
+            np.array([2400, 2420]),  # rho
         )
 
         result = patchy_shear_model.predict_abs(patchy_valid_input, case="depleted")
@@ -350,7 +384,9 @@ class TestPatchyCementPressureModels:
 
     def test_validate_input_invalid_columns(self, patchy_bulk_model):
         """Test input validation with wrong number of columns."""
-        invalid_input = np.array([[0.2, 3.7e10, 4.4e10, 2650, 7.7e10, 3.2e10, 2200, 2e7]])  # Missing column
+        invalid_input = np.array(
+            [[0.2, 3.7e10, 4.4e10, 2650, 7.7e10, 3.2e10, 2200, 2e7]]
+        )  # Missing column
         with pytest.raises(ValueError, match="Input must be \\(n,9\\)"):
             patchy_bulk_model.validate_input(invalid_input)
 
@@ -359,43 +395,56 @@ class TestPatchyCementPressureModels:
 class TestModelIntegration:
     """Integration tests across model types."""
 
-    @pytest.mark.parametrize("model_fixture,input_fixture", [
-        ("exponential_model", "exp_poly_valid_input"),
-        ("polynomial_model", "exp_poly_valid_input"),
-        ("sigmoidal_model", "sigmoidal_valid_input"),
-        ("friable_bulk_model", "friable_valid_input"),
-        ("friable_shear_model", "friable_valid_input"),
-        ("patchy_bulk_model", "patchy_valid_input"),
-        ("patchy_shear_model", "patchy_valid_input")
-    ])
+    @pytest.mark.parametrize(
+        (
+            "model_fixture",
+            "input_fixture",
+        ),
+        [
+            ("exponential_model", "exp_poly_valid_input"),
+            ("polynomial_model", "exp_poly_valid_input"),
+            ("sigmoidal_model", "sigmoidal_valid_input"),
+            ("friable_bulk_model", "friable_valid_input"),
+            ("friable_shear_model", "friable_valid_input"),
+            ("patchy_bulk_model", "patchy_valid_input"),
+            ("patchy_shear_model", "patchy_valid_input"),
+        ],
+    )
     def test_all_models_predict_interface(self, request, model_fixture, input_fixture):
         """Test that all models implement the required interface."""
         model = request.getfixturevalue(model_fixture)
         test_input = request.getfixturevalue(input_fixture)
 
         # Test interface methods exist and work
-        assert hasattr(model, 'predict_abs')
-        assert hasattr(model, 'predict')
-        assert hasattr(model, 'predict_max')
-        assert hasattr(model, 'validate_input')
-        assert hasattr(model, 'todict')
-        assert hasattr(model, 'save')
+        assert hasattr(model, "predict_abs")
+        assert hasattr(model, "predict")
+        assert hasattr(model, "predict_max")
+        assert hasattr(model, "validate_input")
+        assert hasattr(model, "todict")
+        assert hasattr(model, "save")
 
         # Test methods work (with mocking for rock physics models)
         if "friable" in model_fixture:
-            with patch('rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry') as mock_friable:
-                mock_friable.return_value = (np.array([1e10] * len(test_input)), np.array([0.8e10] * len(test_input)))
+            with patch(
+                "rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry"
+            ) as mock_friable:
+                mock_friable.return_value = (
+                    np.array([1e10] * len(test_input)),
+                    np.array([0.8e10] * len(test_input)),
+                )
 
                 result_abs = model.predict_abs(test_input)
                 result_diff = model.predict(test_input)
                 result_max = model.predict_max(test_input)
 
         elif "patchy" in model_fixture:
-            with patch('rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry') as mock_patchy:
+            with patch(
+                "rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry"
+            ) as mock_patchy:
                 mock_patchy.return_value = (
                     np.array([1e10] * len(test_input)),
                     np.array([0.8e10] * len(test_input)),
-                    np.array([2400] * len(test_input))
+                    np.array([2400] * len(test_input)),
                 )
 
                 result_abs = model.predict_abs(test_input)
@@ -410,7 +459,9 @@ class TestModelIntegration:
         assert len(result_diff) == len(test_input)
         assert len(result_max) == len(test_input)
 
-    def test_model_serialization_consistency(self, exponential_model, polynomial_model, sigmoidal_model):
+    def test_model_serialization_consistency(
+        self, exponential_model, polynomial_model, sigmoidal_model
+    ):
         """Test that all models can be serialized and deserialized consistently."""
         models = [exponential_model, polynomial_model, sigmoidal_model]
 
@@ -421,7 +472,7 @@ class TestModelIntegration:
             assert len(model_dict) > 0
 
             # Test save/load cycle
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.pkl') as tmp:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pkl") as tmp:
                 tmp_path = tmp.name
 
             try:
@@ -446,9 +497,10 @@ class TestModelPerformance:
     def test_exponential_model_performance(self, exponential_model, n_samples):
         """Test exponential model performance with different data sizes."""
         # Generate test data
-        velocities = np.random.uniform(2500, 4000, n_samples)
-        p_in_situ = np.random.uniform(1e7, 3e7, n_samples)
-        p_depleted = np.random.uniform(0.5e7, 1.5e7, n_samples)
+        rng = np.random.default_rng(42)
+        velocities = rng.uniform(2500, 4000, n_samples)
+        p_in_situ = rng.uniform(1e7, 3e7, n_samples)
+        p_depleted = rng.uniform(0.5e7, 1.5e7, n_samples)
         test_data = np.column_stack([velocities, p_in_situ, p_depleted])
 
         # Test prediction (should complete without errors)
@@ -460,9 +512,10 @@ class TestModelPerformance:
         """Test that models don't leak memory with repeated calls."""
         # Create moderate size dataset
         n_samples = 10000
-        velocities = np.random.uniform(2500, 4000, n_samples)
-        p_in_situ = np.random.uniform(1e7, 3e7, n_samples)
-        p_depleted = np.random.uniform(0.5e7, 1.5e7, n_samples)
+        rng = np.random.default_rng(42)
+        velocities = rng.uniform(2500, 4000, n_samples)
+        p_in_situ = rng.uniform(1e7, 3e7, n_samples)
+        p_depleted = rng.uniform(0.5e7, 1.5e7, n_samples)
         test_data = np.column_stack([velocities, p_in_situ, p_depleted])
 
         # Run multiple predictions

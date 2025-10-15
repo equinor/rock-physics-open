@@ -1,6 +1,6 @@
 import pandas as pd
 
-from rock_physics_open.equinor_utilities.machine_learning_utilities import (
+from rock_physics_open.equinor_utilities.machine_learning_utilities.run_regression import (
     run_regression,
 )
 

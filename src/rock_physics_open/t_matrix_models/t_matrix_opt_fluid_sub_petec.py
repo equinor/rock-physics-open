@@ -1,9 +1,13 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.optimisation_utilities import (
+    gen_mod_routine,
+    gen_sub_routine,
+    load_opt_params,
+)
 
 from .curvefit_t_matrix_min import curve_fit_2_inclusion_sets
-from .opt_subst_utilities import gen_mod_routine, gen_sub_routine, load_opt_params
 
 
 def run_t_matrix_with_opt_params_petec(
