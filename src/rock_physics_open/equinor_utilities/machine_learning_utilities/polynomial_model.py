@@ -6,54 +6,46 @@ import pickle
 from .base_pressure_model import BasePressureModel
 
 
-class ExponentialPressureModel(BasePressureModel):
+class PolynomialPressureModel(BasePressureModel):
     """
-    Exponential pressure sensitivity model for velocity prediction.
+    Polynomial pressure sensitivity model for velocity prediction.
 
-    Uses exponential decay function: v = v0 * (1 - a*exp(-p/b)) / (1 - a*exp(-p0/b))
-    where v0 is reference velocity, p is pressure, a and b are model parameters.
+    Uses polynomial function: v = v0 * P(p_depl) / P(p_in_situ)
+    where P(p) is a polynomial function with specified coefficients.
 
     Input format (n,3): [velocity, p_eff_in_situ, p_eff_depleted]
     """
 
     def __init__(
-            self,
-            a_factor: float,
-            b_factor: float,
-            model_max_pressure: float | None = None,
-            description: str = ""
+        self,
+        weights: list[float],
+        model_max_pressure: float | None = None,
+        description: str = ""
     ):
         """
-        Initialize exponential pressure model.
+        Initialize polynomial pressure model.
 
         Parameters
         ----------
-        a_factor : float
-            Exponential amplitude parameter [unitless].
-        b_factor : float
-            Exponential decay parameter [Pa].
+        weights : list[float]
+            Polynomial coefficients [unitless]. First element is constant term,
+            second is linear coefficient, etc.
         model_max_pressure : float | None
             Maximum pressure for predict_max method [Pa].
         description : str
             Model description.
         """
         super().__init__(model_max_pressure, description)
-        self._a_factor = a_factor
-        self._b_factor = b_factor
+        self._weights = weights
 
     @property
-    def a_factor(self) -> float:
-        """Exponential amplitude factor."""
-        return self._a_factor
-
-    @property
-    def b_factor(self) -> float:
-        """Exponential decay factor."""
-        return self._b_factor
+    def weights(self) -> list[float]:
+        """Polynomial coefficients."""
+        return self._weights
 
     def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
         """
-        Validate input for exponential model.
+        Validate input for polynomial model.
 
         Parameters
         ----------
@@ -96,35 +88,39 @@ class ExponentialPressureModel(BasePressureModel):
         """
         arr = self.validate_input(inp_arr)
 
+        # Validate weights are set
+        if not self._weights:
+            raise ValueError('Field "weights" is not set.')
+
         vel = arr[:, 0]
         p_in_situ = arr[:, 1]
         p_depleted = arr[:, 2]
 
+        # Create polynomial from weights
+        polynomial_expr = np.polynomial.Polynomial(self._weights)
+
+        # Select pressure based on case
         p_eff = p_in_situ if case == "in_situ" else p_depleted
 
-        return (
-                vel * (1.0 - self._a_factor * np.exp(-p_eff / self._b_factor))
-                / (1.0 - self._a_factor * np.exp(-p_in_situ / self._b_factor))
-        )
+        # Calculate velocity using polynomial pressure correction
+        return vel * polynomial_expr(p_eff) / polynomial_expr(p_in_situ)
 
     def todict(self) -> Dict[str, Any]:
         """Convert model to dictionary."""
         return {
-            "a_factor": self._a_factor,
-            "b_factor": self._b_factor,
+            "weights": self._weights,
             "model_max_pressure": self._model_max_pressure,
             "description": self._description
         }
 
     @classmethod
-    def load(cls, file: Union[str, bytes]) -> "ExponentialPressureModel":
-        """Load exponential model from pickle file."""
+    def load(cls, file: Union[str, bytes]) -> "PolynomialPressureModel":
+        """Load polynomial model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)
 
         return cls(
-            a_factor=d["a_factor"],
-            b_factor=d["b_factor"],
+            weights=d["weights"],
             model_max_pressure=d["model_max_pressure"],
             description=d["description"]
         )

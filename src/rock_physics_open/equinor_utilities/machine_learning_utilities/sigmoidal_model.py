@@ -1,188 +1,233 @@
-import pickle
-from io import BufferedIOBase
-from typing import Union
-
+from __future__ import annotations
+from typing import Any, Dict, Union
 import numpy as np
+import pickle
+
+from .base_pressure_model import BasePressureModel
 
 
-class Sigmoid:
+class SigmoidalPressureModel(BasePressureModel):
+    """
+    Sigmoidal pressure sensitivity model for velocity prediction.
+
+    Uses nested sigmoid functions: velocity amplitude varies with porosity,
+    and velocity varies sigmoidally with effective pressure using the amplitude.
+
+    Input format (n,3): [porosity, p_eff_in_situ, p_eff_depleted]
+
+    The model applies two sigmoid transformations:
+    1. Porosity -> velocity amplitude using phi_model parameters
+    2. Effective pressure -> velocity using p_eff_model parameters and amplitude
+    """
+
     def __init__(
         self,
-        amplitude: float = None,
-        median_point: float = None,
-        x_scaling: float = None,
-        bias: float = None,
-        description="",
+        phi_amplitude: float,
+        phi_median_point: float,
+        phi_x_scaling: float,
+        phi_bias: float,
+        p_eff_median_point: float,
+        p_eff_x_scaling: float,
+        p_eff_bias: float,
+        model_max_pressure: float | None = None,
+        description: str = ""
     ):
-        self._amplitude = amplitude
-        self._median_point = median_point
-        self._x_scaling = x_scaling
-        self._bias = bias
-        self._description = description
+        """
+        Initialize sigmoidal pressure model.
 
-    def todict(self):
-        return {
-            "amplitude": self._amplitude,
-            "median_point": self._median_point,
-            "x_scaling": self._x_scaling,
-            "bias": self._bias,
-            "description": self._description,
-        }
-
-    @property
-    def amplitude(self):
-        return self._amplitude
-
-    @property
-    def median_point(self):
-        return self._median_point
-
-    @property
-    def x_scaling(self):
-        return self._x_scaling
-
-    @property
-    def bias(self):
-        return self._bias
-
-    @property
-    def description(self):
-        return self._description
-
-    def predict(self, x):
-        if isinstance(x, list):
-            x = np.array(x)
-        if not self._valid():
-            return None
-        return (
-            self._amplitude / (1 + np.exp(-self._x_scaling * (x - self._median_point)))
-            + self._bias
-        )
-
-    def predict_amp(self, x, amp):
-        if isinstance(x, list):
-            x = np.array(x)
-        if isinstance(amp, list):
-            amp = np.array(amp)
-        if not self._valid(variant="amp"):
-            return None
-        return (
-            amp / (1 + np.exp(-self._x_scaling * (x - self._median_point))) + self._bias
-        )
-
-    @classmethod
-    def save(cls, file):
-        with open(file, "wb") as f_out:
-            pickle.dump(cls, f_out)
-
-    @classmethod
-    def load(cls, file):
-        with open(file, "rb") as f_in:
-            return pickle.load(f_in)
-
-    def _valid(self, variant=None):
-        if variant is None and self.amplitude is None:
-            raise ValueError('object field "variant" is not set')
-        if self.median_point is None:
-            raise ValueError('object field "median_point" is not set')
-        if self.x_scaling is None:
-            raise ValueError('object field "x_scaling" is not set')
-        if self.bias is None:
-            raise ValueError('object field "bias" is not set')
-        return True
-
-
-class CarbonateSigmoidalPressure:
-    def __init__(
-        self,
-        phi_model: Union[dict, Sigmoid] = None,
-        p_eff_model: Union[dict, Sigmoid] = None,
-    ):
-        if isinstance(phi_model, Sigmoid):
-            self._phi_model = phi_model
-        elif isinstance(phi_model, dict):
-            self._phi_model = Sigmoid(**phi_model)
-        else:
-            self._phi_model = None
-        if isinstance(p_eff_model, Sigmoid):
-            self._p_eff_model = p_eff_model
-        elif isinstance(p_eff_model, dict):
-            self._p_eff_model = Sigmoid(**p_eff_model)
-        else:
-            self._p_eff_model = None
+        Parameters
+        ----------
+        phi_amplitude : float
+            Amplitude parameter for porosity sigmoid [m/s].
+        phi_median_point : float
+            Median point for porosity sigmoid [fraction].
+        phi_x_scaling : float
+            X-scaling parameter for porosity sigmoid [unitless].
+        phi_bias : float
+            Bias parameter for porosity sigmoid [m/s].
+        p_eff_median_point : float
+            Median point for pressure sigmoid [Pa].
+        p_eff_x_scaling : float
+            X-scaling parameter for pressure sigmoid [1/Pa].
+        p_eff_bias : float
+            Bias parameter for pressure sigmoid [m/s].
+        model_max_pressure : float | None
+            Maximum pressure for predict_max method [Pa].
+        description : str
+            Model description.
+        """
+        super().__init__(model_max_pressure, description)
+        # Porosity model parameters
+        self._phi_amplitude = phi_amplitude
+        self._phi_median_point = phi_median_point
+        self._phi_x_scaling = phi_x_scaling
+        self._phi_bias = phi_bias
+        # Pressure model parameters
+        self._p_eff_median_point = p_eff_median_point
+        self._p_eff_x_scaling = p_eff_x_scaling
+        self._p_eff_bias = p_eff_bias
 
     @property
-    def phi_model(self):
-        return self._phi_model
+    def phi_amplitude(self) -> float:
+        """Porosity sigmoid amplitude."""
+        return self._phi_amplitude
 
-    @phi_model.setter
-    def phi_model(self, phi_mod):
-        if isinstance(phi_mod, Sigmoid):
-            self._phi_model = phi_mod
-        else:
+    @property
+    def phi_median_point(self) -> float:
+        """Porosity sigmoid median point."""
+        return self._phi_median_point
+
+    @property
+    def phi_x_scaling(self) -> float:
+        """Porosity sigmoid x-scaling."""
+        return self._phi_x_scaling
+
+    @property
+    def phi_bias(self) -> float:
+        """Porosity sigmoid bias."""
+        return self._phi_bias
+
+    @property
+    def p_eff_median_point(self) -> float:
+        """Pressure sigmoid median point."""
+        return self._p_eff_median_point
+
+    @property
+    def p_eff_x_scaling(self) -> float:
+        """Pressure sigmoid x-scaling."""
+        return self._p_eff_x_scaling
+
+    @property
+    def p_eff_bias(self) -> float:
+        """Pressure sigmoid bias."""
+        return self._p_eff_bias
+
+    def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
+        """
+        Validate input for sigmoidal model.
+
+        Parameters
+        ----------
+        inp_arr : np.ndarray
+            Input array to validate.
+
+        Returns
+        -------
+        np.ndarray
+            Validated input array.
+
+        Raises
+        ------
+        ValueError
+            If input format is invalid.
+        """
+        if not isinstance(inp_arr, np.ndarray):
+            raise ValueError("Input must be numpy ndarray.")
+        if inp_arr.ndim != 2 or inp_arr.shape[1] != 3:
             raise ValueError(
-                f"{type(self)}: expected input Sigmoid object, received {type(phi_mod)}"
+                "Input must be (n,3): [porosity, p_eff_in_situ, p_eff_depleted]"
             )
+        return inp_arr
 
-    @property
-    def p_eff_model(self):
-        return self._p_eff_model
+    def _sigmoid_phi(self, phi: np.ndarray) -> np.ndarray:
+        """
+        Calculate velocity amplitude from porosity using sigmoid function.
 
-    @p_eff_model.setter
-    def p_eff_model(self, p_eff_mod):
-        if isinstance(p_eff_mod, Sigmoid):
-            self._p_eff_model = p_eff_mod
-        else:
-            raise ValueError(
-                f"{type(self)}: expected input Sigmoid object, received {type(p_eff_mod)}"
-            )
+        Parameters
+        ----------
+        phi : np.ndarray
+            Porosity values [fraction].
 
-    def predict(self, inp_arr: np.ndarray) -> np.ndarray:
-        # Don't save any of the intermediate calculations, only return the difference between the effective pressure
-        # cases. The method name is set to be the same as for other machine learning models
-        self._validate_input(inp_arr)
-        velocity_amp = self._phi_model.predict(inp_arr[:, 0].flatten())
-        velocity_init = self._p_eff_model.predict_amp(
-            inp_arr[:, 1].flatten(), velocity_amp
+        Returns
+        -------
+        np.ndarray
+            Velocity amplitude values [m/s].
+        """
+        return (
+            self._phi_amplitude / (1 + np.exp(-self._phi_x_scaling * (phi - self._phi_median_point)))
+            + self._phi_bias
         )
-        velocity_depl = self._p_eff_model.predict_amp(
-            inp_arr[:, 2].flatten(), velocity_amp
+
+    def _sigmoid_p_eff(self, p_eff: np.ndarray, amplitude: np.ndarray) -> np.ndarray:
+        """
+        Calculate velocity from effective pressure using sigmoid function with amplitude.
+
+        Parameters
+        ----------
+        p_eff : np.ndarray
+            Effective pressure values [Pa].
+        amplitude : np.ndarray
+            Velocity amplitude values [m/s].
+
+        Returns
+        -------
+        np.ndarray
+            Velocity values [m/s].
+        """
+        return (
+            amplitude / (1 + np.exp(-self._p_eff_x_scaling * (p_eff - self._p_eff_median_point)))
+            + self._p_eff_bias
         )
-        return velocity_depl - velocity_init
 
     def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
-        # Method for access to absolute results, not just the difference
-        self._validate_input(inp_arr)
-        velocity_amp = self._phi_model.predict(inp_arr[:, 0].flatten())
-        if case == "in_situ":
-            return self._p_eff_model.predict_amp(inp_arr[:, 1].flatten(), velocity_amp)
-        return self._p_eff_model.predict_amp(inp_arr[:, 2].flatten(), velocity_amp)
+        """
+        Calculate absolute velocity for specified pressure case.
 
-    def _validate_input(self, input_array):
-        if not isinstance(input_array, np.ndarray):
-            raise ValueError(
-                f"{type(input_array)}: should be numpy array with shape n x 3"
-            )
-        if not ((input_array.ndim == 2) and (input_array.shape[1] == 3)):
-            raise ValueError(
-                f'{type(self)}: Input array should be of shape n x 3, with columns in sequence "PHIT", '
-                f'"P_EFF_in_situ" and "P_EFF_depleted"'
-            )
+        Parameters
+        ----------
+        inp_arr : np.ndarray
+            Validated input array (n,3).
+        case : str
+            Pressure case: "in_situ" or "depleted".
 
-    def todict(self):
+        Returns
+        -------
+        np.ndarray
+            Velocity values [m/s].
+        """
+        arr = self.validate_input(inp_arr)
+
+        phi = arr[:, 0]
+        p_in_situ = arr[:, 1]
+        p_depleted = arr[:, 2]
+
+        # Calculate velocity amplitude from porosity
+        velocity_amplitude = self._sigmoid_phi(phi)
+
+        # Select pressure based on case
+        p_eff = p_in_situ if case == "in_situ" else p_depleted
+
+        # Calculate velocity from effective pressure and amplitude
+        return self._sigmoid_p_eff(p_eff, velocity_amplitude)
+
+    def todict(self) -> Dict[str, Any]:
+        """Convert model to dictionary."""
         return {
-            "phi_model": self._phi_model.todict(),
-            "p_eff_model": self._p_eff_model.todict(),
+            "phi_amplitude": self._phi_amplitude,
+            "phi_median_point": self._phi_median_point,
+            "phi_x_scaling": self._phi_x_scaling,
+            "phi_bias": self._phi_bias,
+            "p_eff_median_point": self._p_eff_median_point,
+            "p_eff_x_scaling": self._p_eff_x_scaling,
+            "p_eff_bias": self._p_eff_bias,
+            "model_max_pressure": self._model_max_pressure,
+            "description": self._description
         }
 
-    def save(self, file: Union[str, BufferedIOBase]):
-        with open(file, "wb") as f_out:
-            pickle.dump(self.todict(), f_out)
-
     @classmethod
-    def load(cls, file: Union[str, BufferedIOBase]):
+    def load(cls, file: Union[str, bytes]) -> "SigmoidalPressureModel":
+        """Load sigmoidal model from pickle file."""
         with open(file, "rb") as f_in:
-            load_dict = pickle.load(f_in)
-            return cls(
-                phi_model=load_dict["phi_model"], p_eff_model=load_dict["p_eff_model"]
-            )
+            d = pickle.load(f_in)
+
+        return cls(
+            phi_amplitude=d["phi_amplitude"],
+            phi_median_point=d["phi_median_point"],
+            phi_x_scaling=d["phi_x_scaling"],
+            phi_bias=d["phi_bias"],
+            p_eff_median_point=d["p_eff_median_point"],
+            p_eff_x_scaling=d["p_eff_x_scaling"],
+            p_eff_bias=d["p_eff_bias"],
+            model_max_pressure=d["model_max_pressure"],
+            description=d["description"]
+        )
