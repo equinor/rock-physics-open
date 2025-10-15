@@ -1,5 +1,14 @@
-from .exponential_model import CarbonateExponentialPressure
-from .sigmoidal_model import CarbonateSigmoidalPressure
+from .exponential_model import ExponentialPressureModel
+from .sigmoidal_model import SigmoidalPressureModel
+from .polynomial_model import PolynomialPressureModel
+from .friable_pressure_models import (
+    FriableDryBulkModulusPressureModel,
+    FriableDryShearModulusPressureModel
+)
+from .patchy_cement_pressure_models import (
+    PatchyCementDryBulkModulusPressureModel,
+    PatchyCementDryShearModulusPressureModel
+)
 
 
 def import_model(model_file_name):
@@ -33,9 +42,19 @@ def import_model(model_file_name):
             mod_dict = load(fin)
 
     if mod_dict["model_type"] == "Sigmoid":
-        models = CarbonateSigmoidalPressure.load(mod_dict["nn_mod"])
+        models = SigmoidalPressureModel.load(mod_dict["nn_mod"])
     elif mod_dict["model_type"] == "Exponential":
-        models = CarbonateExponentialPressure.load(mod_dict["nn_mod"])
+        models = ExponentialPressureModel.load(mod_dict["nn_mod"])
+    elif mod_dict["model_type"] == "Polynomial":
+        models = PolynomialPressureModel.load(mod_dict["nn_mod"])
+    elif mod_dict["model_type"] == "FriableDryBulk":
+        models = FriableDryBulkModulusPressureModel.load(mod_dict["nn_mod"])
+    elif mod_dict["model_type"] == "FriableDryShear":
+        models = FriableDryShearModulusPressureModel.load(mod_dict["nn_mod"])
+    elif mod_dict["model_type"] == "PatchyCementDryBulk":
+        models = PatchyCementDryBulkModulusPressureModel.load(mod_dict["nn_mod"])
+    elif mod_dict["model_type"] == "PatchyCementDryShear":
+        models = PatchyCementDryShearModulusPressureModel.load(mod_dict["nn_mod"])
     else:
         raise ValueError("unknown model type {}".format(mod_dict["model_type"]))
 
