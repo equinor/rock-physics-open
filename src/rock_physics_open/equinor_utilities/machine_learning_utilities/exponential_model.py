@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import Any, Dict, Union
-import numpy as np
+
 import pickle
+from typing import Any
+
+import numpy as np
 
 from .base_pressure_model import BasePressureModel
 
@@ -17,11 +19,11 @@ class ExponentialPressureModel(BasePressureModel):
     """
 
     def __init__(
-            self,
-            a_factor: float,
-            b_factor: float,
-            model_max_pressure: float | None = None,
-            description: str = ""
+        self,
+        a_factor: float,
+        b_factor: float,
+        model_max_pressure: float | None = None,
+        description: str = "",
     ):
         """
         Initialize exponential pressure model.
@@ -103,21 +105,22 @@ class ExponentialPressureModel(BasePressureModel):
         p_eff = p_in_situ if case == "in_situ" else p_depleted
 
         return (
-                vel * (1.0 - self._a_factor * np.exp(-p_eff / self._b_factor))
-                / (1.0 - self._a_factor * np.exp(-p_in_situ / self._b_factor))
+            vel
+            * (1.0 - self._a_factor * np.exp(-p_eff / self._b_factor))
+            / (1.0 - self._a_factor * np.exp(-p_in_situ / self._b_factor))
         )
 
-    def todict(self) -> Dict[str, Any]:
+    def todict(self) -> dict[str, Any]:
         """Convert model to dictionary."""
         return {
             "a_factor": self._a_factor,
             "b_factor": self._b_factor,
             "model_max_pressure": self._model_max_pressure,
-            "description": self._description
+            "description": self._description,
         }
 
     @classmethod
-    def load(cls, file: Union[str, bytes]) -> "ExponentialPressureModel":
+    def load(cls, file: str | bytes) -> "ExponentialPressureModel":
         """Load exponential model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)
@@ -126,5 +129,5 @@ class ExponentialPressureModel(BasePressureModel):
             a_factor=d["a_factor"],
             b_factor=d["b_factor"],
             model_max_pressure=d["model_max_pressure"],
-            description=d["description"]
+            description=d["description"],
         )

@@ -22,6 +22,7 @@ from .patchy_cement_fluid_substitution_model import (
 from .patchy_cement_model import (
     constant_cement_model_pcm,
     patchy_cement_model_cem_frac,
+    patchy_cement_model_dry,
     patchy_cement_model_weight,
 )
 from .patchy_cement_optimisation import (
@@ -48,6 +49,7 @@ __all__ = [
     "friable_shaly_sand_sandy_shale_model",
     "patchy_cement_pressure_fluid_substitution",
     "constant_cement_model_pcm",
+    "patchy_cement_model_dry",
     "patchy_cement_model_cem_frac",
     "patchy_cement_model_weight",
     "patchy_cement_model_optimisation",

@@ -1,10 +1,4 @@
 from .carbonate_pressure_substitution import carbonate_pressure_model
-from .opt_subst_utilities import (
-    gen_opt_routine,
-    opt_param_info,
-    opt_param_to_ascii,
-    save_opt_params,
-)
 from .parse_t_matrix_inputs import parse_t_matrix_inputs
 from .run_t_matrix import run_t_matrix
 from .t_matrix_C import t_matrix_porosity_c_alpha_v
@@ -26,10 +20,6 @@ from .t_matrix_vector import (
 
 __all__ = [
     "carbonate_pressure_model",
-    "gen_opt_routine",
-    "opt_param_info",
-    "opt_param_to_ascii",
-    "save_opt_params",
     "parse_t_matrix_inputs",
     "run_t_matrix",
     "t_matrix_porosity_c_alpha_v",

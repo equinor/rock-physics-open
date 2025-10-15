@@ -1,4 +1,6 @@
-from rock_physics_open.t_matrix_models import opt_param_to_ascii
+from rock_physics_open.equinor_utilities.optimisation_utilities import (
+    opt_param_to_ascii,
+)
 
 
 def test_opt_param_to_ascii_display_petec(monkeypatch, data_dir):

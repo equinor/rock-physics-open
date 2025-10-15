@@ -1,8 +1,10 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Union
-import numpy as np
+
 import pickle
+from abc import ABC, abstractmethod
+from typing import Any, Self
+
+import numpy as np
 
 
 class BasePressureModel(ABC):
@@ -57,7 +59,9 @@ class BasePressureModel(ABC):
             Differential change values.
         """
         arr = self.validate_input(inp_arr)
-        return self.predict_abs(arr, case="depleted") - self.predict_abs(arr, case="in_situ")
+        return self.predict_abs(arr, case="depleted") - self.predict_abs(
+            arr, case="in_situ"
+        )
 
     def predict_max(self, inp_arr: np.ndarray) -> np.ndarray:
         """
@@ -79,12 +83,14 @@ class BasePressureModel(ABC):
             If model_max_pressure is not set.
         """
         if self._model_max_pressure is None:
-            raise ValueError('Field "model_max_pressure" is not set.')
+            raise ValueError('Field "model_max_pressure" is not set')
 
         arr = self.validate_input(inp_arr).copy()
         # Replace last column (assumed to be depleted pressure) with max pressure
         arr[:, -1] = self._model_max_pressure
-        return self.predict_abs(arr, case="depleted") - self.predict_abs(arr, case="in_situ")
+        return self.predict_abs(arr, case="depleted") - self.predict_abs(
+            arr, case="in_situ"
+        )
 
     @abstractmethod
     def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
@@ -106,7 +112,6 @@ class BasePressureModel(ABC):
         ValueError
             If input format is invalid for this model.
         """
-        pass
 
     @abstractmethod
     def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
@@ -125,27 +130,25 @@ class BasePressureModel(ABC):
         np.ndarray
             Absolute predicted values.
         """
-        pass
 
     @abstractmethod
-    def todict(self) -> Dict[str, Any]:
+    def todict(self) -> dict[str, Any]:
         """
         Convert model to dictionary for serialization.
 
         Returns
         -------
-        Dict[str, Any]
+        dict[str, Any]
             Dictionary containing all model parameters.
         """
-        pass
 
-    def save(self, file: Union[str, bytes]) -> None:
+    def save(self, file: str | bytes) -> None:
         """
         Save model to pickle file.
 
         Parameters
         ----------
-        file : Union[str, bytes]
+        file : str | bytes
             File path for saving.
         """
         with open(file, "wb") as f_out:
@@ -153,13 +156,13 @@ class BasePressureModel(ABC):
 
     @classmethod
     @abstractmethod
-    def load(cls, file: Union[str, bytes]) -> "BasePressureModel":
+    def load(cls, file: str | bytes) -> Self:
         """
         Load model from pickle file.
 
         Parameters
         ----------
-        file : Union[str, bytes]
+        file : str | bytes
             File path for loading.
 
         Returns
@@ -167,4 +170,3 @@ class BasePressureModel(ABC):
         BasePressureModel
             Loaded model instance.
         """
-        pass

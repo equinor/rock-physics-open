@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 
+from rock_physics_open.equinor_utilities.optimisation_utilities import gen_opt_routine
 from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
     INITIATE,
     compare_snapshots,
@@ -16,7 +17,6 @@ from rock_physics_open.t_matrix_models.curvefit_t_matrix_exp import (
 from rock_physics_open.t_matrix_models.curvefit_t_matrix_min import (
     curve_fit_2_inclusion_sets,
 )
-from rock_physics_open.t_matrix_models.opt_subst_utilities import gen_opt_routine
 from tests.conftest import TESTDATA_DIR
 
 inp_df = pd.read_csv(TESTDATA_DIR / "tmatrix_test_data.csv")

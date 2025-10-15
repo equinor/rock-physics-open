@@ -1,7 +1,10 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
-from rock_physics_open.t_matrix_models import gen_opt_routine, save_opt_params
+from rock_physics_open.equinor_utilities.optimisation_utilities import (
+    gen_opt_routine,
+    save_opt_params,
+)
 
 from .curvefit_sandstone_models import curvefit_friable
 

@@ -1,14 +1,14 @@
 from .exponential_model import ExponentialPressureModel
-from .sigmoidal_model import SigmoidalPressureModel
-from .polynomial_model import PolynomialPressureModel
 from .friable_pressure_models import (
     FriableDryBulkModulusPressureModel,
-    FriableDryShearModulusPressureModel
+    FriableDryShearModulusPressureModel,
 )
 from .patchy_cement_pressure_models import (
     PatchyCementDryBulkModulusPressureModel,
-    PatchyCementDryShearModulusPressureModel
+    PatchyCementDryShearModulusPressureModel,
 )
+from .polynomial_model import PolynomialPressureModel
+from .sigmoidal_model import SigmoidalPressureModel
 
 
 def import_model(model_file_name):

@@ -1,7 +1,9 @@
 from __future__ import annotations
-from typing import Any, Dict, Union
-import numpy as np
+
 import pickle
+from typing import Any
+
+import numpy as np
 
 from .base_pressure_model import BasePressureModel
 
@@ -30,7 +32,7 @@ class SigmoidalPressureModel(BasePressureModel):
         p_eff_x_scaling: float,
         p_eff_bias: float,
         model_max_pressure: float | None = None,
-        description: str = ""
+        description: str = "",
     ):
         """
         Initialize sigmoidal pressure model.
@@ -144,7 +146,8 @@ class SigmoidalPressureModel(BasePressureModel):
             Velocity amplitude values [m/s].
         """
         return (
-            self._phi_amplitude / (1 + np.exp(-self._phi_x_scaling * (phi - self._phi_median_point)))
+            self._phi_amplitude
+            / (1 + np.exp(-self._phi_x_scaling * (phi - self._phi_median_point)))
             + self._phi_bias
         )
 
@@ -165,7 +168,8 @@ class SigmoidalPressureModel(BasePressureModel):
             Velocity values [m/s].
         """
         return (
-            amplitude / (1 + np.exp(-self._p_eff_x_scaling * (p_eff - self._p_eff_median_point)))
+            amplitude
+            / (1 + np.exp(-self._p_eff_x_scaling * (p_eff - self._p_eff_median_point)))
             + self._p_eff_bias
         )
 
@@ -200,7 +204,7 @@ class SigmoidalPressureModel(BasePressureModel):
         # Calculate velocity from effective pressure and amplitude
         return self._sigmoid_p_eff(p_eff, velocity_amplitude)
 
-    def todict(self) -> Dict[str, Any]:
+    def todict(self) -> dict[str, Any]:
         """Convert model to dictionary."""
         return {
             "phi_amplitude": self._phi_amplitude,
@@ -211,11 +215,11 @@ class SigmoidalPressureModel(BasePressureModel):
             "p_eff_x_scaling": self._p_eff_x_scaling,
             "p_eff_bias": self._p_eff_bias,
             "model_max_pressure": self._model_max_pressure,
-            "description": self._description
+            "description": self._description,
         }
 
     @classmethod
-    def load(cls, file: Union[str, bytes]) -> "SigmoidalPressureModel":
+    def load(cls, file: str | bytes) -> "SigmoidalPressureModel":
         """Load sigmoidal model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)
@@ -229,5 +233,5 @@ class SigmoidalPressureModel(BasePressureModel):
             p_eff_x_scaling=d["p_eff_x_scaling"],
             p_eff_bias=d["p_eff_bias"],
             model_max_pressure=d["model_max_pressure"],
-            description=d["description"]
+            description=d["description"],
         )

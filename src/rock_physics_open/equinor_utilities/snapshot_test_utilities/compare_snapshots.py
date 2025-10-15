@@ -1,7 +1,6 @@
 import inspect
 import math
 import re
-from typing import Union
 from warnings import warn
 
 import numpy as np
@@ -13,7 +12,7 @@ from .snapshots import get_snapshot_name
 
 
 def compare_snapshots(
-    test_results: Union[np.ndarray, tuple, DataFrame],
+    test_results: np.ndarray | tuple | DataFrame,
     saved_results: tuple,
     name_arr=None,
     display_results: bool = False,
