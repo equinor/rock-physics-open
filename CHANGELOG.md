@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.0](https://github.com/equinor/rock-physics-open/compare/v0.2.3...v0.3.0) (2025-10-21)
+
+
+### Features
+
+* add an abstract base class for all pressure sensitivity models, add models for polynomial, friable, patchy cement; add tests ([a8cfbdb](https://github.com/equinor/rock-physics-open/commit/a8cfbdb4e7d890f5199a18cf06a98c030003fbc9))
+* Add static type checking to gen_utilities ([f3c9424](https://github.com/equinor/rock-physics-open/commit/f3c94246e86810cc40e2a51682e8168ad8f0a28c))
+
+
+### Bug Fixes
+
+* enforce SI units in all fluid models, update snapshots ([c8fe5c0](https://github.com/equinor/rock-physics-open/commit/c8fe5c0f443c7821036e56153f82503a6b098642))
+* Potential fix for code scanning alert no. 3: Workflow does not contain permissions ([8f520ec](https://github.com/equinor/rock-physics-open/commit/8f520ec8fe9990c50dd0d64611022e5a7c233a3d))
+* Potential fix for code scanning alert no. 6: Workflow does not contain permissions ([55fe74e](https://github.com/equinor/rock-physics-open/commit/55fe74eedd4c38f1de54a65e7d9980f0f858e785))
+* Potential fix for code scanning alert no. 7: Workflow does not contain permissions ([09aa44f](https://github.com/equinor/rock-physics-open/commit/09aa44f936522c541269b3c0aeab7674084b745b))
+* Potential fix for code scanning alert no. 9: Workflow does not contain permissions ([d8983f4](https://github.com/equinor/rock-physics-open/commit/d8983f45542dee6c5d6f253273ee35055d44ef07))
+* revert isinstance checking ([f3c9424](https://github.com/equinor/rock-physics-open/commit/f3c94246e86810cc40e2a51682e8168ad8f0a28c))
+
 ## [0.2.3](https://github.com/equinor/rock-physics-open/compare/v0.2.2...v0.2.3) (2025-08-21)
 
 
