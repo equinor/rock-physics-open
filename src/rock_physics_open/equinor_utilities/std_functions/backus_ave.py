@@ -1,7 +1,22 @@
 import numpy as np
+import numpy.typing as npt
 
 
-def backus_average(vp1, vs1, rho1, vp2, vs2, rho2, f1):
+def backus_average(
+    vp1: npt.NDArray[np.float64],
+    vs1: npt.NDArray[np.float64],
+    rho1: npt.NDArray[np.float64],
+    vp2: npt.NDArray[np.float64],
+    vs2: npt.NDArray[np.float64],
+    rho2: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Backus average for a combination of two phases. The individual phases are isotropic
     but the resulting effective medium is not.

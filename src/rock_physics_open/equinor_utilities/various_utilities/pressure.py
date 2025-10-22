@@ -1,7 +1,15 @@
 import numpy as np
+import numpy.typing as npt
 
 
-def pressure(rho, tvd_msl, water_depth, p_form, tvd_p_form, n):
+def pressure(
+    rho: npt.NDArray[np.float64],
+    tvd_msl: npt.NDArray[np.float64],
+    water_depth: float,
+    p_form: float,
+    tvd_p_form: float,
+    n: float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Function to estimate overburden pressure and vertical effective stress (lithostatic pressure)
     based on density.

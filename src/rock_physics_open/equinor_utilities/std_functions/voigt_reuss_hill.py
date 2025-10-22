@@ -1,7 +1,14 @@
 import numpy as np
+import numpy.typing as npt
 
 
-def voigt(k1, mu1, k2, mu2, f1):
+def voigt(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Effective media calculation of a mixture of two phases using the Voigt bound.
 
@@ -31,7 +38,13 @@ def voigt(k1, mu1, k2, mu2, f1):
     return k_v, mu_v
 
 
-def voigt_reuss_hill(k1, mu1, k2, mu2, f1):
+def voigt_reuss_hill(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Effective media calculation of a mixture of two phases using the Voigt-Reuss-Hill average.
 
@@ -63,7 +76,9 @@ def voigt_reuss_hill(k1, mu1, k2, mu2, f1):
     return k_vrh, mu_vrh
 
 
-def multi_voigt_reuss_hill(*varargin):
+def multi_voigt_reuss_hill(
+    *varargin: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Voigt-Reuss-Hill with multiple mineral input.
 
@@ -97,7 +112,13 @@ def multi_voigt_reuss_hill(*varargin):
     return k, mu
 
 
-def reuss(k1, mu1, k2, mu2, f1):
+def reuss(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Effective media calculation of a mixture of two phases using the Reuss bound.
 

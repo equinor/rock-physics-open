@@ -1,9 +1,14 @@
 from warnings import warn
 
 import numpy as np
+import numpy.typing as npt
 
 
-def rho_b(phi, rho_f, rho_mat):
+def rho_b(
+    phi: npt.NDArray[np.float64],
+    rho_f: npt.NDArray[np.float64],
+    rho_mat: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Calculate bulk density from porosity, fluid density and matrix density.
 
@@ -24,7 +29,12 @@ def rho_b(phi, rho_f, rho_mat):
     return phi * rho_f + (1 - phi) * rho_mat
 
 
-def rho_m(frac_cem, phi, rho_cem, rho_min):
+def rho_m(
+    frac_cem: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    rho_cem: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Calculates matrix density as a combination of cement fraction and minerals
     fracCem is defined as cement fraction relative to total volume.

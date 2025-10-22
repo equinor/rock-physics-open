@@ -1,7 +1,14 @@
 import numpy as np
+import numpy.typing as npt
 
 
-def walton_smooth(k, mu, phi, p_eff, coord=None):
+def walton_smooth(
+    k: npt.NDArray[np.float64],
+    mu: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    p_eff: npt.NDArray[np.float64],
+    coord: float | npt.NDArray[np.float64] | None = None,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Walton Smooth Pressure-induced moduli increase at critical porosity.
 

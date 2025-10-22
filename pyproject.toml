@@ -1,9 +1,5 @@
 [build-system]
-requires = [
-    "setuptools >= 69.5.1",
-    "setuptools_scm[toml] >= 7.1.0",
-    "wheel"
-]
+requires = ["setuptools >= 69.5.1", "setuptools_scm[toml] >= 7.1.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
@@ -36,7 +32,14 @@ maintainers = [
 ]
 readme = "README.md"
 requires-python = ">=3.11"
-keywords = ["energy", "subsurface", "seismic", "rock physics", "scientific", "engineering"]
+keywords = [
+    "energy",
+    "subsurface",
+    "seismic",
+    "rock physics",
+    "scientific",
+    "engineering",
+]
 classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering",
@@ -56,7 +59,7 @@ dependencies = [
     "matplotlib >= 3.7.1",
     "scipy >= 1.10.1, < 2",
     "scikit-learn >= 1.2.2",
-    "sympy >= 1.13.3", # TODO: remove? (only used 1 place in span_wagner co2 equations)
+    "sympy >= 1.13.3",       # TODO: remove? (only used 1 place in span_wagner co2 equations)
     "tmatrix >= 1.0.0",
 ]
 
@@ -80,23 +83,23 @@ dev = [
 
 [tool.ruff]
 lint.select = [
-    "C",   # Complexity
-    "E",   # Errors
-    "F",   # Flake (unused variables etc.)
-    "I",   # Imports
-    "NPY", # Numpy
-    "PIE", # Python idioms and style
+    "C",       # Complexity
+    "E",       # Errors
+    "F",       # Flake (unused variables etc.)
+    "I",       # Imports
+    "NPY",     # Numpy
+    "PIE",     # Python idioms and style
     "PLR1711", # Redundant Return
-    "PT",  # PyTest
-    "Q",   # Quotes
-    "RET", # Return statements
-    "RSE", # Raising exceptions
-    "SIM", # Code simplification
-    "W",   # Warnings
+    "PT",      # PyTest
+    "Q",       # Quotes
+    "RET",     # Return statements
+    "RSE",     # Raising exceptions
+    "SIM",     # Code simplification
+    "W",       # Warnings
 ]
 lint.ignore = [
-    "C901",   # Complex Code (too many branches/statements)
-    "E501",   # Line Too Long
+    "C901", # Complex Code (too many branches/statements)
+    "E501", # Line Too Long
 ]
 line-length = 88
 
@@ -117,6 +120,8 @@ pythonVersion = "3.11"
 include = [
     # Currently only enabling on general utilities and the corresponding tests
     "src/rock_physics_open/equinor_utilities/gen_utilities/*.py",
+    "src/rock_physics_open/equinor_utilities/various_utilities/*.py",
+    "src/rock_physics_open/equinor_utilities/std_functions/*.py",
     "tests/gen_utilities_tests/*.py",
 ]
 exclude = ["src/**/version.py"]

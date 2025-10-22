@@ -1,17 +1,28 @@
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import std_functions
 
 
 def gassmann_sub_model(
-    k_min,
-    k_fl_orig,
-    rho_fl_orig,
-    k_fl_sub,
-    rho_fl_sub,
-    k_sat_orig,
-    mu,
-    rho_sat_orig,
-    por,
-):
+    k_min: npt.NDArray[np.float64],
+    k_fl_orig: npt.NDArray[np.float64],
+    rho_fl_orig: npt.NDArray[np.float64],
+    k_fl_sub: npt.NDArray[np.float64],
+    rho_fl_sub: npt.NDArray[np.float64],
+    k_sat_orig: npt.NDArray[np.float64],
+    mu: npt.NDArray[np.float64],
+    rho_sat_orig: npt.NDArray[np.float64],
+    por: npt.NDArray[np.float64],
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Gassmann model to go from one saturated state to another.
 
@@ -24,7 +35,7 @@ def gassmann_sub_model(
     rho_fl_orig : np.ndarray
         Original fluid density [lg/m^3].
     k_fl_sub : np.ndarray
-        Sunstituted fluid  bulk modulus [Pa].
+        Substituted fluid  bulk modulus [Pa].
     rho_fl_sub : np.ndarray
         Substituted fluid density [lg/m^3].
     k_sat_orig : np.ndarray
@@ -39,7 +50,7 @@ def gassmann_sub_model(
     Returns
     -------
     tuple
-        vp_sat, vs_sat, rho_sat, ai_sat, vpvs_sat, k_sat, mu : (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray).
+        vp_sat, vs_sat, rho_sat, ai_sat, vpvs_sat, k_sat, mu : np.ndarray
         vp_sat, vs_sat:  saturated velocities [m/s], rho_sat: saturated density [kg/m^3], ai_sat: saturated acoustic
         impedance [kg/m^3 x m/s], vpvs_sat: saturated velocity ratio [unitless], k_sat, mu: saturated bulk modulus and
         shear modulus (the latter unchanged from dry state) [Pa].

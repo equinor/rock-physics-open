@@ -1,7 +1,26 @@
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import std_functions
 
 
-def hs_average(k1, mu1, rhob1, k2, mu2, rhob2, f):
+def hs_average(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    rhob1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    rhob2: npt.NDArray[np.float64],
+    f: npt.NDArray[np.float64],
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     BMix of two phases by Hashin-Shtrikman model. Derived properties are also returned.
 

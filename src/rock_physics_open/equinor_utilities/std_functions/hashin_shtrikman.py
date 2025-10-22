@@ -1,9 +1,18 @@
+from typing import Literal, cast
+
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 
 
-def hashin_shtrikman(k1, mu1, k2, mu2, f):
+def hashin_shtrikman(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    f: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Hashin-Sktrikman upper or lower according to ordering of phases.
 
@@ -34,7 +43,13 @@ def hashin_shtrikman(k1, mu1, k2, mu2, f):
     return k, mu
 
 
-def hashin_shtrikman_average(k1, mu1, k2, mu2, f):
+def hashin_shtrikman_average(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    f: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Average of Hashin-Shtrikman upper and lower bound.
 
@@ -66,7 +81,14 @@ def hashin_shtrikman_average(k1, mu1, k2, mu2, f):
     return k_av, mu_av
 
 
-def hashin_shtrikman_walpole(k1, mu1, k2, mu2, f1, bound="lower"):
+def hashin_shtrikman_walpole(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+    bound: Literal["upper", "lower"] = "lower",
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Hashin-Shtrikman upper bound is obtained when the stiffest material is
     termed 1 and vice versa for lower bound. Tricky in cases like Quartz -
@@ -94,7 +116,10 @@ def hashin_shtrikman_walpole(k1, mu1, k2, mu2, f1, bound="lower"):
         k, mu : np.ndarray.
         k: effective bulk modulus [Pa], mu: effective shear modulus [Pa].
     """
-    k1, mu1, k2, mu2, f1 = dim_check_vector((k1, mu1, k2, mu2, f1))
+    k1, mu1, k2, mu2, f1 = cast(
+        list[npt.NDArray[np.float64]],
+        dim_check_vector((k1, mu1, k2, mu2, f1)),
+    )
     if bound.lower() not in ["lower", "upper"]:
         raise ValueError(f'{__file__}: bound must be one of "lower" or "upper"')
 
@@ -138,7 +163,10 @@ def hashin_shtrikman_walpole(k1, mu1, k2, mu2, f1, bound="lower"):
     return k, mu
 
 
-def multi_hashin_shtrikman(*coeffs, mode="average"):
+def multi_hashin_shtrikman(
+    *coeffs: npt.NDArray[np.float64],
+    mode: Literal["average", "upper", "lower"] = "average",
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Hashin-Shtrikman effective medium calculation for multi-mineral case.
 
@@ -163,8 +191,9 @@ def multi_hashin_shtrikman(*coeffs, mode="average"):
     k_arr = np.array(coeffs[::3])
     mu_arr = np.array(coeffs[1::3])
     f = np.array(coeffs[2::3])
-
-    if not np.all(np.around(np.sum(f, axis=0), decimals=6) == 1.0):
+    if not np.all(
+        cast(npt.NDArray[np.float64], np.around(np.sum(f, axis=0), decimals=6)) == 1.0
+    ):
         raise ValueError("multi_hashin_shtrikman: all fractions do not add up to 1.0")
 
     if mode.lower() not in ["average", "upper", "lower"]:

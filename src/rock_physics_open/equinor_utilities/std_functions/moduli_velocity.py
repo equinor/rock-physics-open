@@ -1,4 +1,16 @@
-def moduli(vp, vs, rhob):
+from typing import TypeVar, cast
+
+import numpy as np
+import numpy.typing as npt
+
+_T = TypeVar("_T", npt.NDArray[np.float64], float)
+
+
+def moduli(
+    vp: _T,
+    vs: _T,
+    rhob: _T,
+) -> tuple[_T, _T]:
     """
     Calculate isotropic moduli from velocity and density.
 
@@ -23,7 +35,11 @@ def moduli(vp, vs, rhob):
     return k, mu
 
 
-def velocity(k, mu, rhob):
+def velocity(
+    k: _T,
+    mu: _T,
+    rhob: _T,
+) -> tuple[_T, _T, _T, _T]:
     """
     Calculate velocity, acoustic impedance and vp/vs ratio from elastic moduli and density.
 
@@ -43,9 +59,9 @@ def velocity(k, mu, rhob):
         vp: pressure wave velocity [m/s], vs: shear wave velocity [m/s], ai: acoustic impedance [m/s x kg/m^3],
         vp_vs: velocity ratio [fraction].
     """
-    vs = (mu / rhob) ** 0.5
-    vp = ((k + 4 / 3 * mu) / rhob) ** 0.5
-    ai = vp * rhob
-    vp_vs = vp / vs
+    vs = cast(_T, (mu / rhob) ** 0.5)
+    vp = cast(_T, ((k + 4 / 3 * mu) / rhob) ** 0.5)
+    ai = cast(_T, vp * rhob)
+    vp_vs = cast(_T, vp / vs)
 
     return vp, vs, ai, vp_vs
