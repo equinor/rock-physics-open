@@ -1,9 +1,19 @@
+from typing import Literal, cast
+
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities import gen_utilities, std_functions
 
 
-def reflectivity(vp_inp, vs_inp, rho_inp, theta=0.0, k=2.0, model="AkiRichards"):
+def reflectivity(
+    vp_inp: npt.NDArray[np.float64],
+    vs_inp: npt.NDArray[np.float64],
+    rho_inp: npt.NDArray[np.float64],
+    theta: float = 0.0,
+    k: float = 2.0,
+    model: Literal["AkiRichards", "SmithGidlow"] = "AkiRichards",
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.bool_]]:
     """
     Reflectivity model according to Aki and Richards or Smith and Gidlow for weak contrasts
     and angles less than critical angle.
@@ -35,12 +45,17 @@ def reflectivity(vp_inp, vs_inp, rho_inp, theta=0.0, k=2.0, model="AkiRichards")
         idx_inp: index to accepted part of the input arrays [bool].
     """
 
-    vp, vs, rho, theta, k = gen_utilities.dim_check_vector(
-        (vp_inp, vs_inp, rho_inp, theta, k)
+    vp, vs, rho, theta_, k_ = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector((vp_inp, vs_inp, rho_inp, theta, k)),
     )
 
-    idx_inp, (vp, vs, rho, theta, k) = gen_utilities.filter_input_log(
-        [vp, vs, rho, theta, k], positive=True
+    idx_inp, (vp, vs, rho, theta_, k_) = cast(
+        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
+        gen_utilities.filter_input_log(
+            [vp, vs, rho, theta_, k_],
+            positive=True,
+        ),
     )
 
     if np.any(~idx_inp):
@@ -69,16 +84,17 @@ def reflectivity(vp_inp, vs_inp, rho_inp, theta=0.0, k=2.0, model="AkiRichards")
                 > 1
             ) * "s"
             raise ValueError(
-                "{0:} reflectivity: Missing or illegal values in input log{1:}: {2:}interpolation of input log{1:} "
-                "is needed\n".format(model, log_str, pl_str)
+                "{0:} reflectivity: Missing or illegal values in input log{1:}: {2:}interpolation of input log{1:} is needed\n".format(
+                    model, log_str, pl_str
+                )
             )
 
     if model == "AkiRichards":
-        refl_coef = std_functions.aki_richards(vp, vs, rho, theta, k)
+        refl_coef = std_functions.aki_richards(vp, vs, rho, theta_, k_)
     elif model == "SmithGidlow":
-        refl_coef = std_functions.smith_gidlow(vp, vs, rho, theta, k)
+        refl_coef = std_functions.smith_gidlow(vp, vs, rho, theta_, k_)
     else:
-        raise ValueError(
+        raise ValueError(  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
             f'{__file__}: unknown model: {model}, should be one of "AkiRichards", "SmithGidlow"'
         )
 

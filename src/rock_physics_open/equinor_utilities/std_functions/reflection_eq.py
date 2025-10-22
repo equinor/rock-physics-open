@@ -1,7 +1,17 @@
+from typing import Literal
+
 import numpy as np
+import numpy.typing as npt
 
 
-def _refl_models(vp, vs, rho, theta, k=2.0, mod="aki_richards"):
+def _refl_models(
+    vp: npt.NDArray[np.float64],
+    vs: npt.NDArray[np.float64],
+    rho: npt.NDArray[np.float64],
+    theta: npt.NDArray[np.float64],
+    k: npt.NDArray[np.float64] | float = 2.0,
+    mod: Literal["aki_richards", "smith_gidlow"] = "aki_richards",
+) -> npt.NDArray[np.float64]:
     """Calculate reflect coeff.
 
     Parameters
@@ -14,7 +24,7 @@ def _refl_models(vp, vs, rho, theta, k=2.0, mod="aki_richards"):
         rho array.
     theta : float, np.ndarray
         Theta value.
-    k : float, optional
+    k : float, np.ndarray, optional
         By default 2.0.
     mod : str, optional
         By default 'aki_richards'.
@@ -47,7 +57,13 @@ def _refl_models(vp, vs, rho, theta, k=2.0, mod="aki_richards"):
     return reflect_coeff
 
 
-def aki_richards(vp, vs, rho, theta, k=2.0):
+def aki_richards(
+    vp: npt.NDArray[np.float64],
+    vs: npt.NDArray[np.float64],
+    rho: npt.NDArray[np.float64],
+    theta: npt.NDArray[np.float64],
+    k: npt.NDArray[np.float64] | float = 2.0,
+) -> npt.NDArray[np.float64]:
     """
     Linearised Zoeppritz equation according to Aki and Richards.
 
@@ -61,7 +77,7 @@ def aki_richards(vp, vs, rho, theta, k=2.0):
         Density [kg/m^3].
     theta : np.ndarray
         Angle of incident ray [radians].
-    k : float
+    k : float, np.ndarray
         Background vp/vs [unitless].
 
     Returns
@@ -72,7 +88,13 @@ def aki_richards(vp, vs, rho, theta, k=2.0):
     return _refl_models(vp, vs, rho, theta, k, mod="aki_richards")
 
 
-def smith_gidlow(vp, vs, rho, theta, k=2.0):
+def smith_gidlow(
+    vp: npt.NDArray[np.float64],
+    vs: npt.NDArray[np.float64],
+    rho: npt.NDArray[np.float64],
+    theta: npt.NDArray[np.float64],
+    k: npt.NDArray[np.float64] | float = 2.0,
+) -> npt.NDArray[np.float64]:
     """
     Linearised Zoeppritz equation according to Smith and Gidlow.
 
@@ -86,7 +108,7 @@ def smith_gidlow(vp, vs, rho, theta, k=2.0):
         Density [kg/m^3].
     theta : np.ndarray
         Angle of incident ray [radians].
-    k : float
+    k : float, np.ndarray
         Background vp/vs [unitless].
 
     Returns

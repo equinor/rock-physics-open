@@ -1,10 +1,15 @@
 import os
 import sys
+from collections.abc import Sequence
+from typing import Any, Literal, cast
 
 import numpy as np
+import numpy.typing as npt
 
 
-def disp_result_stats(title: str, arr: list | tuple, names_arr: list, **kwargs):
+def disp_result_stats(
+    title: str, arr: Sequence[Any], names_arr: list[str], **kwargs: Any
+) -> None:
     """
     Display results utilizing tkinter.
 
@@ -17,17 +22,19 @@ def disp_result_stats(title: str, arr: list | tuple, names_arr: list, **kwargs):
     from tkinter import END, Entry, PhotoImage, Tk
 
     class Table:
-        def __init__(self, tk_root, no_rows, no_cols, info):
+        def __init__(
+            self, tk_root: Tk, no_rows: int, no_cols: int, info: npt.NDArray[Any]
+        ):
             # code for creating table
             str_len = np.vectorize(len)
-            text_justify = ["center", "left"]
-            text_weight = ["bold", "normal"]
+            text_justify: list[Literal["center", "left"]] = ["center", "left"]
+            text_weight: list[str] = ["bold", "normal"]
             for i in range(no_rows):
-                weigh = text_weight[np.sign(i)]
+                weigh = text_weight[cast(int, np.sign(i))]
                 for j in range(no_cols):
-                    just = text_justify[np.sign(i)]
+                    just = text_justify[cast(int, np.sign(i))]
                     max_len = np.max(str_len(info[:, j]))
-                    self.e = Entry(
+                    self.e: Entry = Entry(
                         tk_root,
                         width=max_len + 2,
                         fg="black",
@@ -57,7 +64,7 @@ def disp_result_stats(title: str, arr: list | tuple, names_arr: list, **kwargs):
             info_array[k + 1, 4] = f"{np.sum(np.isnan(np.asarray(arr[k])))}"
             info_array[k + 1, 5] = f"{np.sum(np.isinf(np.asarray(arr[k])))}"
 
-    Table(root, info_array.shape[0], info_array.shape[1], info_array)
+    _ = Table(root, info_array.shape[0], info_array.shape[1], info_array)
 
     root.update_idletasks()
     window_height = root.winfo_height()
@@ -78,6 +85,6 @@ def disp_result_stats(title: str, arr: list | tuple, names_arr: list, **kwargs):
         logo = PhotoImage(
             file=os.path.join(os.path.dirname(__file__), "Equinor_logo.gif")
         )
-        root.call("wm", "iconphoto", root._w, logo)
+        root.wm_iconphoto(True, logo)
 
     root.mainloop()

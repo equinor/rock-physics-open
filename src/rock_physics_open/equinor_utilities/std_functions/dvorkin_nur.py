@@ -1,9 +1,17 @@
 import numpy as np
+import numpy.typing as npt
 
 
 def dvorkin_contact_cement(
-    frac_cem, por0_sst, mu0_sst, k0_sst, mu0_cem, k0_cem, vs_red, c
-):
+    frac_cem: npt.NDArray[np.float64],
+    por0_sst: npt.NDArray[np.float64],
+    mu0_sst: npt.NDArray[np.float64],
+    k0_sst: npt.NDArray[np.float64],
+    mu0_cem: npt.NDArray[np.float64],
+    k0_cem: npt.NDArray[np.float64],
+    vs_red: npt.NDArray[np.float64],
+    c: float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Dvorkin-Nur contact cement model for estimation of elastic moduli.
 

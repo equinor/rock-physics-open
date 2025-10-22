@@ -1,11 +1,18 @@
 import warnings
+from typing import cast
 
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 
 
-def gassmann(k_dry, por, k_fl, k_min):
+def gassmann(
+    k_dry: npt.NDArray[np.float64],
+    por: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    k_min: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Fluid substitution according to the Gassmann equation.
 
@@ -25,7 +32,10 @@ def gassmann(k_dry, por, k_fl, k_min):
     np.ndarray
         k_sat: bulk modulus for saturated rock [Pa]
     """
-    k_dry, por, k_fl, k_min = dim_check_vector((k_dry, por, k_fl, k_min))
+    k_dry, por, k_fl, k_min = cast(
+        list[npt.NDArray[np.float64]],
+        dim_check_vector((k_dry, por, k_fl, k_min)),
+    )
 
     idx = np.logical_or(k_dry == k_min, por == 0)
     k_sat = np.ones(k_dry.shape) * np.nan
@@ -42,7 +52,13 @@ def gassmann(k_dry, por, k_fl, k_min):
     return k_sat
 
 
-def gassmann2(k_sat_1, k_fl_1, k_fl_2, por, k_min):
+def gassmann2(
+    k_sat_1: npt.NDArray[np.float64],
+    k_fl_1: npt.NDArray[np.float64],
+    k_fl_2: npt.NDArray[np.float64],
+    por: npt.NDArray[np.float64],
+    k_min: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Fluid substitution by Gassmann method with substitution of one fluid to another
 
@@ -64,8 +80,9 @@ def gassmann2(k_sat_1, k_fl_1, k_fl_2, por, k_min):
     np.ndarray
         k_sat_2: bulk modulus of rock saturated with replaced fluid [Pa]
     """
-    k_sat_1, k_fl_1, k_fl_2, por, k_min = dim_check_vector(
-        (k_sat_1, k_fl_1, k_fl_2, por, k_min)
+    k_sat_1, k_fl_1, k_fl_2, por, k_min = cast(
+        list[npt.NDArray[np.float64]],
+        dim_check_vector((k_sat_1, k_fl_1, k_fl_2, por, k_min)),
     )
 
     idx = np.any(
@@ -96,7 +113,12 @@ def gassmann2(k_sat_1, k_fl_1, k_fl_2, por, k_min):
     return k_sat_2
 
 
-def gassmann_dry(k_sat, por, k_fl, k_min):
+def gassmann_dry(
+    k_sat: npt.NDArray[np.float64],
+    por: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    k_min: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Dry rock properties of saturated rock by Gassmann equation
 
@@ -116,7 +138,10 @@ def gassmann_dry(k_sat, por, k_fl, k_min):
     np.ndarray
         k_dry: dry rock bulk modulus [Pa]
     """
-    k_sat, por, k_fl, k_min = dim_check_vector((k_sat, por, k_fl, k_min))
+    k_sat, por, k_fl, k_min = cast(
+        list[npt.NDArray[np.float64]],
+        dim_check_vector((k_sat, por, k_fl, k_min)),
+    )
 
     idx = np.any(np.array([k_sat == k_min, por == 0, k_fl == k_min]), axis=0)
     k_dry = np.ones(k_sat.shape)

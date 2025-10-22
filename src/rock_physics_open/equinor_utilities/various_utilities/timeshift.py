@@ -1,7 +1,13 @@
 import numpy as np
+import numpy.typing as npt
 
 
-def time_shift_pp(tvd, vp_base, vp_mon, multiplier):
+def time_shift_pp(
+    tvd: npt.NDArray[np.float64],
+    vp_base: npt.NDArray[np.float64],
+    vp_mon: npt.NDArray[np.float64],
+    multiplier: int,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Cumulative time shift calculation for 4D case. According to Equinor standard
     the time shift is negative for an increase in velocity from base to monitor
@@ -43,7 +49,14 @@ def time_shift_pp(tvd, vp_base, vp_mon, multiplier):
     return owt_pp_shift, twt_pp_shift
 
 
-def time_shift_ps(tvd, vp_base, vp_mon, vs_base, vs_mon, multiplier):
+def time_shift_ps(
+    tvd: npt.NDArray[np.float64],
+    vp_base: npt.NDArray[np.float64],
+    vp_mon: npt.NDArray[np.float64],
+    vs_base: npt.NDArray[np.float64],
+    vs_mon: npt.NDArray[np.float64],
+    multiplier: int,
+) -> npt.NDArray[np.float64]:
     """
     Cumulative time shift calculation for 4D case. According to Equinor standard
     the time shift is negative for an increase in velocity from base to monitor

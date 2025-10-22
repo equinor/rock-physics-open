@@ -1,9 +1,31 @@
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import std_functions
 
 
 def min_3_voigt_reuss_hill(
-    vp1, vs1, rhob1, f1, vp2, vs2, rhob2, f2, vp3, vs3, rhob3, f3
-):
+    vp1: npt.NDArray[np.float64],
+    vs1: npt.NDArray[np.float64],
+    rhob1: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+    vp2: npt.NDArray[np.float64],
+    vs2: npt.NDArray[np.float64],
+    rhob2: npt.NDArray[np.float64],
+    f2: npt.NDArray[np.float64],
+    vp3: npt.NDArray[np.float64],
+    vs3: npt.NDArray[np.float64],
+    rhob3: npt.NDArray[np.float64],
+    f3: npt.NDArray[np.float64],
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Mix of three phases by Voigt-Reuss-Hill model. The fractions should add up to 1 with input of vp, vs and rho.
 

@@ -1,6 +1,8 @@
 import os
+from typing import Literal, cast
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from sklearn.metrics import r2_score
 
@@ -8,18 +10,18 @@ from .display_result_statistics import disp_result_stats
 
 
 def vp_vs_rho_stats(
-    vp_observed,
-    vs_observed,
-    rho_observed,
-    vp_estimated,
-    vs_estimated,
-    rho_estimated,
-    fname,
-    estimated_set_names,
-    well_names,
-    file_mode="a",
-    disp_results=True,
-):
+    vp_observed: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    vs_observed: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    rho_observed: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    vp_estimated: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    vs_estimated: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    rho_estimated: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    fname: str,
+    estimated_set_names: str | list[str],
+    well_names: str | list[str],
+    file_mode: Literal["a", "w"] = "a",
+    disp_results: bool = True,
+) -> None:
     """
     Utility to estimate statistics between vp-vs-rho sets - observed and estimated values. The results are displayed
     on screen (optional) and saved to a .csv file. If the file exists, the results will be appended.
@@ -83,33 +85,42 @@ def vp_vs_rho_stats(
     ]
     est_frame = pd.DataFrame(columns=est_frame_columns, index=estimated_set_names)
     est_frame.index.name = "Estimated set name"
-    est_frame.iloc[:, 0] = well_names
+    est_frame.iloc[:, 0] = well_names  # pyright: ignore[reportArgumentType]
 
     # If inputs are found to satisfy expectations in _verify, and they are numpy arrays, cast to lists, and run through
     if isinstance(vp_observed, np.ndarray):
         vp_observed = [vp_observed]
+    if isinstance(vs_observed, np.ndarray):
         vs_observed = [vs_observed]
+    if isinstance(rho_observed, np.ndarray):
         rho_observed = [rho_observed]
+    if isinstance(vp_estimated, np.ndarray):
         vp_estimated = [vp_estimated]
+    if isinstance(vs_estimated, np.ndarray):
         vs_estimated = [vs_estimated]
+    if isinstance(rho_estimated, np.ndarray):
         rho_estimated = [rho_estimated]
 
     for i in range(len(vp_observed)):
-        res = []
+        res: list[float] = []
         for obs, est in zip(
             [vp_observed[i], vs_observed[i], rho_observed[i]],
             [vp_estimated[i], vs_estimated[i], rho_estimated[i]],
         ):
-            res.append(np.mean(np.abs((est.flatten() - obs.flatten()) / obs.flatten())))
-            res.append(
-                np.sqrt(
-                    np.mean(np.square((est.flatten() - obs.flatten()) / obs.flatten()))
-                )
+            rmae = float(
+                np.mean(np.abs((est.flatten() - obs.flatten()) / obs.flatten()))
             )
-            res.append(r2_score(obs.flatten(), est.flatten()))
+            rrmse: float = np.sqrt(
+                np.mean(np.square((est.flatten() - obs.flatten()) / obs.flatten()))
+            )
+            r2 = cast(float, r2_score(obs.flatten(), est.flatten()))
+
+            res.append(rmae)
+            res.append(rrmse)
+            res.append(r2)
 
         res_dict = dict(zip(est_frame_columns[1:], res))
-        est_frame.iloc[i, 1:] = res_dict
+        est_frame.iloc[i, 1:] = res_dict  # pyright: ignore[reportArgumentType]
         if disp_results:
             disp_result_stats(
                 estimated_set_names[i], res, est_frame_columns[1:], values_only=True
@@ -122,7 +133,12 @@ def vp_vs_rho_stats(
         est_frame.to_csv(fname, mode=file_mode)
 
 
-def _verify(*args, set_names=None, well_names=None, file_mode=None):
+def _verify(
+    *args: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
+    set_names: list[str],
+    well_names: list[str],
+    file_mode: Literal["a", "w"],
+):
     """Verify that arguments are either numpy arrays or lists of numpy arrays.
     Raises
     ------
@@ -142,7 +158,7 @@ def _verify(*args, set_names=None, well_names=None, file_mode=None):
         if isinstance(arg, np.ndarray):
             arg = [arg]
         for this_arg in arg:
-            if not isinstance(this_arg, np.ndarray):
+            if not isinstance(this_arg, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | For backward compatibility
                 raise ValueError(f"{__file__}: input not numpy array: {type(arg)}")
             if np.any(np.isnan(this_arg)):
                 raise ValueError(f"{__file__}: input contains NaNs")
@@ -151,4 +167,4 @@ def _verify(*args, set_names=None, well_names=None, file_mode=None):
         if not len(arg) == len(set_names) == len(well_names):
             raise ValueError(f"{__file__}: mismatch in argument lengths")
     if not (file_mode == "a" or file_mode == "w"):
-        raise ValueError(f'{__file__}: file_mode must be one of ["a", "w"]')
+        raise ValueError(f'{__file__}: file_mode must be one of ["a", "w"]')  # pyright: ignore[reportUnreachable] | For backward compatibility

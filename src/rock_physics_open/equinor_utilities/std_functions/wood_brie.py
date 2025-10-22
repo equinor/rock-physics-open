@@ -1,7 +1,18 @@
+from collections.abc import Sequence
+
 import numpy as np
+import numpy.typing as npt
 
 
-def brie(s_gas, k_gas, s_brine, k_brine, s_oil, k_oil, e):
+def brie(
+    s_gas: npt.NDArray[np.float64],
+    k_gas: npt.NDArray[np.float64],
+    s_brine: npt.NDArray[np.float64],
+    k_brine: npt.NDArray[np.float64],
+    s_oil: npt.NDArray[np.float64],
+    k_oil: npt.NDArray[np.float64],
+    e: float | npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Brie function for effective bulk modulus of a mix of fluids.
 
@@ -36,7 +47,13 @@ def brie(s_gas, k_gas, s_brine, k_brine, s_oil, k_oil, e):
     return (k_liquid - k_gas) * (1 - s_gas) ** e + k_gas
 
 
-def wood(s1, k1, rho1, k2, rho2):
+def wood(
+    s1: npt.NDArray[np.float64],
+    k1: npt.NDArray[np.float64],
+    rho1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    rho2: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Wood effective fluid properties for a mix of two fluids.
 
@@ -67,7 +84,7 @@ def wood(s1, k1, rho1, k2, rho2):
     return k, rho
 
 
-def multi_wood(fractions, bulk_moduli):
+def multi_wood(fractions: Sequence[float], bulk_moduli: Sequence[float]) -> float:
     assert len(fractions) == len(bulk_moduli)
     sum_fractions = sum(fractions)
     ratio_sum = sum(
