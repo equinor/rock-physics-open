@@ -108,7 +108,9 @@ def _perform_regression(
     return res_frame
 
 
-def run_regression(inp_df, vp_model_file_name, vs_model_file_name, model_dir=None):
+def run_regression(
+    inp_df, first_model_file_name, second_model_file_name, model_dir=None
+):
     """
     Estimate Vp and Vs by neural network regression with multiple inputs.
 
@@ -116,9 +118,9 @@ def run_regression(inp_df, vp_model_file_name, vs_model_file_name, model_dir=Non
     ----------
     inp_df : pd.DataFrame
         Input logs required for the regression.
-    vp_model_file_name : str
+    first_model_file_name : str
         Full file name for vp model.
-    vs_model_file_name : str
+    second_model_file_name : str
         Full file name for vs model.
     model_dir : str
         Directory.
@@ -139,7 +141,7 @@ def run_regression(inp_df, vp_model_file_name, vs_model_file_name, model_dir=Non
         category_var,
         column_names,
         column_units,
-    ) = _read_models(vp_model_file_name, vs_model_file_name, model_dir=model_dir)
+    ) = _read_models(first_model_file_name, second_model_file_name, model_dir=model_dir)
     return _perform_regression(
         inp_df,
         column_names,
