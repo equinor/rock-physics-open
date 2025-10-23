@@ -124,7 +124,7 @@ def friable_model_dry(k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear
         Critical porosity [fraction].
     coord_num_func : str
         Indication if coordination number should be calculated from porosity or kept constant.
-    n : float
+    n : float | None
         Coordination number [unitless].
     shear_red : float
         Shear reduction factor [fraction].
@@ -135,18 +135,17 @@ def friable_model_dry(k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear
         k, mu : (np.ndarray, np.ndarray).
         Bulk modulus k [Pa], shear modulus mu [Pa] of dry rock.
     """
-    # Expand floats to arrays
-    phi, phi_c, n, shear_red = gen_utilities.dim_check_vector(
-        (phi, phi_c, n, shear_red)
+    # Expand floats to arrays, check for equal length
+    phi, phi_c, shear_red, k_min, mu_min, p_eff = gen_utilities.dim_check_vector(
+        (phi, phi_c, shear_red, k_min, mu_min, p_eff)
     )
-
     # Valid porosity values are less or equal to the critical porosity
     # Use filter_input_log to remove values that do not comply with this
     (
         idx_phi,
-        (k_min, mu_min, phi, p_eff, phi_c, n, shear_red, _),
+        (phi, phi_c, shear_red, k_min, mu_min, p_eff, _),
     ) = gen_utilities.filter_input_log(
-        (k_min, mu_min, phi, p_eff, phi_c, n, shear_red, phi_c - phi)
+        (phi, phi_c, shear_red, k_min, mu_min, p_eff, phi_c - phi)
     )
 
     # Dry rock properties of high-porosity end member calculated with

@@ -1,6 +1,11 @@
 import numpy as np
 
 from rock_physics_open.equinor_utilities import std_functions
+from rock_physics_open.equinor_utilities.gen_utilities import (
+    dim_check_vector,
+    filter_input_log,
+    filter_output,
+)
 
 from .constant_cement_models import constant_cement_model_dry
 from .friable_models import friable_model_dry
@@ -299,6 +304,14 @@ def patchy_cement_model_dry(
         mu : dry rock shear modulus [Pa],
         rho_dry : dry rock density [kg/m3].,
     """
+    # There are cases which suffer from a lack of consistency check at this stage,
+    # add dim_check_vector and filter input/output
+    phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff = dim_check_vector(
+        (phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)
+    )
+    (idx, (phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)) = (
+        filter_input_log((phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff))
+    )
 
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
         k_cem, mu_cem, k_min, mu_min, FRAC_CEM_UP, bound="lower"
@@ -365,5 +378,7 @@ def patchy_cement_model_dry(
     mu = mu_fri + weight_mu * (mu_up - mu_fri)
 
     rho_dry = (1 - phi - frac_cem) * rho_min + frac_cem * rho_cem
+
+    k_dry, mu, rho_dry = filter_output(idx, (k_dry, mu, rho_dry))
 
     return k_dry, mu, rho_dry

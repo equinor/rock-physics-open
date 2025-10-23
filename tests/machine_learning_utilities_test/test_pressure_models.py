@@ -14,7 +14,6 @@ pytest test_pressure_models.py -k "exponential"     # Run tests matching pattern
 
 import os
 import tempfile
-from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -22,14 +21,6 @@ import pytest
 # Import all model classes
 from rock_physics_open.equinor_utilities.machine_learning_utilities.exponential_model import (
     ExponentialPressureModel,
-)
-from rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models import (
-    FriableDryBulkModulusPressureModel,
-    FriableDryShearModulusPressureModel,
-)
-from rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models import (
-    PatchyCementDryBulkModulusPressureModel,
-    PatchyCementDryShearModulusPressureModel,
 )
 from rock_physics_open.equinor_utilities.machine_learning_utilities.polynomial_model import (
     PolynomialPressureModel,
@@ -78,57 +69,6 @@ def sigmoidal_model():
 
 
 @pytest.fixture
-def friable_bulk_model():
-    """Create friable bulk modulus model for testing."""
-    return FriableDryBulkModulusPressureModel(
-        phi_c=0.4,
-        coord_num_func="Porosity",
-        shear_red=1.0,
-        model_max_pressure=5e7,
-        description="Test friable bulk model",
-    )
-
-
-@pytest.fixture
-def friable_shear_model():
-    """Create friable shear modulus model for testing."""
-    return FriableDryShearModulusPressureModel(
-        phi_c=0.4,
-        coord_num_func="ConstVal",
-        n=8.0,
-        shear_red=0.8,
-        model_max_pressure=5e7,
-        description="Test friable shear model",
-    )
-
-
-@pytest.fixture
-def patchy_bulk_model():
-    """Create patchy cement bulk modulus model for testing."""
-    return PatchyCementDryBulkModulusPressureModel(
-        frac_cem=0.3,
-        phi_c=0.4,
-        coord_num_func="Porosity",
-        shear_red=1.0,
-        model_max_pressure=5e7,
-        description="Test patchy bulk model",
-    )
-
-
-@pytest.fixture
-def patchy_shear_model():
-    """Create patchy cement shear modulus model for testing."""
-    return PatchyCementDryShearModulusPressureModel(
-        frac_cem=0.3,
-        phi_c=0.4,
-        coord_num_func="Porosity",
-        shear_red=1.0,
-        model_max_pressure=5e7,
-        description="Test patchy shear model",
-    )
-
-
-@pytest.fixture
 def exp_poly_valid_input():
     """Valid input for exponential and polynomial models."""
     return np.array([[3000.0, 2e7, 1e7], [3200.0, 2.5e7, 1.2e7]])
@@ -140,25 +80,6 @@ def sigmoidal_valid_input():
     return np.array([[0.2, 2e7, 1e7], [0.25, 2.5e7, 1.2e7]])
 
 
-@pytest.fixture
-def friable_valid_input():
-    """Valid input for friable models."""
-    return np.array(
-        [[0.2, 3.7e10, 4.4e10, 2e7, 1e7], [0.25, 3.8e10, 4.5e10, 2.5e7, 1.2e7]]
-    )
-
-
-@pytest.fixture
-def patchy_valid_input():
-    """Valid input for patchy cement models."""
-    return np.array(
-        [
-            [0.2, 3.7e10, 4.4e10, 2650, 7.7e10, 3.2e10, 2200, 2e7, 1e7],
-            [0.25, 3.8e10, 4.5e10, 2670, 7.8e10, 3.3e10, 2220, 2.5e7, 1.2e7],
-        ]
-    )
-
-
 # Invalid data fixtures for error testing
 @pytest.fixture
 def invalid_input_data():
@@ -168,8 +89,6 @@ def invalid_input_data():
         "wrong_type": [[1, 2, 3], [4, 5, 6]],  # List instead of ndarray
         "wrong_dimensions": np.array([1, 2, 3, 4, 5]),  # 1D instead of 2D
         "wrong_columns_exp": rng.random((10, 4)),  # 4 columns instead of 3
-        "wrong_columns_friable": rng.random((10, 3)),  # 3 columns instead of 5
-        "wrong_columns_patchy": rng.random((10, 6)),  # 6 columns instead of 9
         "empty_array": np.empty((0, 3)),  # Empty array
     }
 
@@ -295,102 +214,6 @@ class TestSigmoidalPressureModel:
             sigmoidal_model.validate_input(invalid_input)
 
 
-# Test Friable Models
-class TestFriablePressureModels:
-    """Test cases for Friable pressure models."""
-
-    @patch(
-        "rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry"
-    )
-    def test_bulk_model_predict_abs(
-        self, mock_friable, friable_bulk_model, friable_valid_input
-    ):
-        """Test bulk modulus prediction."""
-        # Mock the friable_model_dry function
-        mock_friable.return_value = (np.array([1e10, 1.2e10]), np.array([0.8e10, 1e10]))
-
-        result = friable_bulk_model.predict_abs(friable_valid_input, case="in_situ")
-        assert len(result) == 2
-        mock_friable.assert_called()
-
-    @patch(
-        "rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry"
-    )
-    def test_shear_model_predict_abs(
-        self, mock_friable, friable_shear_model, friable_valid_input
-    ):
-        """Test shear modulus prediction."""
-        # Mock the friable_model_dry function
-        mock_friable.return_value = (np.array([1e10, 1.2e10]), np.array([0.8e10, 1e10]))
-
-        result = friable_shear_model.predict_abs(friable_valid_input, case="depleted")
-        assert len(result) == 2
-        mock_friable.assert_called()
-
-    def test_validate_input_invalid_columns(self, friable_bulk_model):
-        """Test input validation with wrong number of columns."""
-        invalid_input = np.array([[0.2, 3.7e10, 4.4e10, 2e7]])  # Missing column
-        with pytest.raises(ValueError, match="Input must be \\(n,5\\)"):
-            friable_bulk_model.validate_input(invalid_input)
-
-    def test_model_properties(self, friable_shear_model):
-        """Test model properties are properly set."""
-        model_dict = friable_shear_model.todict()
-        assert model_dict["phi_c"] == 0.4
-        assert model_dict["coord_num_func"] == "ConstVal"
-        assert model_dict["n"] == 8.0
-        assert model_dict["shear_red"] == 0.8
-
-
-# Test Patchy Cement Models
-class TestPatchyCementPressureModels:
-    """Test cases for Patchy Cement pressure models."""
-
-    @patch(
-        "rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry"
-    )
-    def test_bulk_model_predict_abs(
-        self, mock_patchy, patchy_bulk_model, patchy_valid_input
-    ):
-        """Test bulk modulus prediction."""
-        # Mock the patchy_cement_model_dry function
-        mock_patchy.return_value = (
-            np.array([1.5e10, 1.7e10]),  # k_dry
-            np.array([1.2e10, 1.4e10]),  # mu
-            np.array([2400, 2420]),  # rho
-        )
-
-        result = patchy_bulk_model.predict_abs(patchy_valid_input, case="in_situ")
-        assert len(result) == 2
-        mock_patchy.assert_called()
-
-    @patch(
-        "rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry"
-    )
-    def test_shear_model_predict_abs(
-        self, mock_patchy, patchy_shear_model, patchy_valid_input
-    ):
-        """Test shear modulus prediction."""
-        # Mock the patchy_cement_model_dry function
-        mock_patchy.return_value = (
-            np.array([1.5e10, 1.7e10]),  # k_dry
-            np.array([1.2e10, 1.4e10]),  # mu
-            np.array([2400, 2420]),  # rho
-        )
-
-        result = patchy_shear_model.predict_abs(patchy_valid_input, case="depleted")
-        assert len(result) == 2
-        mock_patchy.assert_called()
-
-    def test_validate_input_invalid_columns(self, patchy_bulk_model):
-        """Test input validation with wrong number of columns."""
-        invalid_input = np.array(
-            [[0.2, 3.7e10, 4.4e10, 2650, 7.7e10, 3.2e10, 2200, 2e7]]
-        )  # Missing column
-        with pytest.raises(ValueError, match="Input must be \\(n,9\\)"):
-            patchy_bulk_model.validate_input(invalid_input)
-
-
 # Integration Tests
 class TestModelIntegration:
     """Integration tests across model types."""
@@ -404,10 +227,6 @@ class TestModelIntegration:
             ("exponential_model", "exp_poly_valid_input"),
             ("polynomial_model", "exp_poly_valid_input"),
             ("sigmoidal_model", "sigmoidal_valid_input"),
-            ("friable_bulk_model", "friable_valid_input"),
-            ("friable_shear_model", "friable_valid_input"),
-            ("patchy_bulk_model", "patchy_valid_input"),
-            ("patchy_shear_model", "patchy_valid_input"),
         ],
     )
     def test_all_models_predict_interface(self, request, model_fixture, input_fixture):
@@ -423,37 +242,9 @@ class TestModelIntegration:
         assert hasattr(model, "todict")
         assert hasattr(model, "save")
 
-        # Test methods work (with mocking for rock physics models)
-        if "friable" in model_fixture:
-            with patch(
-                "rock_physics_open.equinor_utilities.machine_learning_utilities.friable_pressure_models.friable_model_dry"
-            ) as mock_friable:
-                mock_friable.return_value = (
-                    np.array([1e10] * len(test_input)),
-                    np.array([0.8e10] * len(test_input)),
-                )
-
-                result_abs = model.predict_abs(test_input)
-                result_diff = model.predict(test_input)
-                result_max = model.predict_max(test_input)
-
-        elif "patchy" in model_fixture:
-            with patch(
-                "rock_physics_open.equinor_utilities.machine_learning_utilities.patchy_cement_pressure_models.patchy_cement_model_dry"
-            ) as mock_patchy:
-                mock_patchy.return_value = (
-                    np.array([1e10] * len(test_input)),
-                    np.array([0.8e10] * len(test_input)),
-                    np.array([2400] * len(test_input)),
-                )
-
-                result_abs = model.predict_abs(test_input)
-                result_diff = model.predict(test_input)
-                result_max = model.predict_max(test_input)
-        else:
-            result_abs = model.predict_abs(test_input)
-            result_diff = model.predict(test_input)
-            result_max = model.predict_max(test_input)
+        result_abs = model.predict_abs(test_input)
+        result_diff = model.predict(test_input)
+        result_max = model.predict_max(test_input)
 
         assert len(result_abs) == len(test_input)
         assert len(result_diff) == len(test_input)
