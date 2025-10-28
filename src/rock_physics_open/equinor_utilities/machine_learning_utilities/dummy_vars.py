@@ -1,8 +1,17 @@
+from typing import cast
+
 import numpy as np
+import numpy.typing as npt
+import pandas as pd
+from pandas.api.types import is_numeric_dtype
 from sklearn.preprocessing import OneHotEncoder
 
 
-def generate_dummy_vars(inp_frame, class_var, ohe=None):
+def generate_dummy_vars(
+    inp_frame: pd.DataFrame,
+    class_var: str,
+    ohe: OneHotEncoder | None = None,
+) -> tuple[npt.NDArray[np.float64], int, npt.NDArray[np.str_]]:
     """
     From categorical variables generate a one-hot-encoder, i.e. each value in the categorical variable becomes a binary
     variable. See sklearn.preprocessing.OneHotEncoder.
@@ -22,7 +31,6 @@ def generate_dummy_vars(inp_frame, class_var, ohe=None):
         dum_features: 2D array with transformed dummy variables, no_dummy_cols: number of columns in returned array,
         dum_var_names: automatically generated feature names.
     """
-    from pandas.api.types import is_numeric_dtype
 
     if is_numeric_dtype(inp_frame[class_var]):
         # Make sure that the chosen indicator variable contains discrete values
@@ -33,9 +41,12 @@ def generate_dummy_vars(inp_frame, class_var, ohe=None):
     if ohe is None:
         classes = features_in
         ohe = OneHotEncoder(categories="auto", sparse_output=False)
-        ohe.fit(classes)
+        _ = ohe.fit(classes)
 
-    dum_features = ohe.transform(features_in)
+    dum_features = cast(  # Casting since scikit-learn is not yet fully typed. `.transform` returns sparse matrix only if `sparse_output=True`.
+        npt.NDArray[np.float64],
+        ohe.transform(features_in),
+    )
     no_dummy_cols = dum_features.shape[1]
     dum_var_names = ohe.get_feature_names_out()
 

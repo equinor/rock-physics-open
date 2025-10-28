@@ -13,9 +13,11 @@ def testdata() -> Path:
 
 
 @pytest.fixture(scope="session", autouse=True, name="data_dir")
-def setup_rock_physics_open_test_data(testdata, tmp_path_factory):
+def setup_rock_physics_open_test_data(
+    testdata: Path, tmp_path_factory: pytest.TempPathFactory
+) -> Path:
     start_dir = tmp_path_factory.mktemp("data")
 
-    copytree(testdata, start_dir, dirs_exist_ok=True)
+    _ = copytree(testdata, start_dir, dirs_exist_ok=True)
 
     return start_dir

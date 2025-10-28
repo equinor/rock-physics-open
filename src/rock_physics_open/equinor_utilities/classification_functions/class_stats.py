@@ -1,9 +1,19 @@
 import numpy as np
+import numpy.typing as npt
 
 NULL_CLASS = 0
 
 
-def gen_class_stats(obs, class_val):
+def gen_class_stats(
+    obs: npt.NDArray[np.float64],
+    class_val: npt.NDArray[np.int64],
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.int64],
+    npt.NDArray[np.int64],
+]:
     """
     Generate statistics - mean, covariance and prior probability - for each
     class in the training data.	The observations are an n x m array, where n
@@ -30,8 +40,8 @@ def gen_class_stats(obs, class_val):
     n, m = obs.shape
     # Find number of classes. If class_val input is not integer, raise an exception
     if not (
-        isinstance(class_val, np.ndarray)
-        and issubclass(class_val.dtype.type, np.integer)
+        isinstance(class_val, np.ndarray)  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+        and issubclass(class_val.dtype.type, np.integer)  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
     ):
         raise ValueError(f"{__file__}: class values are not discrete numbers")
 

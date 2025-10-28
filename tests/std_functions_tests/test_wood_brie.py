@@ -18,7 +18,7 @@ class TestWoodBrie:
         return s_gas, s_brine, s_oil, k_gas, k_brine, k_oil, rho_gas, rho_brine
 
     def test_wood(self):
-        s_gas, s_brine, s_oil, k_gas, k_brine, k_oil, rho_gas, rho_brine = self.setup()
+        s_gas, _, _, k_gas, k_brine, _, rho_gas, rho_brine = self.setup()
         k, rho = wood(s_gas, k_gas, rho_gas, k_brine, rho_brine)
         k_ref = np.array([0.25e6, 2.8e9, 2.8e9])
         rho_ref = np.array([210, 1005, 1005])
@@ -26,7 +26,7 @@ class TestWoodBrie:
         np.testing.assert_almost_equal(rho, rho_ref)
 
     def test_brie(self):
-        s_gas, s_brine, s_oil, k_gas, k_brine, k_oil, rho_gas, rho_brine = self.setup()
+        s_gas, s_brine, s_oil, k_gas, k_brine, k_oil, _, _ = self.setup()
         e = 1.5
         k = brie(s_gas, k_gas, s_brine, k_brine, s_oil, k_oil, e)
         k_ref = np.array([0.25e6, 2.8e9, 0.9e9])

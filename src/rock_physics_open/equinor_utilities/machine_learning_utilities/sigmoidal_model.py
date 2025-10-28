@@ -1,13 +1,13 @@
-from __future__ import annotations
-
 import pickle
-from typing import Any
+from typing import Any, Self, final
 
 import numpy as np
+from typing_extensions import override
 
 from .base_pressure_model import BasePressureModel
 
 
+@final
 class SigmoidalPressureModel(BasePressureModel):
     """
     Sigmoidal pressure sensitivity model for velocity prediction.
@@ -104,6 +104,7 @@ class SigmoidalPressureModel(BasePressureModel):
         """Pressure sigmoid bias."""
         return self._p_eff_bias
 
+    @override
     def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
         """
         Validate input for sigmoidal model.
@@ -123,8 +124,8 @@ class SigmoidalPressureModel(BasePressureModel):
         ValueError
             If input format is invalid.
         """
-        if not isinstance(inp_arr, np.ndarray):
-            raise ValueError("Input must be numpy ndarray.")
+        if not isinstance(inp_arr, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+            raise ValueError("Input must be numpy ndarray.")  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
         if inp_arr.ndim != 2 or inp_arr.shape[1] != 3:
             raise ValueError(
                 "Input must be (n,3): [porosity, p_eff_in_situ, p_eff_depleted]"
@@ -173,6 +174,7 @@ class SigmoidalPressureModel(BasePressureModel):
             + self._p_eff_bias
         )
 
+    @override
     def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
         """
         Calculate absolute velocity for specified pressure case.
@@ -204,6 +206,7 @@ class SigmoidalPressureModel(BasePressureModel):
         # Calculate velocity from effective pressure and amplitude
         return self._sigmoid_p_eff(p_eff, velocity_amplitude)
 
+    @override
     def todict(self) -> dict[str, Any]:
         """Convert model to dictionary."""
         return {
@@ -218,8 +221,9 @@ class SigmoidalPressureModel(BasePressureModel):
             "description": self._description,
         }
 
+    @override
     @classmethod
-    def load(cls, file: str | bytes) -> "SigmoidalPressureModel":
+    def load(cls, file: str | bytes) -> Self:
         """Load sigmoidal model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)

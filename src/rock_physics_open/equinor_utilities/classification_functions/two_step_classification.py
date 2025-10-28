@@ -1,10 +1,24 @@
+import numpy as np
+import numpy.typing as npt
+
 from .class_stats import gen_class_stats
 from .mahal_class import mahal_class
 
 NULL_CLASS = 0
 
 
-def gen_two_step_class_stats(obs, class_val, thresh):
+def gen_two_step_class_stats(
+    obs: npt.NDArray[np.float64],
+    class_val: npt.NDArray[np.int64],
+    thresh: float,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.int64],
+    npt.NDArray[np.int64],
+    npt.NDArray[np.float64],
+]:
     """
     The observations are an n x m array, where n
     is the number of observations and m is the number of variables. With p

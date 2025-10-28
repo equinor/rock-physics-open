@@ -1,8 +1,13 @@
 import matplotlib.path as mplpath
 import numpy as np
+import numpy.typing as npt
 
 
-def poly_class(train_data, polygons, labels):
+def poly_class(
+    train_data: npt.NDArray[np.float64],
+    polygons: npt.NDArray[np.float64],
+    labels: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Points within the polygons are assigned to class labels. Point that do not
     fall within any polygon are set to NULL_CLASS.

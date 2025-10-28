@@ -920,6 +920,7 @@ dev = [
     { name = "pytest-cov" },
     { name = "ruff" },
     { name = "scipy-stubs" },
+    { name = "typing-extensions" },
 ]
 
 [package.metadata]
@@ -943,6 +944,7 @@ dev = [
     { name = "pytest-cov", specifier = ">=6.2.1" },
     { name = "ruff", specifier = ">=0.12.11" },
     { name = "scipy-stubs", specifier = ">=1.16.1.1" },
+    { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 
 [[package]]

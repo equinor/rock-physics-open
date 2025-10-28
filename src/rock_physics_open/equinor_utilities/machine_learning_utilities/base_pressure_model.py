@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pickle
 from abc import ABC, abstractmethod
 from typing import Any, Self
@@ -31,8 +29,8 @@ class BasePressureModel(ABC):
         description : str
             Human-readable description of the model instance.
         """
-        self._model_max_pressure = model_max_pressure
-        self._description = description
+        self._model_max_pressure: float | None = model_max_pressure
+        self._description: str = description
 
     @property
     def max_pressure(self) -> float | None:

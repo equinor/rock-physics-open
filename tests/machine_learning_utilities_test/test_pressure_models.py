@@ -14,8 +14,10 @@ pytest test_pressure_models.py -k "exponential"     # Run tests matching pattern
 
 import os
 import tempfile
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import pytest
 
 # Import all model classes
@@ -32,7 +34,7 @@ from rock_physics_open.equinor_utilities.machine_learning_utilities.sigmoidal_mo
 
 # Fixtures
 @pytest.fixture
-def exponential_model():
+def exponential_model() -> ExponentialPressureModel:
     """Create exponential model for testing."""
     return ExponentialPressureModel(
         a_factor=0.5,
@@ -43,7 +45,7 @@ def exponential_model():
 
 
 @pytest.fixture
-def polynomial_model():
+def polynomial_model() -> PolynomialPressureModel:
     """Create polynomial model for testing."""
     return PolynomialPressureModel(
         weights=[1.0, 2e-8, -1e-16],
@@ -53,7 +55,7 @@ def polynomial_model():
 
 
 @pytest.fixture
-def sigmoidal_model():
+def sigmoidal_model() -> SigmoidalPressureModel:
     """Create sigmoidal model for testing."""
     return SigmoidalPressureModel(
         phi_amplitude=1000.0,
@@ -69,7 +71,7 @@ def sigmoidal_model():
 
 
 @pytest.fixture
-def exp_poly_valid_input():
+def exp_poly_valid_input() -> npt.NDArray[np.float64]:
     """Valid input for exponential and polynomial models."""
     return np.array([[3000.0, 2e7, 1e7], [3200.0, 2.5e7, 1.2e7]])
 
@@ -82,7 +84,7 @@ def sigmoidal_valid_input():
 
 # Invalid data fixtures for error testing
 @pytest.fixture
-def invalid_input_data():
+def invalid_input_data() -> dict[str, Any]:
     """Provide various invalid input formats for testing."""
     rng = np.random.default_rng(42)
     return {
@@ -97,19 +99,27 @@ def invalid_input_data():
 class TestExponentialPressureModel:
     """Test cases for ExponentialPressureModel."""
 
-    def test_initialization(self, exponential_model):
+    def test_initialization(self, exponential_model: ExponentialPressureModel):
         """Test model initialization."""
         assert exponential_model.a_factor == 0.5
         assert exponential_model.b_factor == 1e7
         assert exponential_model.max_pressure == 5e7
         assert exponential_model.description == "Test exponential model"
 
-    def test_validate_input_valid(self, exponential_model, exp_poly_valid_input):
+    def test_validate_input_valid(
+        self,
+        exponential_model: ExponentialPressureModel,
+        exp_poly_valid_input: npt.NDArray[np.float64],
+    ):
         """Test input validation with valid data."""
         result = exponential_model.validate_input(exp_poly_valid_input)
         np.testing.assert_array_equal(result, exp_poly_valid_input)
 
-    def test_validate_input_invalid(self, exponential_model, invalid_input_data):
+    def test_validate_input_invalid(
+        self,
+        exponential_model: ExponentialPressureModel,
+        invalid_input_data: dict[str, Any],
+    ):
         """Test validation with invalid input formats."""
         test_cases = [
             ("wrong_type", "Input must be numpy ndarray."),
@@ -123,38 +133,53 @@ class TestExponentialPressureModel:
                 continue  # Skip cases where we don't expect an error
 
             with pytest.raises(ValueError, match=expected_error):
-                exponential_model.validate_input(invalid_input_data[case_name])
+                _ = exponential_model.validate_input(invalid_input_data[case_name])
 
     @pytest.mark.parametrize("case", ["in_situ", "depleted"])
-    def test_predict_abs(self, exponential_model, exp_poly_valid_input, case):
+    def test_predict_abs(
+        self,
+        exponential_model: ExponentialPressureModel,
+        exp_poly_valid_input: npt.NDArray[np.float64],
+        case: str,
+    ):
         """Test absolute prediction for different cases."""
         result = exponential_model.predict_abs(exp_poly_valid_input, case=case)
         assert len(result) == 2
         assert np.all(result > 0)
 
-    def test_predict_differential(self, exponential_model, exp_poly_valid_input):
+    def test_predict_differential(
+        self,
+        exponential_model: ExponentialPressureModel,
+        exp_poly_valid_input: npt.NDArray[np.float64],
+    ):
         """Test differential prediction."""
         result = exponential_model.predict(exp_poly_valid_input)
         assert len(result) == 2
 
-    def test_predict_max(self, exponential_model, exp_poly_valid_input):
+    def test_predict_max(
+        self,
+        exponential_model: ExponentialPressureModel,
+        exp_poly_valid_input: npt.NDArray[np.float64],
+    ):
         """Test prediction with max pressure."""
         result = exponential_model.predict_max(exp_poly_valid_input)
         assert len(result) == 2
 
-    def test_predict_max_no_max_pressure(self, exp_poly_valid_input):
+    def test_predict_max_no_max_pressure(
+        self, exp_poly_valid_input: npt.NDArray[np.float64]
+    ):
         """Test predict_max without max_pressure set."""
         model_no_max = ExponentialPressureModel(0.5, 1e7)
         with pytest.raises(ValueError, match='Field "model_max_pressure" is not set'):
-            model_no_max.predict_max(exp_poly_valid_input)
+            _ = model_no_max.predict_max(exp_poly_valid_input)
 
-    def test_todict(self, exponential_model):
+    def test_todict(self, exponential_model: ExponentialPressureModel):
         """Test dictionary conversion."""
         result = exponential_model.todict()
         expected_keys = {"a_factor", "b_factor", "model_max_pressure", "description"}
         assert set(result.keys()) == expected_keys
 
-    def test_save_load(self, exponential_model):
+    def test_save_load(self, exponential_model: ExponentialPressureModel):
         """Test save and load functionality."""
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pkl") as tmp:
             tmp_path = tmp.name
@@ -174,17 +199,23 @@ class TestExponentialPressureModel:
 class TestPolynomialPressureModel:
     """Test cases for PolynomialPressureModel."""
 
-    def test_initialization(self, polynomial_model):
+    def test_initialization(self, polynomial_model: PolynomialPressureModel):
         """Test model initialization."""
         assert polynomial_model.weights == [1.0, 2e-8, -1e-16]
 
-    def test_predict_abs_no_weights(self, exp_poly_valid_input):
+    def test_predict_abs_no_weights(
+        self, exp_poly_valid_input: npt.NDArray[np.float64]
+    ):
         """Test prediction with empty weights."""
         model_no_weights = PolynomialPressureModel([])
         with pytest.raises(ValueError, match='Field "weights" is not set'):
-            model_no_weights.predict_abs(exp_poly_valid_input)
+            _ = model_no_weights.predict_abs(exp_poly_valid_input)
 
-    def test_predict_abs(self, polynomial_model, exp_poly_valid_input):
+    def test_predict_abs(
+        self,
+        polynomial_model: PolynomialPressureModel,
+        exp_poly_valid_input: npt.NDArray[np.float64],
+    ):
         """Test absolute prediction."""
         result = polynomial_model.predict_abs(exp_poly_valid_input, case="in_situ")
         assert len(result) == 2
@@ -195,23 +226,27 @@ class TestPolynomialPressureModel:
 class TestSigmoidalPressureModel:
     """Test cases for SigmoidalPressureModel."""
 
-    def test_properties(self, sigmoidal_model):
+    def test_properties(self, sigmoidal_model: SigmoidalPressureModel):
         """Test model properties."""
         assert sigmoidal_model.phi_amplitude == 1000.0
         assert sigmoidal_model.phi_median_point == 0.2
         assert sigmoidal_model.p_eff_median_point == 1.5e7
 
-    def test_predict_abs(self, sigmoidal_model, sigmoidal_valid_input):
+    def test_predict_abs(
+        self,
+        sigmoidal_model: SigmoidalPressureModel,
+        sigmoidal_valid_input: npt.NDArray[np.float64],
+    ):
         """Test absolute prediction."""
         result = sigmoidal_model.predict_abs(sigmoidal_valid_input, case="in_situ")
         assert len(result) == 2
         assert np.all(result > 0)
 
-    def test_input_validation(self, sigmoidal_model):
+    def test_input_validation(self, sigmoidal_model: SigmoidalPressureModel):
         """Test input validation with wrong format."""
         invalid_input = np.array([[0.2, 2e7]])  # Missing column
         with pytest.raises(ValueError, match="Input must be \\(n,3\\)"):
-            sigmoidal_model.validate_input(invalid_input)
+            _ = sigmoidal_model.validate_input(invalid_input)
 
 
 # Integration Tests
@@ -229,7 +264,9 @@ class TestModelIntegration:
             ("sigmoidal_model", "sigmoidal_valid_input"),
         ],
     )
-    def test_all_models_predict_interface(self, request, model_fixture, input_fixture):
+    def test_all_models_predict_interface(
+        self, request: pytest.FixtureRequest, model_fixture: str, input_fixture: str
+    ):
         """Test that all models implement the required interface."""
         model = request.getfixturevalue(model_fixture)
         test_input = request.getfixturevalue(input_fixture)
@@ -251,7 +288,10 @@ class TestModelIntegration:
         assert len(result_max) == len(test_input)
 
     def test_model_serialization_consistency(
-        self, exponential_model, polynomial_model, sigmoidal_model
+        self,
+        exponential_model: ExponentialPressureModel,
+        polynomial_model: PolynomialPressureModel,
+        sigmoidal_model: SigmoidalPressureModel,
     ):
         """Test that all models can be serialized and deserialized consistently."""
         models = [exponential_model, polynomial_model, sigmoidal_model]
@@ -285,7 +325,9 @@ class TestModelPerformance:
     """Performance and stress tests."""
 
     @pytest.mark.parametrize("n_samples", [100, 1000, 10000])
-    def test_exponential_model_performance(self, exponential_model, n_samples):
+    def test_exponential_model_performance(
+        self, exponential_model: ExponentialPressureModel, n_samples: int
+    ):
         """Test exponential model performance with different data sizes."""
         # Generate test data
         rng = np.random.default_rng(42)
@@ -299,7 +341,7 @@ class TestModelPerformance:
         assert len(result) == n_samples
         assert np.all(np.isfinite(result))
 
-    def test_memory_usage(self, exponential_model):
+    def test_memory_usage(self, exponential_model: ExponentialPressureModel):
         """Test that models don't leak memory with repeated calls."""
         # Create moderate size dataset
         n_samples = 10000

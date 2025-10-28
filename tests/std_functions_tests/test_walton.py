@@ -8,7 +8,7 @@ class TestWalton:
         k = np.ones(11) * 36.8e9
         mu = np.ones(11) * 44.0e9
         phi = np.linspace(0.1, 0.36, 11)
-        p_eff = 15.0e6
+        p_eff = np.ones(11) * 15.0e6
         k_dry, mu_dry = walton_smooth(k, mu, phi, p_eff)
         k_dry_ref = np.array(
             [
@@ -47,7 +47,7 @@ class TestWalton:
         k = np.ones(11) * 36.8e9
         mu = np.ones(11) * 44.0e9
         phi = np.linspace(0.1, 0.36, 11)
-        p_eff = 15.0e6
+        p_eff = np.ones(11) * 15.0e6
         n = 8.5
         k_dry, mu_dry = walton_smooth(k, mu, phi, p_eff, coord=n)
         k_dry_ref = np.array(
