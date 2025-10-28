@@ -183,15 +183,15 @@ def _make_mesh(ax):
     # Tick mark text
     xy1 = _ternary_coord_trans(1 - i, i, np.zeros(len(i)))
     for j in range(len(i)):
-        text_handles.append(ax.text(xy1[j, 0], xy1[j, 1] - 0.025, "%.1f" % (i[j])))
+        text_handles.append(ax.text(xy1[j, 0], xy1[j, 1] - 0.025, "%.1f" % (i[j, 0])))
     xy1 = _ternary_coord_trans(i, np.zeros(len(i)), 1 - i)
     for j in range(len(i)):
         text_handles.append(
-            ax.text(xy1[j, 0] - 0.05, xy1[j, 1] + 0.025, "%.1f" % (i[j]))
+            ax.text(xy1[j, 0] - 0.05, xy1[j, 1] + 0.025, "%.1f" % (i[j, 0]))
         )
     xy1 = _ternary_coord_trans(np.zeros(len(i)), 1 - i, i)
     for j in range(len(i)):
-        text_handles.append(ax.text(xy1[j, 0], xy1[j, 1] + 0.025, "%.1f" % (i[j])))
+        text_handles.append(ax.text(xy1[j, 0], xy1[j, 1] + 0.025, "%.1f" % (i[j, 0])))
     plt.setp(text_handles, fontsize=10)
 
     return text_handles, line_handles
