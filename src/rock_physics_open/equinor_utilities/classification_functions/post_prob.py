@@ -1,9 +1,10 @@
 import numpy as np
+import numpy.typing as npt
 
-NULL_CLASS = 0
 
-
-def posterior_probability(min_dist, dist):
+def posterior_probability(
+    min_dist: npt.NDArray[np.float64], dist: npt.NDArray[np.float64]
+) -> npt.NDArray[np.float64]:
     """
     Posterior probability, which is defined as the exponential of minimum distance divided by the sum of the
     exponentials of distance to all classes.

@@ -17,7 +17,7 @@ class TestGassmann:
         return k_brine, phie, k_min, k_dry, k_oil
 
     def test_gassmann(self):
-        k_brine, phie, k_min, k_dry, k_oil = self.setup_gassmann()
+        k_brine, phie, k_min, k_dry, _ = self.setup_gassmann()
         k_sat = gassmann(k_dry, phie, k_brine, k_min)
         ksat_ref = np.array([36.6, 17.6473742, 29.4012504])
         np.testing.assert_almost_equal(k_sat / 1.0e9, ksat_ref)
@@ -30,7 +30,7 @@ class TestGassmann:
         np.testing.assert_almost_equal(k_sat2 / 1.0e9, ksat2_ref)
 
     def test_gassmann_dry(self):
-        k_brine, phie, k_min, k_dry, k_oil = self.setup_gassmann()
+        k_brine, phie, k_min, k_dry, _ = self.setup_gassmann()
         k_sat = gassmann(k_dry, phie, k_brine, k_min)
         k_dry2 = gassmann_dry(k_sat, phie, k_brine, k_min)
         k_dry2_ref = np.array([36.6e9, 15.0e9, 28.0e9]) / 1e9

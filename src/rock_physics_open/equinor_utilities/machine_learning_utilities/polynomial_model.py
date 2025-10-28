@@ -1,13 +1,13 @@
-from __future__ import annotations
-
 import pickle
-from typing import Any
+from typing import Any, Self, final
 
 import numpy as np
+from typing_extensions import override
 
 from .base_pressure_model import BasePressureModel
 
 
+@final
 class PolynomialPressureModel(BasePressureModel):
     """
     Polynomial pressure sensitivity model for velocity prediction.
@@ -45,6 +45,7 @@ class PolynomialPressureModel(BasePressureModel):
         """Polynomial coefficients."""
         return self._weights
 
+    @override
     def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
         """
         Validate input for polynomial model.
@@ -64,14 +65,15 @@ class PolynomialPressureModel(BasePressureModel):
         ValueError
             If input format is invalid.
         """
-        if not isinstance(inp_arr, np.ndarray):
-            raise ValueError("Input must be numpy ndarray.")
+        if not isinstance(inp_arr, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+            raise ValueError("Input must be numpy ndarray.")  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
         if inp_arr.ndim != 2 or inp_arr.shape[1] != 3:
             raise ValueError(
                 "Input must be (n,3): [velocity, p_eff_in_situ, p_eff_depleted]"
             )
         return inp_arr
 
+    @override
     def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
         """
         Calculate absolute velocity for specified pressure case.
@@ -107,6 +109,7 @@ class PolynomialPressureModel(BasePressureModel):
         # Calculate velocity using polynomial pressure correction
         return vel * polynomial_expr(p_eff) / polynomial_expr(p_in_situ)
 
+    @override
     def todict(self) -> dict[str, Any]:
         """Convert model to dictionary."""
         return {
@@ -115,8 +118,9 @@ class PolynomialPressureModel(BasePressureModel):
             "description": self._description,
         }
 
+    @override
     @classmethod
-    def load(cls, file: str | bytes) -> "PolynomialPressureModel":
+    def load(cls, file: str | bytes) -> Self:
         """Load polynomial model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)

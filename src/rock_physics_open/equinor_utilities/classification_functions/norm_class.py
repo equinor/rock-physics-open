@@ -1,9 +1,17 @@
 import numpy as np
+import numpy.typing as npt
 
 NULL_CLASS = 0
 
 
-def norm_class(obs, class_mean, class_cov, prior_prob, class_id, thresh=np.inf):
+def norm_class(
+    obs: npt.NDArray[np.float64],
+    class_mean: npt.NDArray[np.float64],
+    class_cov: npt.NDArray[np.float64],
+    prior_prob: npt.NDArray[np.float64],
+    class_id: npt.NDArray[np.int64],
+    thresh: float = np.inf,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Normal distribution classification routine. All data points are assigned a
     class, unless a threshold is set. The "dist" calculated here is the quadratic

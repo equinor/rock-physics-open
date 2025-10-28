@@ -1,10 +1,12 @@
 import inspect
 import math
 import re
+from typing import Any
 from warnings import warn
 
 import numpy as np
-from pandas import DataFrame
+import numpy.typing as npt
+import pandas as pd
 
 from rock_physics_open.equinor_utilities.various_utilities import disp_result_stats
 
@@ -12,9 +14,10 @@ from .snapshots import get_snapshot_name
 
 
 def compare_snapshots(
-    test_results: np.ndarray | tuple | DataFrame,
-    saved_results: tuple,
-    name_arr=None,
+    test_results: tuple[npt.NDArray[np.float64] | pd.DataFrame]
+    | tuple[npt.NDArray[np.float64] | pd.DataFrame],
+    saved_results: tuple[npt.NDArray[np.float64] | pd.DataFrame],
+    name_arr: list[str] | None = None,
     display_results: bool = False,
 ) -> bool:
     test_results = _validate_input(test_results, saved_results)
@@ -49,67 +52,85 @@ def compare_snapshots(
             log_file = re.sub("npz", "log", get_snapshot_name(step=2))
 
             with open(log_file, open_mode) as file:
-                file.write(
-                    f"Test function: "
-                    f"{get_snapshot_name(include_extension=False, include_snapshot_dir=False, include_filename=False)} \n"
+                _ = file.write(
+                    f"Test function: {get_snapshot_name(include_extension=False, include_snapshot_dir=False, include_filename=False)} \n"
                 )
                 if name_arr:
-                    file.write(f"Test variable: {name_arr[i]} \n")
+                    _ = file.write(f"Test variable: {name_arr[i]} \n")
                 else:
-                    file.write(f"Test variable number: {i} \n")
+                    _ = file.write(f"Test variable number: {i} \n")
 
                 for line in str(error).splitlines():
                     mismatched_elements_index = (
                         line.replace(" ", "").lower().find("mismatchedelements")
                     )
                     if mismatched_elements_index != -1:
-                        file.write(line + "\n")
+                        _ = file.write(line + "\n")
                         continue
 
                     max_abs_diff_index = (
                         line.replace(" ", "").lower().find("maxabsolutedifference")
                     )
                     if max_abs_diff_index != -1:
-                        file.write(line + "\n")
+                        _ = file.write(line + "\n")
                         continue
 
                     max_rel_diff_index = (
                         line.replace(" ", "").lower().find("maxrelativedifference")
                     )
                     if max_rel_diff_index != -1:
-                        file.write(line + "\n")
+                        _ = file.write(line + "\n")
                         continue
 
                     reg_index = re.search(r"differ", line)
 
                     if reg_index:
-                        if isinstance(test_item, np.ndarray):
+                        if isinstance(test_item, np.ndarray) and isinstance(
+                            saved_item, np.ndarray
+                        ):
                             differences, num_nans = _compare_ndarray(
-                                saved_item, test_item, equal_nan, r_tol
+                                saved_array=saved_item,
+                                test_array=test_item,
+                                eq_nan=equal_nan,
+                                rel_tol=r_tol,
                             )
-                        elif isinstance(test_results, DataFrame):
+                        elif isinstance(test_item, pd.DataFrame) and isinstance(
+                            saved_item, pd.DataFrame
+                        ):
                             differences, num_nans = _compare_df(
-                                saved_item, test_item, equal_nan, r_tol
+                                saved_results=saved_item,
+                                test_results=test_item,
+                                equal_nan=equal_nan,
+                                r_tol=r_tol,
                             )
-                        file.write("Number of NaN elements: " + str(num_nans) + "\n")
-                        file.write("Index:\t\tSaved:\t\tGenerated:\n")
+                        else:
+                            raise TypeError(
+                                f"Unsupported data type for comparison: {type(test_item)}"
+                            )
+                        _ = file.write(
+                            "Number of NaN elements: " + str(num_nans) + "\n"
+                        )
+                        _ = file.write("Index:\t\tSaved:\t\tGenerated:\n")
 
                         # Write test results and saved results differences to file
                         if len(differences) > 0:
                             tab = "\t"
                             for difference in differences:
-                                file.write(
+                                _ = file.write(
                                     f"{tab}[{difference[0]:4}]=> {difference[1]:.8g} != {difference[2]:.8g}\n"
                                 )
-                            file.write(f"{'_' * 40}\n")
+                            _ = file.write(f"{'_' * 40}\n")
     return no_difference_found
 
 
 def _compare_ndarray(
-    saved_array: np.ndarray, test_array: np.ndarray, eq_nan: bool, rel_tol: float
-) -> (list, int):
+    saved_array: npt.NDArray[np.float64],
+    test_array: npt.NDArray[np.float64],
+    eq_nan: bool,
+    rel_tol: float,
+) -> tuple[list[list[Any]], int]:
     differ_indexes = np.where(saved_array != test_array)[0]
-    differences = []
+    differences: list[list[Any]] = []
     num_nans = 0
 
     for index in differ_indexes:
@@ -126,26 +147,35 @@ def _compare_ndarray(
     return differences, num_nans
 
 
-def _compare_df(saved_results, test_results, equal_nan, r_tol):
+def _compare_df(
+    saved_results: pd.DataFrame,
+    test_results: pd.DataFrame,
+    equal_nan: bool,
+    r_tol: float,
+) -> tuple[list[list[Any]], int]:
     return _compare_ndarray(
-        saved_results.to_numpy().flatten(),
-        test_results.to_numpy().flatten(),
-        equal_nan,
-        r_tol,
+        saved_array=saved_results.to_numpy().flatten(),
+        test_array=test_results.to_numpy().flatten(),
+        eq_nan=equal_nan,
+        rel_tol=r_tol,
     )
 
 
-def _validate_input(test_obj, saved_obj: tuple) -> tuple:
+def _validate_input(
+    test_obj: tuple[npt.NDArray[np.float64] | pd.DataFrame]
+    | npt.NDArray[np.float64]
+    | pd.DataFrame,
+    saved_obj: tuple[npt.NDArray[np.float64] | pd.DataFrame],
+) -> tuple[npt.NDArray[np.float64] | pd.DataFrame]:
     # Check for compatibility of test results and stored data
-    if isinstance(test_obj, (np.ndarray, DataFrame)):
+    if isinstance(test_obj, (np.ndarray, pd.DataFrame)):
         return_test_obj = (test_obj,)
     else:
         return_test_obj = test_obj
-    if isinstance(return_test_obj, (tuple, list)):
+    if isinstance(return_test_obj, (tuple, list)):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
         if len(saved_obj) != len(return_test_obj):
             raise ValueError(
-                f"unable to compare snapshots, different number of saved: ({len(saved_obj)})"
-                f"  and generated results ({len(test_obj)})"
+                f"unable to compare snapshots, different number of saved: ({len(saved_obj)}) and generated results ({len(test_obj)})"
             )
     else:
         raise ValueError(

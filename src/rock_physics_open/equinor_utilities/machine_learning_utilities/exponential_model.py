@@ -1,13 +1,13 @@
-from __future__ import annotations
-
 import pickle
-from typing import Any
+from typing import Any, Self, final
 
 import numpy as np
+from typing_extensions import override
 
 from .base_pressure_model import BasePressureModel
 
 
+@final
 class ExponentialPressureModel(BasePressureModel):
     """
     Exponential pressure sensitivity model for velocity prediction.
@@ -53,6 +53,7 @@ class ExponentialPressureModel(BasePressureModel):
         """Exponential decay factor."""
         return self._b_factor
 
+    @override
     def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
         """
         Validate input for exponential model.
@@ -72,14 +73,15 @@ class ExponentialPressureModel(BasePressureModel):
         ValueError
             If input format is invalid.
         """
-        if not isinstance(inp_arr, np.ndarray):
-            raise ValueError("Input must be numpy ndarray.")
+        if not isinstance(inp_arr, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+            raise ValueError("Input must be numpy ndarray.")  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
         if inp_arr.ndim != 2 or inp_arr.shape[1] != 3:
             raise ValueError(
                 "Input must be (n,3): [velocity, p_eff_in_situ, p_eff_depleted]"
             )
         return inp_arr
 
+    @override
     def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
         """
         Calculate absolute velocity for specified pressure case.
@@ -110,6 +112,7 @@ class ExponentialPressureModel(BasePressureModel):
             / (1.0 - self._a_factor * np.exp(-p_in_situ / self._b_factor))
         )
 
+    @override
     def todict(self) -> dict[str, Any]:
         """Convert model to dictionary."""
         return {
@@ -119,8 +122,9 @@ class ExponentialPressureModel(BasePressureModel):
             "description": self._description,
         }
 
+    @override
     @classmethod
-    def load(cls, file: str | bytes) -> "ExponentialPressureModel":
+    def load(cls, file: str | bytes) -> Self:
         """Load exponential model from pickle file."""
         with open(file, "rb") as f_in:
             d = pickle.load(f_in)

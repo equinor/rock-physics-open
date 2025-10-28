@@ -1,4 +1,7 @@
+from typing import cast
+
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities import gen_utilities
 
@@ -10,8 +13,20 @@ from rock_physics_open.equinor_utilities import gen_utilities
 	"""
 
 
-def c_ij_2_c_factors(cij):
-    """Transform a single stifness tensor into components. VTI medium is assumed
+def c_ij_2_c_factors(
+    cij: npt.NDArray[np.float64],
+) -> (
+    tuple[
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+    ]
+    | None
+):
+    """Transform a single stiffness tensor into components. VTI medium is assumed
 
     Parameters
     ----------
@@ -23,11 +38,11 @@ def c_ij_2_c_factors(cij):
     tuple
             (c11, c12, c13, c33, c44, c66).
     """
-    if not isinstance(cij, np.ndarray):
-        try:
-            cij = np.array(cij, dtype=float)
+    if not isinstance(cij, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance]
+        try:  # pyright: ignore[reportUnreachable]
+            cij = np.array(cij, dtype=float)  # pyright: ignore[reportUnreachable]
         except ValueError:
-            print("Input data can't be transformed into a NumPy array")
+            print("Input data can't be transformed into a NumPy array")  # pyright: ignore[reportUnreachable]
     try:
         num_samp = int(cij.size / 36)
         cij = cij.reshape((6, 6, num_samp))
@@ -43,7 +58,14 @@ def c_ij_2_c_factors(cij):
         print("Input data is not a 6x6xN array")
 
 
-def cfactors2cij(c11, c12, c13, c33, c44, c66):
+def cfactors2cij(
+    c11: npt.NDArray[np.float64],
+    c12: npt.NDArray[np.float64],
+    c13: npt.NDArray[np.float64],
+    c33: npt.NDArray[np.float64],
+    c44: npt.NDArray[np.float64],
+    c66: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """Transform individual stiffness factors to stiffness tensor 6x6x(number of samples).
 
     Parameters
@@ -54,10 +76,11 @@ def cfactors2cij(c11, c12, c13, c33, c44, c66):
     Returns
     -------
     np.ndarray
-            A 6xx6x(number of samples) stifness teensor.
+            A 6x6x(number of samples) stiffness tensor.
     """
-    c11, c12, c13, c33, c44, c66 = gen_utilities.dim_check_vector(
-        (c11, c12, c13, c33, c44, c66)
+    c11, c12, c13, c33, c44, c66 = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector((c11, c12, c13, c33, c44, c66)),
     )
 
     num_samp = c11.shape[1]
@@ -79,7 +102,18 @@ def cfactors2cij(c11, c12, c13, c33, c44, c66):
     return cij
 
 
-def c_ij_2_thomsen(c, rho):
+def c_ij_2_thomsen(
+    c: npt.NDArray[np.float64], rho: npt.NDArray[np.float64]
+) -> (
+    tuple[
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+        npt.NDArray[np.float64],
+    ]
+    | None
+):
     """Thomsen parameter for weak anisotropy.
 
     Parameters
@@ -95,11 +129,11 @@ def c_ij_2_thomsen(c, rho):
             alpha, beta, gamma, delta, epsilon.
     """
     # C matrix should be 6x6
-    if not isinstance(c, np.ndarray):
-        try:
-            c = np.array(c, dtype=float)
+    if not isinstance(c, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance]
+        try:  # pyright: ignore[reportUnreachable]
+            c = np.array(c, dtype=float)  # pyright: ignore[reportUnreachable]
         except ValueError:
-            print("Input data can't be transformed into a NumPy array")
+            print("Input data can't be transformed into a NumPy array")  # pyright: ignore[reportUnreachable]
     try:
         num_samp = int(c.size / 36)
         c = c.reshape((6, 6, num_samp))
@@ -118,9 +152,23 @@ def c_ij_2_thomsen(c, rho):
         print("Input data is not a 6x6xN array")
 
 
-def thomsen_2_c_ij(alpha, beta, gamma, delta, epsilon, rho):
+def thomsen_2_c_ij(
+    alpha: npt.NDArray[np.float64],
+    beta: npt.NDArray[np.float64],
+    gamma: npt.NDArray[np.float64],
+    delta: npt.NDArray[np.float64],
+    epsilon: npt.NDArray[np.float64],
+    rho: npt.NDArray[np.float64],
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """Elastic stiffness. Assumptions:
-            Thomsen's parameters apply for weak anisotropy in a transversly isotropic medium:
+            Thomsen's parameters apply for weak anisotropy in a transversely isotropic medium:
 
             c11 c12 c13  0   0   0
 
@@ -148,8 +196,9 @@ def thomsen_2_c_ij(alpha, beta, gamma, delta, epsilon, rho):
     tuple
             Elastic stiffness c11, c12, c13, c33, c44, c66.
     """
-    alpha, beta, gamma, delta, epsilon = gen_utilities.dim_check_vector(
-        (alpha, beta, gamma, delta, epsilon)
+    alpha, beta, gamma, delta, epsilon = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector((alpha, beta, gamma, delta, epsilon)),
     )
 
     c33 = rho * alpha**2

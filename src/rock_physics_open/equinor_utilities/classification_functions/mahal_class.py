@@ -1,11 +1,18 @@
 import numpy as np
+import numpy.typing as npt
 
 from .post_prob import posterior_probability
 
 NULL_CLASS = 0
 
 
-def mahal_class(obs, class_mean, class_cov, class_id, thresh=np.inf):
+def mahal_class(
+    obs: npt.NDArray[np.float64],
+    class_mean: npt.NDArray[np.float64],
+    class_cov: npt.NDArray[np.float64],
+    class_id: npt.NDArray[np.int64],
+    thresh: float = np.inf,
+):
     """
     Mahalanobis classification routine. All data points are assigned a class, unless a threshold is set
 

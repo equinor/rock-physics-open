@@ -79,6 +79,7 @@ dev = [
     "pytest-cov>=6.2.1",
     "ruff>=0.12.11",
     "scipy-stubs>=1.16.1.1",
+    "typing-extensions>=4.15.0",
 ]
 
 [tool.ruff]
@@ -119,9 +120,7 @@ addopts = ["--color=yes", "--strict-markers"]
 pythonVersion = "3.11"
 include = [
     # Currently only enabling on general utilities and the corresponding tests
-    "src/rock_physics_open/equinor_utilities/gen_utilities/*.py",
-    "src/rock_physics_open/equinor_utilities/various_utilities/*.py",
-    "src/rock_physics_open/equinor_utilities/std_functions/*.py",
+    "src/rock_physics_open/equinor_utilities/**/*.py",
     "tests/gen_utilities_tests/*.py",
 ]
 exclude = ["src/**/version.py"]

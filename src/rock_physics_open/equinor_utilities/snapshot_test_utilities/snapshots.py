@@ -1,7 +1,9 @@
 import inspect
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 INITIATE = False
 
@@ -39,7 +41,7 @@ def get_snapshot_name(
     include_filename: bool = True,
     include_function_name: bool = True,
     include_extension: bool = True,
-    include_snapshot_dir=True,
+    include_snapshot_dir: bool = True,
 ) -> str:
     """
     Parameters
@@ -87,7 +89,7 @@ def store_snapshot(snapshot_name: str, *args: np.ndarray) -> bool:
     return True
 
 
-def read_snapshot(snapshot_name: str) -> tuple:
+def read_snapshot(snapshot_name: str) -> tuple[npt.NDArray[Any], ...]:
     try:
         with np.load(snapshot_name) as stored_npz:
             return tuple(stored_npz[arr_name] for arr_name in stored_npz.files)

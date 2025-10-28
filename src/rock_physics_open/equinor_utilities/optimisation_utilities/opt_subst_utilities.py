@@ -1,14 +1,24 @@
 import os
 import pickle
-
-# from scipy.optimize import minimize, Bounds
 import sys
+from pathlib import Path
+from typing import Any, Callable, Literal, cast
 
 import numpy as np
+import numpy.typing as npt
 from scipy.optimize import curve_fit
 
+OptCallable = Callable[[npt.NDArray[np.float64]], npt.NDArray[np.float64]]
 
-def curve_fit_wrapper(x_init, opt_func, x_data, y_data, *args, **opt_kwargs):
+
+def curve_fit_wrapper(
+    x_init: npt.NDArray[np.float64],
+    opt_func: OptCallable,
+    x_data: npt.NDArray[np.float64],
+    y_data: npt.NDArray[np.float64],
+    *args: Any,
+    **opt_kwargs: Any,
+) -> npt.NDArray[np.float64]:
     """Use in tests with scipy.optimize.minimize instead of curve_fit.
 
     Parameters
@@ -36,8 +46,14 @@ def curve_fit_wrapper(x_init, opt_func, x_data, y_data, *args, **opt_kwargs):
 
 
 def gen_opt_routine(
-    opt_function, x_data_orig, y_data, x_init, low_bound, high_bound, **opt_kwargs
-):
+    opt_function: OptCallable,
+    x_data_orig: npt.NDArray[np.float64],
+    y_data: npt.NDArray[np.float64],
+    x_init: npt.NDArray[np.float64],
+    low_bound: npt.NDArray[np.float64],
+    high_bound: npt.NDArray[np.float64],
+    **opt_kwargs: Any,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     This function is a lean method for running optimisation with the given opt_function in curve_fit. Predicted values,
     residuals to the observed values and optimal parameters are returned.
@@ -68,15 +84,18 @@ def gen_opt_routine(
         opt_params : optimal model parameters.
     """
     try:
-        opt_params, param_cov = curve_fit(
-            opt_function,
-            x_data_orig,
-            y_data.flatten("F"),
-            x_init,
-            bounds=(low_bound, high_bound),
-            method="trf",
-            loss="soft_l1",
-            **opt_kwargs,
+        opt_params, _ = cast(
+            tuple[npt.NDArray[np.float64], Any],
+            curve_fit(
+                opt_function,
+                x_data_orig,
+                y_data.flatten("F"),
+                x_init,
+                bounds=(low_bound, high_bound),
+                method="trf",
+                loss="soft_l1",
+                **opt_kwargs,
+            ),
         )
 
     except ValueError:
@@ -101,7 +120,12 @@ def gen_opt_routine(
         return y_pred, y_res, opt_params
 
 
-def gen_mod_routine(opt_function, xdata_orig, ydata_shape, opt_params):
+def gen_mod_routine(
+    opt_function: OptCallable,
+    xdata_orig: npt.NDArray[np.float64],
+    ydata_shape: tuple[int, int],
+    opt_params: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """Predict modelled values based on an earlier optimisation run for optimal model parameters.
 
     Parameters
@@ -124,7 +148,13 @@ def gen_mod_routine(opt_function, xdata_orig, ydata_shape, opt_params):
     return np.reshape(opt_function(xdata_orig, *opt_params), ydata_shape, order="F")
 
 
-def gen_sub_routine(opt_function, xdata_orig, xdata_new, ydata, opt_params):
+def gen_sub_routine(
+    opt_function: OptCallable,
+    xdata_orig: npt.NDArray[np.float64],
+    xdata_new: npt.NDArray[np.float64],
+    ydata: npt.NDArray[np.float64],
+    opt_params: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """General substitution function based on a calibrated/optimised model and with two sets of input parameters.
     The substituted values are calculated as the original observations plus the difference of the two modelling
     steps.
@@ -325,8 +355,12 @@ def load_opt_params(file_name: str):
 
 
 def opt_param_to_ascii(
-    in_file, display_results=True, out_file=None, well_name="Unknown well", **kwargs
-):
+    in_file: str | Path,
+    display_results: bool = True,
+    out_file: str | Path | None = None,
+    well_name: str = "Unknown well",
+    **kwargs: Any,
+) -> None:
     """Utility to convert stored optimised parameters to ascii and display results or save to file.
 
     Parameters
@@ -351,8 +385,8 @@ def opt_param_to_ascii(
             type_translation_dict,
         ) = opt_param_info()
 
-        item = []
-        value = []
+        item: list[str] = []
+        value: list[str] = []
         disp_string = ""
         for opt_key, opt_value in param_dict.items():
             if opt_key in parameter_translation_dict:
@@ -378,15 +412,21 @@ def opt_param_to_ascii(
             from tkinter import END, Entry, Tk
 
             class Table:
-                def __init__(self, tk_root, no_rows, no_cols, info):
+                def __init__(
+                    self,
+                    tk_root: Tk,
+                    no_rows: int,
+                    no_cols: int,
+                    info: npt.NDArray[Any],
+                ):
                     # code for creating table
                     str_len = np.vectorize(len)
-                    text_justify = ["right", "left"]
+                    text_justify: list[Literal["right", "left"]] = ["right", "left"]
                     for i in range(no_rows):
                         for j in range(no_cols):
                             just = text_justify[0] if j == 0 else text_justify[1]
                             max_len = np.max(str_len(info[:, j]))
-                            self.e = Entry(
+                            self.e: Entry = Entry(
                                 root,
                                 width=max_len + 2,
                                 fg="black",
@@ -404,12 +444,12 @@ def opt_param_to_ascii(
             if sys.platform.startswith("win"):
                 ico_file = os.path.join(os.path.dirname(__file__), "Equinor_logo.ico")
                 root.iconbitmap(ico_file)
-            Table(root, info_array.shape[0], info_array.shape[1], info_array)
-            root.attributes("-topmost", True)
+            _ = Table(root, info_array.shape[0], info_array.shape[1], info_array)
+            _ = root.attributes("-topmost", True)
             root.mainloop()
 
         if out_file is not None:
             with open(out_file, "w") as f_out:
-                f_out.write(disp_string)
+                _ = f_out.write(disp_string)
 
         return
