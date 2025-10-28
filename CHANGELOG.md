@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.1](https://github.com/equinor/rock-physics-open/compare/v0.3.0...v0.3.1) (2025-10-28)
+
+
+### Bug Fixes
+
+* Add static typing to std_functions and various_utilities ([1ed5353](https://github.com/equinor/rock-physics-open/commit/1ed5353d0886e0d7625ae1e998535bd5c78b9e31))
+* catch cases with non-consistent input lengths ([7843c8e](https://github.com/equinor/rock-physics-open/commit/7843c8ed3e9d4144bbe7079d314af20c087d48be))
+* make proper reference to cell in numpy array with ndim &gt; 0 ([0abca8f](https://github.com/equinor/rock-physics-open/commit/0abca8fcb82a5d35a990857d4ecbd2f050077b08))
+* remove redundant prototypes ([7843c8e](https://github.com/equinor/rock-physics-open/commit/7843c8ed3e9d4144bbe7079d314af20c087d48be))
+
 ## [0.3.0](https://github.com/equinor/rock-physics-open/compare/v0.2.3...v0.3.0) (2025-10-21)
 
 
