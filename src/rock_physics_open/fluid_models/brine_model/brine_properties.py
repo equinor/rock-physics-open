@@ -1,18 +1,19 @@
 import warnings
+from typing import Any
 
 import numpy as np
-from numpy import sqrt
+import numpy.typing as npt
 from numpy.polynomial.polynomial import polyval2d, polyval3d
 
 
 def brine_properties(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-    salinity: np.ndarray | float,
-    p_nacl: np.ndarray | float | None = None,
-    p_kcl: np.ndarray | float | None = None,
-    p_cacl: np.ndarray | float | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    salinity: npt.NDArray[np.float64],
+    p_nacl: npt.NDArray[np.float64] | float | None = None,  # pyright: ignore[reportUnusedParameter]
+    p_kcl: npt.NDArray[np.float64] | float | None = None,  # pyright: ignore[reportUnusedParameter]
+    p_cacl: npt.NDArray[np.float64] | float | None = None,  # pyright: ignore[reportUnusedParameter]
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     :param salinity: Salinity of solution as [ppm] of NaCl.
     :param pressure: Pressure [Pa]
@@ -22,17 +23,25 @@ def brine_properties(
     :param p_cacl: CaCl percentage, for future use
     :return: Brine velocity vel_b [m/s], brine density den_b [kg/m^3], brine bulk modulus k_b [Pa]
     """
-    vel_b = brine_primary_velocity(temperature, pressure, salinity)
-    den_b = brine_density(temperature, pressure, salinity)
+    vel_b = brine_primary_velocity(
+        temperature=temperature,
+        pressure=pressure,
+        salinity=salinity,
+    )
+    den_b = brine_density(
+        temperature=temperature,
+        pressure=pressure,
+        salinity=salinity,
+    )
     k_b = vel_b**2 * den_b
     return vel_b, den_b, k_b
 
 
 def brine_density(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-    salinity: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    salinity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     density of sodium chloride solutions, equation 27 in Batzle & Wang [1].
     :param salinity: Salinity of solution in ppm
@@ -59,10 +68,10 @@ def brine_density(
 
 
 def brine_primary_velocity(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-    salinity: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    salinity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Primary wave velocity of sodium chloride solutions, equation 29 in Batzle & Wang [1]
 
@@ -90,14 +99,17 @@ def brine_primary_velocity(
     coefficients[2, 0, 0] = -820
 
     return water_primary_velocity(temperature, pressure) + salinity_frac * polyval3d(
-        sqrt(salinity_frac), temperature, pressure_mpa, coefficients
+        np.sqrt(salinity_frac),
+        temperature,
+        pressure_mpa,
+        coefficients,
     )
 
 
 def water_density(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+) -> npt.NDArray[Any]:
     """
     Density of water,, equation 27a in Batzle & Wang [1].
     :param pressure: Pressure [Pa]
@@ -117,9 +129,9 @@ def water_density(
 
 
 def water_primary_velocity(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+) -> npt.NDArray[Any]:
     """
     Primary wave velocity of water, table 1 and equation 28 in Batzle & Wang [1].
     :param pressure: Pressure [Pa]
@@ -147,8 +159,9 @@ def water_primary_velocity(
 
 
 def water(
-    temperature: np.ndarray | float, pressure: np.ndarray | float
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     :param pressure: Pressure [Pa]
     :param temperature: Temperature [°C]
@@ -161,9 +174,9 @@ def water(
 
 
 def brine_viscosity(
-    temperature: np.ndarray | float,
-    salinity: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    salinity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Brine viscosity according to Batzle & Wang [1].
 

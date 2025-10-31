@@ -14,9 +14,9 @@ from .snapshots import get_snapshot_name
 
 
 def compare_snapshots(
-    test_results: tuple[npt.NDArray[np.float64] | pd.DataFrame]
-    | tuple[npt.NDArray[np.float64] | pd.DataFrame],
-    saved_results: tuple[npt.NDArray[np.float64] | pd.DataFrame],
+    test_results: tuple[npt.NDArray[np.float64] | pd.DataFrame, ...]
+    | npt.NDArray[np.float64],
+    saved_results: tuple[npt.NDArray[np.float64] | pd.DataFrame, ...],
     name_arr: list[str] | None = None,
     display_results: bool = False,
 ) -> bool:
@@ -162,11 +162,11 @@ def _compare_df(
 
 
 def _validate_input(
-    test_obj: tuple[npt.NDArray[np.float64] | pd.DataFrame]
+    test_obj: tuple[npt.NDArray[np.float64] | pd.DataFrame, ...]
     | npt.NDArray[np.float64]
     | pd.DataFrame,
-    saved_obj: tuple[npt.NDArray[np.float64] | pd.DataFrame],
-) -> tuple[npt.NDArray[np.float64] | pd.DataFrame]:
+    saved_obj: tuple[npt.NDArray[np.float64] | pd.DataFrame, ...],
+) -> tuple[npt.NDArray[np.float64] | pd.DataFrame, ...]:
     # Check for compatibility of test results and stored data
     if isinstance(test_obj, (np.ndarray, pd.DataFrame)):
         return_test_obj = (test_obj,)

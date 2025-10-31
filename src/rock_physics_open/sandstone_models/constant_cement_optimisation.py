@@ -1,8 +1,13 @@
+from typing import Callable, cast
+
 import numpy as np
+import numpy.typing as npt
+from numpy import float64
 
 from rock_physics_open.equinor_utilities import gen_utilities
 from rock_physics_open.equinor_utilities.optimisation_utilities import (
     gen_opt_routine,
+    opt_param_to_ascii,
     save_opt_params,
 )
 
@@ -10,61 +15,71 @@ from .curvefit_sandstone_models import curvefit_constant_cement
 
 
 def constant_cement_model_optimisation(
-    k_min: np.ndarray,
-    mu_min: np.ndarray,
-    rho_min: np.ndarray,
-    k_cem: np.ndarray,
-    mu_cem: np.ndarray,
-    rho_cem: np.ndarray,
-    k_fl: np.ndarray,
-    rho_fl: np.ndarray,
-    por: np.ndarray,
-    vp: np.ndarray,
-    vs: np.ndarray,
-    rhob: np.ndarray,
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    rho_cem: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    por: npt.NDArray[np.float64],
+    vp: npt.NDArray[np.float64],
+    vs: npt.NDArray[np.float64],
+    rhob: npt.NDArray[np.float64],
     file_out_str: str = "constant_cement_optimal_params.pkl",
     display_results: bool = False,
     well_name: str = "Unknown well",
-):
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """Patchy cement model with optimisation for a selection of parameters.
 
     Parameters
     ----------
-    k_min :
+    k_min : np.ndarray
         Cement bulk modulus [Pa].
-    mu_min :
+    mu_min : np.ndarray
         Cement shear modulus [Pa].
-    rho_min :
+    rho_min : np.ndarray
         Cement density [kg/m^3].
-    k_cem :
+    k_cem : np.ndarray
         Cement bulk modulus [Pa].
-    mu_cem :
+    mu_cem : np.ndarray
         Cement shear modulus [Pa].
-    rho_cem :
+    rho_cem : np.ndarray
         Cement density [kg/m^3].
-    k_fl :
+    k_fl : np.ndarray
         Fluid bulk modulus [Pa].
-    rho_fl :
+    rho_fl : np.ndarray
         Fluid density [kg/m^3].
-    por :
+    por : np.ndarray
         Inclusion porosity [ratio].
-    vp :
+    vp : np.ndarray
         Compressional velocity log [m/s].
-    vs :
+    vs : np.ndarray
         Shear velocity log [m/s].
-    rhob :
+    rhob : np.ndarray
         Bulk density log [kg/m^3].
-    file_out_str :
+    file_out_str : str
         Output file name (string) to store optimal parameters (pickle format).
-    display_results :
+    display_results : bool
         Display optimal parameters in a window after run.
-    well_name :
+    well_name : str
         Name of well to be displayed in info box title.
 
     Returns
     -------
     tuple
-        vp_mod, vs_mod - modelled logs, vp_res, vs_res - residual logs.
+        vp_mod, vs_mod - modelled logs, vp_res, vs_res : np.ndarray
+        residual logs.
     """
 
     # Skip hardcoded Vp/Vs ratio
@@ -72,9 +87,12 @@ def constant_cement_model_optimisation(
     # Set weight to vs to give vp and vs similar influence on optimisation
     y_data = np.stack([vp, vs * def_vpvs], axis=1)
     # Optimisation function for selected parameters
-    opt_fun = curvefit_constant_cement
+    opt_fun: Callable[..., npt.NDArray[float64]] = curvefit_constant_cement
     # expand single value parameters to match logs length
-    por, def_vpvs = gen_utilities.dim_check_vector((por, def_vpvs))
+    por, def_vpvs = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector((por, def_vpvs)),
+    )
     x_data = np.stack(
         (k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, k_fl, rho_fl, por, def_vpvs),
         axis=1,
@@ -101,7 +119,12 @@ def constant_cement_model_optimisation(
     x0 = (upper_bound + lower_bound) / 2.0
     # Optimisation step without fluid substitution
     vel_mod, vel_res, opt_params = gen_opt_routine(
-        opt_fun, x_data, y_data, x0, lower_bound, upper_bound
+        opt_function=opt_fun,
+        x_data_orig=x_data,
+        y_data=y_data,
+        x_init=x0,
+        low_bound=lower_bound,
+        high_bound=upper_bound,
     )
     frac_cem = opt_params[2]
 
@@ -116,10 +139,13 @@ def constant_cement_model_optimisation(
     ai_mod = vp_mod * rhob_mod
     rhob_res = rhob_mod - rhob
     # Save the optimal parameters
-    save_opt_params("const_cem", opt_params, file_out_str, well_name=well_name)
+    save_opt_params(
+        opt_type="const_cem",
+        opt_params=opt_params,
+        file_name=file_out_str,
+        well_name=well_name,
+    )
     if display_results:
-        from rock_physics_open.t_matrix_models import opt_param_to_ascii
-
-        opt_param_to_ascii(file_out_str, well_name=well_name)
+        opt_param_to_ascii(in_file=file_out_str, well_name=well_name)
 
     return vp_mod, vs_mod, rhob_mod, ai_mod, vpvs_mod, vp_res, vs_res, rhob_res

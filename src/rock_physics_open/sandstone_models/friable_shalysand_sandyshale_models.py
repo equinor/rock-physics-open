@@ -1,34 +1,46 @@
-import numpy as np
+from typing import cast
 
-from rock_physics_open import sandstone_models
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import gen_utilities, std_functions
+from rock_physics_open.sandstone_models.friable_models import (
+    CoordinateNumberFunction,
+    friable_model,
+)
 
 
 def friable_shaly_sand_sandy_shale_model(
-    k_sst,
-    mu_sst,
-    rho_sst,
-    k_mud,
-    mu_mud,
-    rho_mud,
-    k_fl_sst,
-    rho_fl_sst,
-    k_fl_mud,
-    rho_fl_mud,
-    phi,
-    p_eff_sst,
-    p_eff_mud,
-    shale_frac,
-    phi_c_sst,
-    phi_c_mud,
-    phi_intr_mud,
-    coord_num_func_sst,
-    n_sst,
-    coord_num_func_mud,
-    n_mud,
-    shear_red_sst,
-    shear_red_mud,
-):
+    k_sst: npt.NDArray[np.float64],
+    mu_sst: npt.NDArray[np.float64],
+    rho_sst: npt.NDArray[np.float64],
+    k_mud: npt.NDArray[np.float64],
+    mu_mud: npt.NDArray[np.float64],
+    rho_mud: npt.NDArray[np.float64],
+    k_fl_sst: npt.NDArray[np.float64],
+    rho_fl_sst: npt.NDArray[np.float64],
+    k_fl_mud: npt.NDArray[np.float64],
+    rho_fl_mud: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    p_eff_sst: npt.NDArray[np.float64],
+    p_eff_mud: npt.NDArray[np.float64],
+    shale_frac: npt.NDArray[np.float64],
+    phi_c_sst: float,
+    phi_c_mud: float,
+    phi_intr_mud: float,
+    coord_num_func_sst: CoordinateNumberFunction,
+    n_sst: float,
+    coord_num_func_mud: CoordinateNumberFunction,
+    n_mud: float,
+    shear_red_sst: float,
+    shear_red_mud: float,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Model for mixing of friable sand and friable shale.
 
@@ -95,7 +107,7 @@ def friable_shaly_sand_sandy_shale_model(
     Returns
     -------
     tuple
-        vp, vs, rho, ai, vpvs  : (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+        vp, vs, rho, ai, vpvs  : np.ndarray
         vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
     """
 
@@ -120,30 +132,36 @@ def friable_shaly_sand_sandy_shale_model(
             _,
             _,
         ),
-    ) = gen_utilities.filter_input_log(
-        (
-            k_sst,
-            mu_sst,
-            rho_sst,
-            k_mud,
-            mu_mud,
-            rho_mud,
-            k_fl_sst,
-            rho_fl_sst,
-            k_fl_mud,
-            rho_fl_mud,
-            phi,
-            p_eff_sst,
-            p_eff_mud,
-            shale_frac,
-            phi_c_sst - phi,
-            phi - phi_intr_mud,
+    ) = cast(
+        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
+        gen_utilities.filter_input_log(
+            (
+                k_sst,
+                mu_sst,
+                rho_sst,
+                k_mud,
+                mu_mud,
+                rho_mud,
+                k_fl_sst,
+                rho_fl_sst,
+                k_fl_mud,
+                rho_fl_mud,
+                phi,
+                p_eff_sst,
+                p_eff_mud,
+                shale_frac,
+                phi_c_sst - phi,
+                phi - phi_intr_mud,
+            ),
+            no_zero=False,
         ),
-        no_zero=False,
     )
 
     # Expand the needed variables from float to numpy array
-    phi, phi_intr_mud = gen_utilities.dim_check_vector((phi, phi_intr_mud))
+    phi, phi_intr_mud_ = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector((phi, phi_intr_mud)),
+    )
 
     sandy_shale_idx = shale_frac > phi
     shaly_sand_idx = ~sandy_shale_idx
@@ -154,42 +172,54 @@ def friable_shaly_sand_sandy_shale_model(
     frac_sand = 1 - shale_frac / phi
 
     # Shale properties for intrinsic porosity point
-    vp_sat_mud, vs_sat_mud, rho_b_mud = sandstone_models.friable_model(
-        k_mud,
-        mu_mud,
-        rho_mud,
-        k_fl_mud,
-        rho_fl_mud,
-        phi_intr_mud,
-        p_eff_mud,
-        phi_c_mud,
-        coord_num_func_mud,
-        n_mud,
-        shear_red_mud,
-    )[0:3]
-    k_sat_mud, mu_sat_mud = std_functions.moduli(vp_sat_mud, vs_sat_mud, rho_b_mud)
+    vp_sat_mud, vs_sat_mud, rho_b_mud, _, _ = friable_model(
+        k_min=k_mud,
+        mu_min=mu_mud,
+        rho_min=rho_mud,
+        k_fl=k_fl_mud,
+        rho_fl=rho_fl_mud,
+        phi=phi_intr_mud_,
+        p_eff=p_eff_mud,
+        phi_c=phi_c_mud,
+        coord_num_func=coord_num_func_mud,
+        n=n_mud,
+        shear_red=shear_red_mud,
+    )
+    k_sat_mud, mu_sat_mud = std_functions.moduli(
+        vp=vp_sat_mud,
+        vs=vs_sat_mud,
+        rhob=rho_b_mud,
+    )
 
     # Silt end member
     k_silt, mu_silt = std_functions.hashin_shtrikman_walpole(
-        k_sat_mud, mu_sat_mud, k_sst, mu_sst, phi_c_sst
+        k1=k_sat_mud,
+        mu1=mu_sat_mud,
+        k2=k_sst,
+        mu2=mu_sst,
+        f1=phi_c_sst,
     )
     rho_silt = rho_b_mud * phi + rho_sst * (1 - phi)
 
     # Estimate the sand end member through the friable model with phi = phiC
-    vp_sat_sst, vs_sat_sst, rho_sat_sst = sandstone_models.friable_model(
-        k_sst,
-        mu_sst,
-        rho_sst,
-        k_fl_sst,
-        rho_fl_sst,
-        phi,
-        p_eff_sst,
-        phi_c_sst,
-        coord_num_func_sst,
-        n_sst,
-        shear_red_sst,
-    )[0:3]
-    k_sat_sst, mu_sat_sst = std_functions.moduli(vp_sat_sst, vs_sat_sst, rho_sat_sst)
+    vp_sat_sst, vs_sat_sst, rho_sat_sst, _, _ = friable_model(
+        k_min=k_sst,
+        mu_min=mu_sst,
+        rho_min=rho_sst,
+        k_fl=k_fl_sst,
+        rho_fl=rho_fl_sst,
+        phi=phi,
+        p_eff=p_eff_sst,
+        phi_c=phi_c_sst,
+        coord_num_func=coord_num_func_sst,
+        n=n_sst,
+        shear_red=shear_red_sst,
+    )
+    k_sat_sst, mu_sat_sst = std_functions.moduli(
+        vp=vp_sat_sst,
+        vs=vs_sat_sst,
+        rhob=rho_sat_sst,
+    )
 
     k = np.ones(shale_frac.shape) * np.nan
     mu = np.ones(shale_frac.shape) * np.nan
@@ -197,11 +227,11 @@ def friable_shaly_sand_sandy_shale_model(
 
     # Points on sandy shale trend
     k[sandy_shale_idx], mu[sandy_shale_idx] = std_functions.hashin_shtrikman_walpole(
-        k_silt[sandy_shale_idx],
-        mu_silt[sandy_shale_idx],
-        k_sat_mud[sandy_shale_idx],
-        mu_sat_mud[sandy_shale_idx],
-        frac_silt[sandy_shale_idx],
+        k1=k_silt[sandy_shale_idx],
+        mu1=mu_silt[sandy_shale_idx],
+        k2=k_sat_mud[sandy_shale_idx],
+        mu2=mu_sat_mud[sandy_shale_idx],
+        f1=frac_silt[sandy_shale_idx],
     )
 
     rho[sandy_shale_idx] = (
@@ -211,11 +241,11 @@ def friable_shaly_sand_sandy_shale_model(
 
     # Points on shaly sand trend
     k[shaly_sand_idx], mu[shaly_sand_idx] = std_functions.hashin_shtrikman_walpole(
-        k_sat_sst[shaly_sand_idx],
-        mu_sat_sst[shaly_sand_idx],
-        k_silt[shaly_sand_idx],
-        mu_silt[shaly_sand_idx],
-        frac_sand[shaly_sand_idx],
+        k1=k_sat_sst[shaly_sand_idx],
+        mu1=mu_sat_sst[shaly_sand_idx],
+        k2=k_silt[shaly_sand_idx],
+        mu2=mu_silt[shaly_sand_idx],
+        f1=frac_sand[shaly_sand_idx],
     )
 
     rho[shaly_sand_idx] = (
@@ -225,11 +255,12 @@ def friable_shaly_sand_sandy_shale_model(
         shaly_sand_idx
     ]
 
-    vp, vs, ai, vpvs = std_functions.velocity(k, mu, rho)
+    vp, vs, ai, vpvs = std_functions.velocity(k=k, mu=mu, rhob=rho)
 
     # Restore original array length
-    vp, vs, rho, ai, vpvs = gen_utilities.filter_output(
-        idx_phi, (vp, vs, rho, ai, vpvs)
+    vp, vs, rho, ai, vpvs = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.filter_output(idx_phi, (vp, vs, rho, ai, vpvs)),
     )
 
     return vp, vs, rho, ai, vpvs

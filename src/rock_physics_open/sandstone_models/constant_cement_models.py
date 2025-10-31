@@ -1,25 +1,34 @@
+from typing import Literal, cast, overload
+
 import numpy as np
+import numpy.typing as npt
 from scipy.interpolate import interp1d
 
 from rock_physics_open.equinor_utilities import gen_utilities, std_functions
 
 
 def constant_cement_model(
-    k_min,
-    mu_min,
-    rho_min,
-    k_cem,
-    mu_cem,
-    rho_cem,
-    k_fl,
-    rho_fl,
-    phi,
-    frac_cem,
-    phi_c,
-    n,
-    shear_red,
-    extrapolate_to_max_phi=False,
-):
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    rho_cem: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    frac_cem: npt.NDArray[np.float64] | float,
+    phi_c: float,
+    n: float,
+    shear_red: float,
+    extrapolate_to_max_phi: bool = False,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Constant cement model is a sandstone model that combined a cemented and a friable sand, so that a constant
     proportion of the rock volume is made up of grain-bonding cement. Variation in porosity is due to grain sorting,
@@ -76,45 +85,91 @@ def constant_cement_model(
     Returns
     -------
     tuple
-        vp, vs, rho, ai, vpvs  : (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+        vp, vs, rho, ai, vpvs  : np.ndarray
         vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
     """
     k_zero, k_dry, mu = constant_cement_model_dry(
-        k_min,
-        mu_min,
-        k_cem,
-        mu_cem,
-        phi,
-        frac_cem,
-        phi_c,
-        n,
-        shear_red,
+        k_min=k_min,
+        mu_min=mu_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        phi=phi,
+        frac_cem=frac_cem,
+        phi_c=phi_c,
+        n=n,
+        shear_red=shear_red,
         extrapolate_to_max_phi=extrapolate_to_max_phi,
         return_k_zero=True,
     )
     # Saturated rock incompressibility is calculated with Gassmann
-    k = std_functions.gassmann(k_dry, phi, k_fl, k_zero)
+    k = std_functions.gassmann(
+        k_dry=k_dry,
+        por=phi,
+        k_fl=k_fl,
+        k_min=k_zero,
+    )
 
     # Bulk density
     rho = phi * rho_fl + (1 - phi - frac_cem) * rho_min + frac_cem * rho_cem
     # Velocity
-    vp, vs, ai, vpvs = std_functions.velocity(k, mu, rho)
+    vp, vs, ai, vpvs = std_functions.velocity(
+        k=k,
+        mu=mu,
+        rhob=rho,
+    )
 
     return vp, vs, rho, ai, vpvs
 
 
+@overload
 def constant_cement_model_dry(
-    k_min,
-    mu_min,
-    k_cem,
-    mu_cem,
-    phi,
-    frac_cem,
-    phi_c,
-    n,
-    shear_red,
-    extrapolate_to_max_phi=False,
-    return_k_zero=False,
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    frac_cem: npt.NDArray[np.float64] | float,
+    phi_c: float,
+    n: float,
+    shear_red: npt.NDArray[np.float64] | float,
+    extrapolate_to_max_phi: bool,
+    return_k_zero: Literal[False],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]: ...
+
+
+@overload
+def constant_cement_model_dry(
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    frac_cem: npt.NDArray[np.float64] | float,
+    phi_c: float,
+    n: float,
+    shear_red: npt.NDArray[np.float64] | float,
+    extrapolate_to_max_phi: bool = ...,
+    return_k_zero: Literal[True] = ...,
+) -> tuple[
+    npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]
+]: ...
+
+
+def constant_cement_model_dry(
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    frac_cem: npt.NDArray[np.float64] | float,
+    phi_c: float,
+    n: float,
+    shear_red: npt.NDArray[np.float64] | float,
+    extrapolate_to_max_phi: bool = False,
+    return_k_zero: bool = False,
+) -> (
+    tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]
+    | tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]
 ):
     """
     Dry rock version of the constant cement model. The method is identical to the constant cement model function,
@@ -150,13 +205,14 @@ def constant_cement_model_dry(
     Returns
     -------
     tuple
-        k_dry, mu : (np.ndarray, np.ndarray).
+        k_dry, mu : np.ndarray
         Bulk modulus k [Pa] and shear modulus mu [Pa] of dry rock.
     """
     # First check if there are input values that are unphysical, i.e. negative values, separate between dry and
     # saturated rock properties. Use the filter_input_log function to identify these values
-    idx, (k_min, mu_min, k_cem, mu_cem, phi) = gen_utilities.filter_input_log(
-        (k_min, mu_min, k_cem, mu_cem, phi)
+    idx, (k_min, mu_min, k_cem, mu_cem, phi) = cast(
+        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
+        gen_utilities.filter_input_log((k_min, mu_min, k_cem, mu_cem, phi)),
     )
 
     # Identify porosity values that exceed (phi_c - frac_cem). This is regardless of setting for extrapolate_to_max_phi
@@ -167,7 +223,12 @@ def constant_cement_model_dry(
     # original grains, so they will be fraction 1 according to the geometrical
     # interpretation of Hashin-Shtrikman
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
-        k_cem, mu_cem, k_min, mu_min, frac_cem, bound="lower"
+        k1=k_cem,
+        mu1=mu_cem,
+        k2=k_min,
+        mu2=mu_min,
+        f1=frac_cem,
+        bound="lower",
     )
 
     # Dry rock properties of high-porosity end member calculated with
@@ -175,7 +236,14 @@ def constant_cement_model_dry(
     # grains (scheme 2 in Dvorkin and Nur's original paper)
 
     k_cc, mu_cc = std_functions.dvorkin_contact_cement(
-        frac_cem, phi_c, mu_min, k_min, mu_cem, k_cem, shear_red, n
+        frac_cem=frac_cem,
+        por0_sst=phi_c,
+        mu0_sst=mu_min,
+        k0_sst=k_min,
+        mu0_cem=mu_cem,
+        k0_cem=k_cem,
+        vs_red=shear_red,
+        c=n,
     )
 
     # Hashin-Shtrikman lower bound describes the dry rock property mixing from
@@ -185,7 +253,12 @@ def constant_cement_model_dry(
     f1 = 1 - phi / (phi_c - frac_cem)
 
     k_dry, mu = std_functions.hashin_shtrikman_walpole(
-        k_zero, mu_zero, k_cc, mu_cc, f1, bound="lower"
+        k1=k_zero,
+        mu1=mu_zero,
+        k2=k_cc,
+        mu2=mu_cc,
+        f1=f1,
+        bound="lower",
     )
 
     # If extrapolate_to_max_phi is True, create extrapolation functions for k_dry and mu using scipy's interp1d
@@ -198,7 +271,10 @@ def constant_cement_model_dry(
         k_dry[idx_phi] = np.nan
         mu[idx_phi] = np.nan
 
-    k_dry, mu = gen_utilities.filter_output(idx, (k_dry, mu))
+    k_dry, mu = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.filter_output(idx, (k_dry, mu)),
+    )
     if return_k_zero:
         return k_zero, k_dry, mu
     return k_dry, mu

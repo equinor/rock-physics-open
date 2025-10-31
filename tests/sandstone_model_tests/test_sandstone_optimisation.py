@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -36,76 +37,76 @@ p_eff = 20.0e6 * np.ones_like(phit)
 phi_c = 0.45
 
 
-def test_friable_optimisation(data_dir):
+def test_friable_optimisation(data_dir: Path):
     file_name = str(data_dir.joinpath("friable_model_optimisation.pkl"))
 
     args = friable_model_optimisation(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl,
-        rho_fl,
-        phit,
-        p_eff,
-        vp,
-        vs,
-        rhob,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        por=phit,
+        p_eff=p_eff,
+        vp=vp,
+        vs=vs,
+        rhob=rhob,
         file_out_str=file_name,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_constant_cement_optimisation(data_dir):
+def test_constant_cement_optimisation(data_dir: Path):
     file_name = str(data_dir.joinpath("constant_cement_model_optimisation.pkl"))
 
     args = constant_cement_model_optimisation(
-        k_min,
-        mu_min,
-        rho_min,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl,
-        rho_fl,
-        phit,
-        vp,
-        vs,
-        rhob,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        por=phit,
+        vp=vp,
+        vs=vs,
+        rhob=rhob,
         file_out_str=file_name,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_optimisation(data_dir):
+def test_patchy_cement_optimisation(data_dir: Path):
     file_name = str(data_dir.joinpath("patchy_cement_model_optimisation.pkl"))
 
     args = patchy_cement_model_optimisation(
-        k_min,
-        mu_min,
-        rho_min,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl,
-        rho_fl,
-        phit,
-        p_eff,
-        vp,
-        vs,
-        rhob,
-        phi_c,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        por=phit,
+        p_eff=p_eff,
+        vp=vp,
+        vs=vs,
+        rhob=rhob,
+        phi_c=phi_c,
         file_out_str=file_name,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

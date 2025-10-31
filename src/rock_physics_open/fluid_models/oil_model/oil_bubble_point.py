@@ -1,12 +1,13 @@
 import numpy as np
+import numpy.typing as npt
 
 
 def bp_standing(
-    density: np.ndarray | float,
-    gas_oil_ratio: np.ndarray | float,
-    gas_gravity: np.ndarray | float,
-    temperature: np.ndarray | float,
-) -> np.ndarray | float:
+    density: npt.NDArray[np.float64],
+    gas_oil_ratio: npt.NDArray[np.float64],
+    gas_gravity: npt.NDArray[np.float64],
+    temperature: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Reservoir oils include some natural gas in solution. The pressure at which
     this natural gas begins to come out of solution and form bubbles is known
@@ -15,7 +16,7 @@ def bp_standing(
     Standing, M. B. "A pressure-volume-temperature correlation for mixtures of
     California oils and gases." Drilling and Production Practice. American
     Petroleum Institute, 1947.
-    Uses refinment described here: https://petrowiki.org/Oil_bubblepoint_pressure
+    Uses refinement described here: https://petrowiki.org/Oil_bubblepoint_pressure
     :param density: density of oil at room conditions [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: molar mass of gas relative to air molar mas.
@@ -50,7 +51,7 @@ def bp_standing(
     #        10**(1770.79/density - 1.64375)=
     #         e**(4072.69738323/density - 3.78487)
     # For temperature in Celsius:
-    #    10**(0.00091 * Farenheit) =
+    #    10**(0.00091 * Fahrenheit) =
     #    10**(0.001638*Celsius + 0.02912) =
     #     e**(0.00377163*Celsius + 0.0670513)
     #

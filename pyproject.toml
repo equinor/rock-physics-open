@@ -119,11 +119,16 @@ addopts = ["--color=yes", "--strict-markers"]
 [tool.basedpyright]
 pythonVersion = "3.11"
 include = [
-    # Currently only enabling on general utilities and the corresponding tests
-    "src/rock_physics_open/equinor_utilities/**/*.py",
-    "tests/gen_utilities_tests/*.py",
+    "src/rock_physics_open/equinor_utilities",
+    "src/rock_physics_open/fluid_models",
+    "src/rock_physics_open/sandstone_models",
+    "src/rock_physics_open/shale_models",
+    "tests/gen_utilities_tests",
+    "tests/fluid_model_tests",
+    "tests/sandstone_model_tests",
+    "tests/shale_model_tests",
 ]
-exclude = ["src/**/version.py"]
+exclude = ["src/rock_physics_open/version.py"]
 allowedUntypedLibraries = [
     "pandas",
     "sklearn",
@@ -134,6 +139,7 @@ allowedUntypedLibraries = [
     "pyplot",
     "plt",
 ]
+typeCheckingMode = "recommended"
 reportAny = false
 reportExplicitAny = false
 reportMissingTypeStubs = false

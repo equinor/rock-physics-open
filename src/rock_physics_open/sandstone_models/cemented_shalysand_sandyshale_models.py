@@ -1,36 +1,51 @@
-import numpy as np
+from typing import cast
 
-from rock_physics_open import sandstone_models
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import gen_utilities, std_functions
+from rock_physics_open.sandstone_models.constant_cement_models import (
+    constant_cement_model,
+)
+from rock_physics_open.sandstone_models.friable_models import (
+    CoordinateNumberFunction,
+    friable_model,
+)
 
 
 def cemented_shaly_sand_sandy_shale_model(
-    k_sst,
-    mu_sst,
-    rho_sst,
-    k_cem,
-    mu_cem,
-    rho_cem,
-    k_mud,
-    mu_mud,
-    rho_mud,
-    k_fl_sst,
-    rho_fl_sst,
-    k_fl_mud,
-    rho_fl_mud,
-    phi,
-    p_eff_mud,
-    shale_frac,
-    frac_cem,
-    phi_c_sst,
-    n_sst,
-    shear_red_sst,
-    phi_c_mud,
-    phi_intr_mud,
-    coord_num_func_mud,
-    n_mud,
-    shear_red_mud,
-):
+    k_sst: npt.NDArray[np.float64],
+    mu_sst: npt.NDArray[np.float64],
+    rho_sst: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    rho_cem: npt.NDArray[np.float64],
+    k_mud: npt.NDArray[np.float64],
+    mu_mud: npt.NDArray[np.float64],
+    rho_mud: npt.NDArray[np.float64],
+    k_fl_sst: npt.NDArray[np.float64],
+    rho_fl_sst: npt.NDArray[np.float64],
+    k_fl_mud: npt.NDArray[np.float64],
+    rho_fl_mud: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    p_eff_mud: npt.NDArray[np.float64],
+    shale_frac: npt.NDArray[np.float64],
+    frac_cem: npt.NDArray[np.float64],
+    phi_c_sst: float,
+    n_sst: float,
+    shear_red_sst: float,
+    phi_c_mud: float,
+    phi_intr_mud: float,
+    coord_num_func_mud: CoordinateNumberFunction,
+    n_mud: float,
+    shear_red_mud: float,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Model for mixing of cemented sand and friable shale.
 
@@ -83,18 +98,18 @@ def cemented_shaly_sand_sandy_shale_model(
         Cement volume fraction [fraction].
     phi_c_sst : float
         Critical porosity for sandstone[fraction].
+    n_sst : float
+        Coordination number for sandstone [unitless].
+    shear_red_sst : float
+        Shear reduction factor for sandstone [fraction].
     phi_c_mud : float
         Critical porosity for mud [fraction].
     phi_intr_mud : float
         Intrinsic porosity for mud [fraction].
-    n_sst : float
-        Coordination number for sandstone [unitless].
-    n_mud : float
-        Coordination number for shale [unitless].
     coord_num_func_mud : str
         Indication if coordination number should be calculated from porosity or kept constant for shale.
-    shear_red_sst : float
-        Shear reduction factor for sandstone [fraction].
+    n_mud : float
+        Coordination number for shale [unitless].
     shear_red_mud : float
         Shear reduction factor for mud [fraction].
 
@@ -124,27 +139,30 @@ def cemented_shaly_sand_sandy_shale_model(
         phi,
         p_eff_mud,
         shale_frac,
-        frac_cem,
-    ) = gen_utilities.dim_check_vector(
-        (
-            k_sst,
-            mu_sst,
-            rho_sst,
-            k_cem,
-            mu_cem,
-            rho_cem,
-            k_mud,
-            mu_mud,
-            rho_mud,
-            k_fl_sst,
-            rho_fl_sst,
-            k_fl_mud,
-            rho_fl_mud,
-            phi,
-            p_eff_mud,
-            shale_frac,
-            frac_cem,
-        )
+        frac_cem_,
+    ) = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector(
+            (
+                k_sst,
+                mu_sst,
+                rho_sst,
+                k_cem,
+                mu_cem,
+                rho_cem,
+                k_mud,
+                mu_mud,
+                rho_mud,
+                k_fl_sst,
+                rho_fl_sst,
+                k_fl_mud,
+                rho_fl_mud,
+                phi,
+                p_eff_mud,
+                shale_frac,
+                frac_cem,
+            )
+        ),
     )
     (
         idx_phi,
@@ -165,35 +183,37 @@ def cemented_shaly_sand_sandy_shale_model(
             phi,
             p_eff_mud,
             shale_frac,
-            frac_cem,
+            frac_cem_,
             _,
             _,
         ),
-    ) = gen_utilities.filter_input_log(
-        (
-            k_sst,
-            mu_sst,
-            rho_sst,
-            k_cem,
-            mu_cem,
-            rho_cem,
-            k_mud,
-            mu_mud,
-            rho_mud,
-            k_fl_sst,
-            rho_fl_sst,
-            k_fl_mud,
-            rho_fl_mud,
-            phi,
-            p_eff_mud,
-            shale_frac,
-            frac_cem,
-            phi_c_sst - frac_cem - phi,
-            phi - phi_intr_mud,
+    ) = cast(
+        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
+        gen_utilities.filter_input_log(
+            (
+                k_sst,
+                mu_sst,
+                rho_sst,
+                k_cem,
+                mu_cem,
+                rho_cem,
+                k_mud,
+                mu_mud,
+                rho_mud,
+                k_fl_sst,
+                rho_fl_sst,
+                k_fl_mud,
+                rho_fl_mud,
+                phi,
+                p_eff_mud,
+                shale_frac,
+                frac_cem_,
+                phi_c_sst - frac_cem - phi,
+                phi - phi_intr_mud,
+            ),
+            no_zero=False,
         ),
-        no_zero=False,
     )
-
     # Reduce range of porosity by frac_cem
     phi_c = phi_c_sst - frac_cem
 
@@ -210,32 +230,46 @@ def cemented_shaly_sand_sandy_shale_model(
     # log.  Make sure that it is of the same length as the other
 
     # Expand the needed variables from float to numpy array
-    phi, phi_intr_mud = gen_utilities.dim_check_vector((phi, phi_intr_mud))
+    phi, phi_intr_mud_ = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector((phi, phi_intr_mud)),
+    )
 
-    vp_sat_mud, vs_sat_mud, rho_b_mud = sandstone_models.friable_model(
-        k_mud,
-        mu_mud,
-        rho_mud,
-        k_fl_mud,
-        rho_fl_mud,
-        phi_intr_mud,
-        p_eff_mud,
-        phi_c_mud,
-        coord_num_func_mud,
-        n_mud,
-        shear_red_mud,
-    )[0:3]
-    k_sat_mud, mu_sat_mud = std_functions.moduli(vp_sat_mud, vs_sat_mud, rho_b_mud)
+    vp_sat_mud, vs_sat_mud, rho_b_mud, _, _ = friable_model(
+        k_min=k_mud,
+        mu_min=mu_mud,
+        rho_min=rho_mud,
+        k_fl=k_fl_mud,
+        rho_fl=rho_fl_mud,
+        phi=phi_intr_mud_,
+        p_eff=p_eff_mud,
+        phi_c=phi_c_mud,
+        coord_num_func=coord_num_func_mud,
+        n=n_mud,
+        shear_red=shear_red_mud,
+    )
+    k_sat_mud, mu_sat_mud = std_functions.moduli(
+        vp=vp_sat_mud, vs=vs_sat_mud, rhob=rho_b_mud
+    )
 
     # Calculate cemented zero-porosity sand
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
-        k_cem, mu_cem, k_sst, mu_sst, frac_cem, bound="lower"
+        k1=k_cem,
+        mu1=mu_cem,
+        k2=k_sst,
+        mu2=mu_sst,
+        f1=frac_cem,
+        bound="lower",
     )
     rho_zero = rho_cem * frac_cem + (1 - frac_cem) * rho_sst
 
     # Silt end member
     k_silt, mu_silt = std_functions.hashin_shtrikman_walpole(
-        k_sat_mud, mu_sat_mud, k_zero, mu_zero, phi_c
+        k1=k_sat_mud,
+        mu1=mu_sat_mud,
+        k2=k_zero,
+        mu2=mu_zero,
+        f1=phi_c,
     )
     rho_silt = rho_b_mud * phi + rho_zero * (1 - phi)
 
@@ -243,22 +277,24 @@ def cemented_shaly_sand_sandy_shale_model(
     # phiCSst <= maybe dubious to expand parameter to vector with assumption
     # that kSst has the correct size
 
-    vp_sat_sst, vs_sat_sst, rho_sat_sst = sandstone_models.constant_cement_model(
-        k_sst,
-        mu_sst,
-        rho_sst,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl_sst,
-        rho_fl_sst,
-        phi,
-        frac_cem,
-        phi_c_sst,
-        n_sst,
-        shear_red_sst,
-    )[0:3]
-    k_sat_sst, mu_sat_sst = std_functions.moduli(vp_sat_sst, vs_sat_sst, rho_sat_sst)
+    vp_sat_sst, vs_sat_sst, rho_sat_sst, _, _ = constant_cement_model(
+        k_min=k_sst,
+        mu_min=mu_sst,
+        rho_min=rho_sst,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl_sst,
+        rho_fl=rho_fl_sst,
+        phi=phi,
+        frac_cem=frac_cem,
+        phi_c=phi_c_sst,
+        n=n_sst,
+        shear_red=shear_red_sst,
+    )
+    k_sat_sst, mu_sat_sst = std_functions.moduli(
+        vp=vp_sat_sst, vs=vs_sat_sst, rhob=rho_sat_sst
+    )
 
     k = np.ones(shale_frac.shape) * np.nan
     mu = np.ones(shale_frac.shape) * np.nan
@@ -266,11 +302,11 @@ def cemented_shaly_sand_sandy_shale_model(
 
     # Points on sandy shale trend
     k[sandy_shale_idx], mu[sandy_shale_idx] = std_functions.hashin_shtrikman_walpole(
-        k_silt[sandy_shale_idx],
-        mu_silt[sandy_shale_idx],
-        k_sat_mud[sandy_shale_idx],
-        mu_sat_mud[sandy_shale_idx],
-        frac_silt[sandy_shale_idx],
+        k1=k_silt[sandy_shale_idx],
+        mu1=mu_silt[sandy_shale_idx],
+        k2=k_sat_mud[sandy_shale_idx],
+        mu2=mu_sat_mud[sandy_shale_idx],
+        f1=frac_silt[sandy_shale_idx],
     )
 
     rhob[sandy_shale_idx] = (
@@ -280,11 +316,11 @@ def cemented_shaly_sand_sandy_shale_model(
 
     # Points on shaly sand trend
     k[shaly_sand_idx], mu[shaly_sand_idx] = std_functions.hashin_shtrikman_walpole(
-        k_sat_sst[shaly_sand_idx],
-        mu_sat_sst[shaly_sand_idx],
-        k_silt[shaly_sand_idx],
-        mu_silt[shaly_sand_idx],
-        frac_sand[shaly_sand_idx],
+        k1=k_sat_sst[shaly_sand_idx],
+        mu1=mu_sat_sst[shaly_sand_idx],
+        k2=k_silt[shaly_sand_idx],
+        mu2=mu_silt[shaly_sand_idx],
+        f1=frac_sand[shaly_sand_idx],
     )
 
     rhob[shaly_sand_idx] = (
@@ -294,11 +330,12 @@ def cemented_shaly_sand_sandy_shale_model(
         shaly_sand_idx
     ]
 
-    vp, vs, ai, vpvs = std_functions.velocity(k, mu, rhob)
+    vp, vs, ai, vpvs = std_functions.velocity(k=k, mu=mu, rhob=rhob)
 
     # Restore original length
-    vp, vs, rhob, ai, vpvs = gen_utilities.filter_output(
-        idx_phi, (vp, vs, rhob, ai, vpvs)
+    vp, vs, rhob, ai, vpvs = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.filter_output(idx_phi, (vp, vs, rhob, ai, vpvs)),
     )
 
     return vp, vs, rhob, ai, vpvs

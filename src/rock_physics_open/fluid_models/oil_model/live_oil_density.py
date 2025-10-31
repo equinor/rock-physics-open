@@ -1,13 +1,14 @@
 import numpy as np
+import numpy.typing as npt
 
 
 def live_oil_density(
-    temperature,
-    pressure: np.ndarray | float | None,
-    reference_density: np.ndarray | float,
-    gas_oil_ratio: np.ndarray | float,
-    gas_gravity: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64] | None,  # pyright: ignore[reportUnusedParameter]
+    reference_density: npt.NDArray[np.float64],
+    gas_oil_ratio: npt.NDArray[np.float64],
+    gas_gravity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Density of live oil at saturation.
 
@@ -23,17 +24,20 @@ def live_oil_density(
     """
     density_gcc = reference_density / 1000.0
     b0 = live_oil_volume_factor(
-        temperature, reference_density, gas_oil_ratio, gas_gravity
+        temperature=temperature,
+        reference_density=reference_density,
+        gas_oil_ratio=gas_oil_ratio,
+        gas_gravity=gas_gravity,
     )
     return 1000.0 * (density_gcc + 0.0012 * gas_gravity * gas_oil_ratio) / b0
 
 
 def live_oil_pseudo_density(
-    temperature: np.ndarray | float,
-    reference_density: np.ndarray | float,
-    gas_oil_ratio: np.ndarray | float,
-    gas_gravity: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    reference_density: npt.NDArray[np.float64],
+    gas_oil_ratio: npt.NDArray[np.float64],
+    gas_gravity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Pseudo density used to substitute reference density in dead_oil_wave_velocity
     for live oils.
@@ -49,17 +53,20 @@ def live_oil_pseudo_density(
     """
     density_gcc = reference_density / 1000.0
     b0 = live_oil_volume_factor(
-        temperature, reference_density, gas_oil_ratio, gas_gravity
+        temperature=temperature,
+        reference_density=reference_density,
+        gas_oil_ratio=gas_oil_ratio,
+        gas_gravity=gas_gravity,
     )
     return 1000.0 * (density_gcc / b0) / (1 + 0.001 * gas_oil_ratio)
 
 
 def live_oil_volume_factor(
-    temperature: np.ndarray | float,
-    reference_density: np.ndarray | float,
-    gas_oil_ratio: np.ndarray | float,
-    gas_gravity: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    reference_density: npt.NDArray[np.float64],
+    gas_oil_ratio: npt.NDArray[np.float64],
+    gas_gravity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Volume factor derived by Standing (1962), equation 23 in Batzle & Wang [1].
     :param reference_density: Density of the oil without dissolved gas

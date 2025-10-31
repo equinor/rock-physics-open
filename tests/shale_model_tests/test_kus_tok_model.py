@@ -25,6 +25,6 @@ def test_kus_tok_model():
     args = kuster_toksoz_model(k1, mu1, rho1, k2, mu2, rho2, frac1, asp_2)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

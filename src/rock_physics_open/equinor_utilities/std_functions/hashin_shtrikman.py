@@ -86,7 +86,7 @@ def hashin_shtrikman_walpole(
     mu1: npt.NDArray[np.float64],
     k2: npt.NDArray[np.float64],
     mu2: npt.NDArray[np.float64],
-    f1: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64] | float,
     bound: Literal["upper", "lower"] = "lower",
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """

@@ -1,34 +1,49 @@
-from rock_physics_open import sandstone_models as sm
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import std_functions
+from rock_physics_open.sandstone_models.constant_cement_models import (
+    constant_cement_model,
+)
+from rock_physics_open.sandstone_models.friable_models import (
+    CoordinateNumberFunction,
+    friable_model,
+)
 
 
 def unresolved_constant_cement_sand_shale_model(
-    k_min_sst,
-    mu_min_sst,
-    rho_min_sst,
-    k_cem,
-    mu_cem,
-    rho_cem,
-    k_mud,
-    mu_mud,
-    rho_mud,
-    k_fl_sst,
-    rho_fl_sst,
-    k_fl_mud,
-    rho_fl_mud,
-    phi_sst,
-    phi_mud,
-    p_eff_mud,
-    shale_frac,
-    frac_cem,
-    phi_c_sst,
-    phi_c_mud,
-    n_sst,
-    coord_num_func_mud,
-    n_mud,
-    shear_red_sst,
-    shear_red_mud,
-):
+    k_min_sst: npt.NDArray[np.float64],
+    mu_min_sst: npt.NDArray[np.float64],
+    rho_min_sst: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    rho_cem: npt.NDArray[np.float64],
+    k_mud: npt.NDArray[np.float64],
+    mu_mud: npt.NDArray[np.float64],
+    rho_mud: npt.NDArray[np.float64],
+    k_fl_sst: npt.NDArray[np.float64],
+    rho_fl_sst: npt.NDArray[np.float64],
+    k_fl_mud: npt.NDArray[np.float64],
+    rho_fl_mud: npt.NDArray[np.float64],
+    phi_sst: npt.NDArray[np.float64],
+    phi_mud: npt.NDArray[np.float64],
+    p_eff_mud: npt.NDArray[np.float64],
+    shale_frac: npt.NDArray[np.float64],
+    frac_cem: float,
+    phi_c_sst: float,
+    phi_c_mud: float,
+    n_sst: float,
+    coord_num_func_mud: CoordinateNumberFunction,
+    n_mud: float,
+    shear_red_sst: float,
+    shear_red_mud: float,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Model for silisiclastic rocks with alternating layers of cemented sand and friable shale, and in which the layers
     are not resolved by the investigating signal. Backus average is used to calculate the anisotropic effect of the
@@ -90,45 +105,51 @@ def unresolved_constant_cement_sand_shale_model(
     Returns
     -------
     tuple
-        vpv, vsv, vph, vsh, rho : (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray).
+        vpv, vsv, vph, vsh, rho : np.ndarray
         vertical p-wave velocity, vertical shear-wave velocity, horizontal p-wave velocity, horizontal shear-wave
         velocity (all [m/s]), bulk density [kg/m^3].
     """
     # Estimate the sand end member through the constant cement model
-    vp_sst, vs_sst, rho_b_sst = sm.constant_cement_model(
-        k_min_sst,
-        mu_min_sst,
-        rho_min_sst,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl_sst,
-        rho_fl_sst,
-        phi_sst,
-        frac_cem,
-        phi_c_sst,
-        n_sst,
-        shear_red_sst,
-    )[0:3]
+    vp_sst, vs_sst, rho_b_sst, _, _ = constant_cement_model(
+        k_min=k_min_sst,
+        mu_min=mu_min_sst,
+        rho_min=rho_min_sst,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl_sst,
+        rho_fl=rho_fl_sst,
+        phi=phi_sst,
+        frac_cem=frac_cem,
+        phi_c=phi_c_sst,
+        n=n_sst,
+        shear_red=shear_red_sst,
+    )
 
     # Estimate the shale end member through the friable model
-    vp_mud, vs_mud, rho_b_mud = sm.friable_model(
-        k_mud,
-        mu_mud,
-        rho_mud,
-        k_fl_mud,
-        rho_fl_mud,
-        phi_mud,
-        p_eff_mud,
-        phi_c_mud,
-        coord_num_func_mud,
-        n_mud,
-        shear_red_mud,
-    )[0:3]
+    vp_mud, vs_mud, rho_b_mud, _, _ = friable_model(
+        k_min=k_mud,
+        mu_min=mu_mud,
+        rho_min=rho_mud,
+        k_fl=k_fl_mud,
+        rho_fl=rho_fl_mud,
+        phi=phi_mud,
+        p_eff=p_eff_mud,
+        phi_c=phi_c_mud,
+        coord_num_func=coord_num_func_mud,
+        n=n_mud,
+        shear_red=shear_red_mud,
+    )
 
     # Calculate Backus average for the effective medium
     vpv, vsv, vph, vsh, rho = std_functions.backus_average(
-        vp_sst, vs_sst, rho_b_sst, vp_mud, vs_mud, rho_b_mud, 1.0 - shale_frac
+        vp1=vp_sst,
+        vs1=vs_sst,
+        rho1=rho_b_sst,
+        vp2=vp_mud,
+        vs2=vs_mud,
+        rho2=rho_b_mud,
+        f1=1.0 - shale_frac,
     )
 
     return vpv, vsv, vph, vsh, rho

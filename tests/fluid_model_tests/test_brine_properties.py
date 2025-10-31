@@ -33,7 +33,7 @@ def test_brine_properties():
     args = brine_properties(temp, pres, sal, nacl, kcl, cacl)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -42,7 +42,7 @@ def test_water_properties():
     args = water(temp, pres)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -51,7 +51,7 @@ def test_water_density():
     args = water_density(temp, pres)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -60,7 +60,7 @@ def test_water_velocity():
     args = water_primary_velocity(temp, pres)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -69,7 +69,7 @@ def test_brine_density():
     args = brine_density(temp, pres, sal)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -78,7 +78,7 @@ def test_brine_velocity():
     args = brine_primary_velocity(temp, pres, sal)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 

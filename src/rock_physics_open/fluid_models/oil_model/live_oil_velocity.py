@@ -1,10 +1,17 @@
+import numpy as np
+import numpy.typing as npt
+
 from .dead_oil_velocity import dead_oil_velocity
 from .live_oil_density import live_oil_pseudo_density
 
 
 def live_oil_velocity(
-    temperature, pressure, reference_density, gas_oil_ratio, gas_gravity
-):
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    reference_density: npt.NDArray[np.float64],
+    gas_oil_ratio: npt.NDArray[np.float64],
+    gas_gravity: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Primary wave velocity of live oil at saturation.
 
@@ -19,6 +26,13 @@ def live_oil_velocity(
     :return: Primary wave velocity of live oil [m/s].
     """
     rho_marked = live_oil_pseudo_density(
-        temperature, reference_density, gas_oil_ratio, gas_gravity
+        temperature=temperature,
+        reference_density=reference_density,
+        gas_oil_ratio=gas_oil_ratio,
+        gas_gravity=gas_gravity,
     )
-    return dead_oil_velocity(temperature, pressure, rho_marked)
+    return dead_oil_velocity(
+        temperature=temperature,
+        pressure=pressure,
+        reference_density=rho_marked,
+    )

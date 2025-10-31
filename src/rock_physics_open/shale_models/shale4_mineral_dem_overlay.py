@@ -1,4 +1,7 @@
+from typing import cast
+
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities import std_functions
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
@@ -7,26 +10,26 @@ from .dem import dem_model
 
 
 def shale_4_min_dem_overlay(
-    k1,
-    mu1,
-    rho1,
-    k2,
-    mu2,
-    rho2,
-    k3,
-    mu3,
-    rho3,
-    k4,
-    mu4,
-    rho4,
-    k_fl,
-    rho_fl,
-    phi,
-    f1,
-    f2,
-    prop_clay,
-    asp,
-):
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    rho1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    rho2: npt.NDArray[np.float64],
+    k3: npt.NDArray[np.float64],
+    mu3: npt.NDArray[np.float64],
+    rho3: npt.NDArray[np.float64],
+    k4: npt.NDArray[np.float64],
+    mu4: npt.NDArray[np.float64],
+    rho4: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    f1: npt.NDArray[np.float64],
+    f2: npt.NDArray[np.float64],
+    prop_clay: float,
+    asp: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Simple shale model with mixture of matrix minerals in Voigt-Reuss-Hill
     and DEM inclusion model for fluid filled porosity. The model is aimed at
@@ -39,30 +42,30 @@ def shale_4_min_dem_overlay(
     ----------
     k1, mu1, rho1 : np.ndarray
         Mineral 1 properties [Quartz and feldspar].
-    f1 : np.ndarray
-        Fraction of mineral 1.
     k2, mu2, rho2 : np.ndarray
         Mineral 2 properties [Kerogen].
-    f2 : np.ndarray
-        Fraction of mineral 2.
     k3, mu3, rho3 : np.ndarray
         Mineral 3 properties [Clay].
     k4, mu4, rho4 : np.ndarray
         Mineral 4 properties [Carbonates].
-    prop_clay : float
-        Range 0 - 1 of the fraction that is clay and carbonate.
     k_fl, rho_fl : np.ndarray
         Fluid properties.
     phi : np.ndarray
         Porosity.
-    asp:
+    f1 : np.ndarray
+        Fraction of mineral 1.
+    f2 : np.ndarray
+        Fraction of mineral 2.
+    prop_clay : float
+        Range 0 - 1 of the fraction that is clay and carbonate.
+    asp: np.ndarray
         Porosity aspect ratio.
 
     Returns
     -------
     tuple
-        k, mu, rhob : (np.ndarray, np.ndarray, np.ndarray).
-        k - effektive bulk modulus [Pa], mu - effective shear modulus [Pa], rhob - effective density [kg/m^3].
+        k, mu, rhob : np.ndarray
+        k - effective bulk modulus [Pa], mu - effective shear modulus [Pa], rhob - effective density [kg/m^3].
     """
 
     #   tol: DEM model calculation tolerance <= Set as a hardcoded value, not
@@ -82,11 +85,20 @@ def shale_4_min_dem_overlay(
     )
     rho_mat = rho1 * f1 + rho2 * f2 + rho3 * f3 + rho4 * f4
 
-    k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = dim_check_vector(
-        (k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp)
+    k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = cast(
+        list[npt.NDArray[np.float64]],
+        dim_check_vector((k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp)),
     )
     k, mu, rhob = dem_model(
-        k_mat, mu_mat, rho_mat, k_fl, np.zeros(len(k_fl)), rho_fl, phi, asp, tol
+        k1=k_mat,
+        mu1=mu_mat,
+        rho1=rho_mat,
+        k2=k_fl,
+        mu2=np.zeros(len(k_fl)),
+        rho2=rho_fl,
+        frac2=phi,
+        asp2=asp,
+        tol=tol,
     )
 
     return k, mu, rhob
