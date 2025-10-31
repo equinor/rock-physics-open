@@ -37,7 +37,7 @@ def test_sca_model():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -48,6 +48,6 @@ def test_multi_sca_model():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

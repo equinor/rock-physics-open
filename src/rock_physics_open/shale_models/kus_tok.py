@@ -1,11 +1,21 @@
 import warnings
 
 import numpy as np
+import numpy.typing as npt
 
 from .pq import p_q_fcn
 
 
-def kuster_toksoz_model(k1, mu1, rho1, k2, mu2, rho2, frac1, asp2):
+def kuster_toksoz_model(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    rho1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    rho2: npt.NDArray[np.float64],
+    frac1: npt.NDArray[np.float64],
+    asp2: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Simplified Kuster-Toksoz model for single mineral inclusion with single aspect ratio.
 
     Parameters
@@ -30,7 +40,7 @@ def kuster_toksoz_model(k1, mu1, rho1, k2, mu2, rho2, frac1, asp2):
     Returns
     -------
     tuple
-        k_kt, mu_kt, rhob : (np.ndarray, np.ndarray, np.ndarray).
+        k_kt, mu_kt, rhob : np.ndarray
         effective media properties: k_kt: bulk modulus [Pa], mu_kt: shear modulus [Pa], rhob: bulk density [kg/m^3].
     """
     frac2 = 1.0 - frac1

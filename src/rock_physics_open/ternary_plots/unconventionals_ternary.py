@@ -1,5 +1,7 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
+import numpy.typing as npt
 
 from .gen_ternary_plot import _ternary_plot
 from .shale_prop_ternary import _shale_prop_ternary
@@ -7,8 +9,16 @@ from .ternary_patches import _ternary_patches
 
 
 def run_ternary(
-    quartz, carb, clay, kero, phi, misc, misc_log_type, well_name, draw_figures=True
-):
+    quartz: npt.NDArray[np.float64],
+    carb: npt.NDArray[np.float64],
+    clay: npt.NDArray[np.float64],
+    kero: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    misc: npt.NDArray[np.float64],
+    misc_log_type: str,
+    well_name: str,
+    draw_figures: bool = True,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Combined call to three different ternary plots used to describe unconventionals (shale) models.
 
     Parameters
@@ -45,27 +55,27 @@ def run_ternary(
     )
 
     hard = _shale_prop_ternary(
-        quartz,
-        carb,
-        clay,
-        kero,
-        phi,
-        misc,
-        misc_log_type,
-        well_name,
+        quartz=quartz,
+        carb=carb,
+        clay=clay,
+        kero=kero,
+        phit=phi,
+        col_code=misc,
+        name_col_code=misc_log_type,
+        well_name=well_name,
         draw_figures=draw_figures,
     )
 
     _ternary_plot(
-        quartz,
-        carb,
-        clay,
-        kero,
-        well_name,
-        "Quartz",
-        "Carbonate",
-        "Clay",
-        "Kerogen",
+        data1=quartz,
+        data2=carb,
+        data3=clay,
+        data4=kero,
+        well_name=well_name,
+        name_data1="Quartz",
+        name_data2="Carbonate",
+        name_data3="Clay",
+        name_data4="Kerogen",
         draw_figures=draw_figures,
     )
 

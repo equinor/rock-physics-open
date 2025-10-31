@@ -53,7 +53,7 @@ def test_dem_model():
     args = dem_model(k1, mu1, rho1, k2, mu2, rho2, frac2, asp_2, tol)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -77,7 +77,7 @@ def test_dem_dual_por_model():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -112,7 +112,7 @@ def test_dem_4_min_model():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -141,6 +141,6 @@ def test_dem_4_min_overlay_model():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

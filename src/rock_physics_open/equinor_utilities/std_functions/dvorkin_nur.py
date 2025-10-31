@@ -3,13 +3,13 @@ import numpy.typing as npt
 
 
 def dvorkin_contact_cement(
-    frac_cem: npt.NDArray[np.float64],
-    por0_sst: npt.NDArray[np.float64],
+    frac_cem: npt.NDArray[np.float64] | float,
+    por0_sst: npt.NDArray[np.float64] | float,
     mu0_sst: npt.NDArray[np.float64],
     k0_sst: npt.NDArray[np.float64],
     mu0_cem: npt.NDArray[np.float64],
     k0_cem: npt.NDArray[np.float64],
-    vs_red: npt.NDArray[np.float64],
+    vs_red: npt.NDArray[np.float64] | float,
     c: float,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
@@ -17,21 +17,21 @@ def dvorkin_contact_cement(
 
     Parameters
     ----------
-    frac_cem : numpy.ndarray
+    frac_cem : np.ndarray | float
         Cement fraction of volume [ratio].
-    por0_sst : numpy.ndarray
+    por0_sst : np.ndarray | float
         Critical porosity of sand [ratio].
-    mu0_sst : numpy.ndarray
+    mu0_sst : np.ndarray
         Mineral shear modulus of sand [Pa].
-    k0_sst : numpy.ndarray
+    k0_sst : np.ndarray
         Mineral bulk modulus of sand [Pa].
-    mu0_cem : numpy.ndarray
+    mu0_cem : np.ndarray
         Mineral shear modulus of cement [Pa].
-    k0_cem : numpy.ndarray
+    k0_cem : np.ndarray
         Mineral bulk modulus of cement [Pa].
-    vs_red : numpy.ndarray
+    vs_red : np.ndarray | float
         Shear modulus reduction factor [ratio].
-    c : float
+    c : np.ndarray | float
         Coordination number (grain contacts per grain) [unitless].
 
     Returns

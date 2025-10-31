@@ -191,8 +191,11 @@ def gen_sub_routine(
     return y_final, y_pred, y_res
 
 
+OptType = Literal["min", "exp", "pat_cem", "const_cem", "friable"]
+
+
 def save_opt_params(
-    opt_type: str,
+    opt_type: OptType,
     opt_params: np.ndarray,
     file_name: str = "opt_params.pkl",
     well_name: str = "Unknown well",
@@ -272,7 +275,7 @@ def save_opt_params(
             "opt_vec": opt_params,
         }
     else:
-        raise ValueError(
+        raise ValueError(  # pyright: ignore[reportUnreachable] # kept for backward compatibility
             "save_opt_params: unknown optimisation opt_type: {}".format(opt_type)
         )
 

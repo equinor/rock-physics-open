@@ -35,30 +35,30 @@ def test_constant_cement_model_dry():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
 def test_constant_cement_model():
     args = constant_cement_model(
-        k_min,
-        mu_min,
-        rho_min,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl,
-        rho_fl,
-        phi,
-        frac_cem,
-        phi_c,
-        n,
-        shear_red,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        frac_cem=frac_cem,
+        phi_c=phi_c,
+        n=n,
+        shear_red=shear_red,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -70,26 +70,26 @@ high_frac_cem = 0.10
 
 def test_constant_cement_model_high_phi():
     args = constant_cement_model(
-        k_min,
-        mu_min,
-        rho_min,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl,
-        rho_fl,
-        new_phi,
-        high_frac_cem,
-        low_phi_c,
-        n,
-        shear_red,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=new_phi,
+        frac_cem=high_frac_cem,
+        phi_c=low_phi_c,
+        n=n,
+        shear_red=shear_red,
     )
     # assert that there are NaN values in the output at the correct indices
     expected_idx_nan = new_phi > low_phi_c - high_frac_cem
     assert np.all(expected_idx_nan == np.isnan(args[0]))
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -97,24 +97,24 @@ def test_constant_cement_model_high_phi():
 def test_constant_cement_model_high_phi_extrapolate():
     # Set flag for extrapolation to True and assert that there are no NaN values in the output
     args = constant_cement_model(
-        k_min,
-        mu_min,
-        rho_min,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl,
-        rho_fl,
-        new_phi,
-        high_frac_cem,
-        low_phi_c,
-        n,
-        shear_red,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=new_phi,
+        frac_cem=high_frac_cem,
+        phi_c=low_phi_c,
+        n=n,
+        shear_red=shear_red,
         extrapolate_to_max_phi=True,
     )
     assert not np.any(np.isnan(args[0]))
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

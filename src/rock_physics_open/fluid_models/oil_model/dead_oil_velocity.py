@@ -1,11 +1,12 @@
 import numpy as np
+import numpy.typing as npt
 
 
 def dead_oil_velocity(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-    reference_density: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    reference_density: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     The primary wave velocity in oil without dissolved gas (dead).
 

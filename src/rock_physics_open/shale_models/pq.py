@@ -1,7 +1,14 @@
 import numpy as np
+import numpy.typing as npt
 
 
-def p_q_fcn(k, mu, k2, mu2, asp):
+def p_q_fcn(
+    k: npt.NDArray[np.float64],
+    mu: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    asp: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Geometric factors used in inclusion models.
 
@@ -25,7 +32,7 @@ def p_q_fcn(k, mu, k2, mu2, asp):
     Returns
     -------
     tuple
-        p, q : (np.ndarray, np.ndarray).
+        p, q : np.ndarray
         geometric factors p and q.
     """
 

@@ -1,45 +1,61 @@
+from typing import Literal
 from warnings import warn
 
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities import std_functions
 
 from .constant_cement_models import constant_cement_model_dry
-from .friable_models import friable_model_dry
+from .friable_models import CoordinateNumberFunction, friable_model_dry
 from .patchy_cement_model import constant_cement_model_pcm
+
+_BehaviorOptions = Literal["snap", "disregard"]
 
 
 def patchy_cement_pressure_fluid_substitution(
-    k_min,
-    mu_min,
-    rho_min,
-    k_cem,
-    mu_cem,
-    rho_cem,
-    k_fl_old,
-    rho_fl_old,
-    k_fl_new,
-    rho_fl_new,
-    phi,
-    p_eff_old,
-    p_eff_new,
-    vp_old,
-    vs_old,
-    rho_b_old,
-    p_eff_low,
-    frac_cem_up,
-    frac_cem,
-    shear_red,
-    phi_c,
-    coord_num_func,
-    n,
-    model_type="weight",
-    phi_below_zero="disregard",
-    phi_above_phi_c="snap",
-    k_sat_above_k_min="disregard",
-    above_upper_bound="snap",
-    below_lower_bound="disregard",
-):
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_cem: npt.NDArray[np.float64],
+    mu_cem: npt.NDArray[np.float64],
+    rho_cem: npt.NDArray[np.float64],
+    k_fl_old: npt.NDArray[np.float64],
+    rho_fl_old: npt.NDArray[np.float64],
+    k_fl_new: npt.NDArray[np.float64],
+    rho_fl_new: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    p_eff_old: npt.NDArray[np.float64],
+    p_eff_new: npt.NDArray[np.float64],
+    vp_old: npt.NDArray[np.float64],
+    vs_old: npt.NDArray[np.float64],
+    rho_b_old: npt.NDArray[np.float64],
+    p_eff_low: npt.NDArray[np.float64],
+    frac_cem_up: npt.NDArray[np.float64] | float,
+    frac_cem: npt.NDArray[np.float64] | float,
+    shear_red: float,
+    phi_c: float,
+    coord_num_func: CoordinateNumberFunction,
+    n: float,
+    model_type: Literal["weight", "cement_fraction"] = "weight",
+    phi_below_zero: _BehaviorOptions = "disregard",
+    phi_above_phi_c: _BehaviorOptions = "snap",
+    k_sat_above_k_min: _BehaviorOptions = "disregard",
+    above_upper_bound: _BehaviorOptions = "snap",
+    below_lower_bound: _BehaviorOptions = "disregard",
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Patchy cement model, developed by Per Avseth and Norunn Skjei. A sandstone model in which part of the
     matrix is pressure sensitive, and part is cemented.
@@ -53,7 +69,7 @@ def patchy_cement_pressure_fluid_substitution(
     result.
 
     phi_above_phi_c = 'disregard':	Values with porosity above critical porosity will either have their values snapped
-    to critical porosity ('sbap') or the input value will be returned ('disregard').
+    to critical porosity ('snap') or the input value will be returned ('disregard').
 
     k_sat_above_k_min='disregard': Values with saturated bulk modulus above the mineral bulk modulus will have their
     value snapped to the mineral modulus ('snap') or the input value will be returned ('disregard').
@@ -147,7 +163,7 @@ def patchy_cement_pressure_fluid_substitution(
     """
 
     # Original saturated bulk and shear modulus
-    k_sat_old, mu_old = std_functions.moduli(vp_old, vs_old, rho_b_old)
+    k_sat_old, mu_old = std_functions.moduli(vp=vp_old, vs=vs_old, rhob=rho_b_old)
 
     # Handling of samples that violate the assumptions of the Patchy Cement
     # substitution:
@@ -155,12 +171,12 @@ def patchy_cement_pressure_fluid_substitution(
     #   2: phi > phi_c
     #   3: k_sat > k_min
     idx1 = _handle_exceptions_part_1(
-        phi,
-        phi_c,
-        k_sat_old,
-        mu_old,
-        k_min,
-        mu_min,
+        phi_vec=phi,
+        phi_c_const=phi_c,
+        k_sat=k_sat_old,
+        mu=mu_old,
+        k_min=k_min,
+        mu_min=mu_min,
         phi_below_zero=phi_below_zero,
         phi_above_phi_c=phi_above_phi_c,
         k_sat_above_k_min=k_sat_above_k_min,
@@ -169,30 +185,48 @@ def patchy_cement_pressure_fluid_substitution(
     # k_dry for original pressure from Gassmann for valid samples
     k_dry_old = np.ones_like(phi) * np.nan
     k_dry_old[~idx1] = std_functions.gassmann_dry(
-        k_sat_old[~idx1], phi[~idx1], k_fl_old[~idx1], k_min[~idx1]
+        k_sat=k_sat_old[~idx1],
+        por=phi[~idx1],
+        k_fl=k_fl_old[~idx1],
+        k_min=k_min[~idx1],
     )
 
     # For common handling of zero-porosity point: calculate effective
     # properties using Hashin-Shtrikman
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
-        k_cem, mu_cem, k_min, mu_min, frac_cem_up, bound="lower"
+        k1=k_cem,
+        mu1=mu_cem,
+        k2=k_min,
+        mu2=mu_min,
+        f1=frac_cem_up,
+        bound="lower",
     )
 
     # Lower bound for estimation of weight W (input moduli in Pa, pressure in Pa)
     k_low, mu_low = friable_model_dry(
-        k_zero,
-        mu_zero,
-        phi,
-        p_eff_low * np.ones_like(phi),
-        phi_c,
-        coord_num_func,
-        n,
-        shear_red,
+        k_min=k_zero,
+        mu_min=mu_zero,
+        phi=phi,
+        p_eff=p_eff_low * np.ones_like(phi),
+        phi_c=phi_c,
+        coord_num_func=coord_num_func,
+        n=n,
+        shear_red=shear_red,
     )
 
     # Upper bounds for estimation of weight W
     k_up, mu_up = constant_cement_model_dry(
-        k_min, mu_min, k_cem, mu_cem, phi, frac_cem_up, phi_c, n, shear_red
+        k_min=k_min,
+        mu_min=mu_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        phi=phi,
+        frac_cem=frac_cem_up,
+        phi_c=phi_c,
+        n=n,
+        shear_red=shear_red,
+        extrapolate_to_max_phi=False,
+        return_k_zero=False,
     )
 
     # Handling of samples that violate the assumptions of the Patchy Cement
@@ -203,13 +237,13 @@ def patchy_cement_pressure_fluid_substitution(
     #   6: k_dry, mu above upper bound
 
     idx2 = _handle_exceptions_part_2(
-        k_dry_old,
-        mu_old,
-        k_up,
-        mu_up,
-        k_low,
-        mu_low,
-        idx1,
+        k_dry=k_dry_old,
+        mu=mu_old,
+        k_up=k_up,
+        mu_up=mu_up,
+        k_low=k_low,
+        mu_low=mu_low,
+        idx=idx1,
         above_upper_bound=above_upper_bound,
         below_lower_bound=below_lower_bound,
     )
@@ -217,34 +251,64 @@ def patchy_cement_pressure_fluid_substitution(
 
     # Pressure sensitive model for initial pressure
     k_dry_p_init, mu_p_init = friable_model_dry(
-        k_zero, mu_zero, phi, p_eff_old, phi_c, coord_num_func, n, shear_red
+        k_min=k_zero,
+        mu_min=mu_zero,
+        phi=phi,
+        p_eff=p_eff_old,
+        phi_c=phi_c,
+        coord_num_func=coord_num_func,
+        n=n,
+        shear_red=shear_red,
     )
 
     # Pressure sensitive model for final pressure
     k_dry_p_final, mu_p_final = friable_model_dry(
-        k_zero, mu_zero, phi, p_eff_new, phi_c, coord_num_func, n, shear_red
+        k_min=k_zero,
+        mu_min=mu_zero,
+        phi=phi,
+        p_eff=p_eff_new,
+        phi_c=phi_c,
+        coord_num_func=coord_num_func,
+        n=n,
+        shear_red=shear_red,
     )
 
     # Weights - either on a sample basis or by a representative constant cement model
     if model_type == "weight":
-        w_k = _calculate_weight(k_dry_old, k_low, k_up)
-        w_mu = _calculate_weight(mu_old, mu_low, mu_up)
+        w_k = _calculate_weight(
+            dry_modulus=k_dry_old,
+            low_modulus=k_low,
+            high_modulus=k_up,
+        )
+        w_mu = _calculate_weight(
+            dry_modulus=mu_old,
+            low_modulus=mu_low,
+            high_modulus=mu_up,
+        )
     else:
         k_cc, mu_cc = constant_cement_model_pcm(
-            k_min,
-            mu_min,
-            k_cem,
-            mu_cem,
-            k_zero,
-            mu_zero,
-            phi,
-            frac_cem,
-            phi_c,
-            n,
-            shear_red,
-        )[0:2]
-        w_k = _calculate_weight(k_cc, k_low, k_up)
-        w_mu = _calculate_weight(mu_cc, mu_low, mu_up)
+            kmin=k_min,
+            mymin=mu_min,
+            kcem=k_cem,
+            mycem=mu_cem,
+            kzero=k_zero,
+            myzero=mu_zero,
+            phi=phi,
+            cem_frac=frac_cem,
+            phic=phi_c,
+            n=n,
+            red_shear=shear_red,
+        )
+        w_k = _calculate_weight(
+            dry_modulus=k_cc,
+            low_modulus=k_low,
+            high_modulus=k_up,
+        )
+        w_mu = _calculate_weight(
+            dry_modulus=mu_cc,
+            low_modulus=mu_low,
+            high_modulus=mu_up,
+        )
 
     w_cem = 0.5 * (w_mu + w_k)
     k_mod_dry = np.nan * np.ones_like(phi)
@@ -257,7 +321,10 @@ def patchy_cement_pressure_fluid_substitution(
         k_up[idx_valid] - k_low[idx_valid]
     )
     k_mod[idx_valid] = std_functions.gassmann(
-        k_mod_dry[idx_valid], phi[idx_valid], k_fl_old[idx_valid], k_min[idx_valid]
+        k_dry=k_mod_dry[idx_valid],
+        por=phi[idx_valid],
+        k_fl=k_fl_old[idx_valid],
+        k_min=k_min[idx_valid],
     )
     mu_mod[idx_valid] = mu_p_init[idx_valid] + w_mu[idx_valid] * (
         mu_up[idx_valid] - mu_low[idx_valid]
@@ -272,7 +339,11 @@ def patchy_cement_pressure_fluid_substitution(
     k_mod[idx2] = k_sat_old[idx2]
     mu_mod[idx2] = mu_old[idx2]
     rho_mod[idx2] = rho_b_old[idx2]
-    vp_mod, vs_mod = std_functions.velocity(k_mod, mu_mod, rho_mod)[0:2]
+    vp_mod, vs_mod, _, _ = std_functions.velocity(
+        k=k_mod,
+        mu=mu_mod,
+        rhob=rho_mod,
+    )
 
     # Calculate residuals. For invalid samples, the residuals will be set to zero
     vp_res = vp_old - vp_mod
@@ -296,7 +367,10 @@ def patchy_cement_pressure_fluid_substitution(
     k_sat_new = np.ones_like(phi) * np.nan
     if np.any(idx_valid):
         k_sat_new[idx_valid] = std_functions.gassmann(
-            k_dry_new[idx_valid], phi[idx_valid], k_fl_new[idx_valid], k_min[idx_valid]
+            k_dry=k_dry_new[idx_valid],
+            por=phi[idx_valid],
+            k_fl=k_fl_new[idx_valid],
+            k_min=k_min[idx_valid],
         )
     k_sat_new[idx2] = k_sat_old[idx2]
     mu_new[idx2] = mu_old[idx2]
@@ -309,7 +383,11 @@ def patchy_cement_pressure_fluid_substitution(
     rho_b_new[idx2] = rho_b_old[idx2]
 
     # New saturated velocities and derived values
-    vp_new, vs_new = std_functions.velocity(k_sat_new, mu_new, rho_b_new)[0:2]
+    vp_new, vs_new, _, _ = std_functions.velocity(
+        k=k_sat_new,
+        mu=mu_new,
+        rhob=rho_b_new,
+    )
     ai_new = vp_new * rho_b_new
     vpvs_new = vp_new / vs_new
 
@@ -329,15 +407,15 @@ def patchy_cement_pressure_fluid_substitution(
 
 
 def _handle_exceptions_part_1(
-    phi_vec: np.ndarray,
+    phi_vec: npt.NDArray[np.float64],
     phi_c_const: float,
-    k_sat: np.ndarray,
-    mu: np.ndarray,
-    k_min: np.ndarray,
-    mu_min: np.ndarray,
-    phi_below_zero: str = "disregard",
-    phi_above_phi_c: str = "snap",
-    k_sat_above_k_min: str = "disregard",
+    k_sat: npt.NDArray[np.float64],
+    mu: npt.NDArray[np.float64],
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    phi_below_zero: _BehaviorOptions = "disregard",
+    phi_above_phi_c: _BehaviorOptions = "snap",
+    k_sat_above_k_min: _BehaviorOptions = "disregard",
 ) -> np.ndarray:
     # Handling of samples that violate assumptions of the Patchy Cement substitution:
     #   1: phi < 0
@@ -352,7 +430,7 @@ def _handle_exceptions_part_1(
     elif phi_below_zero == "disregard":
         pass
     else:
-        raise ValueError('unknown argument for parameter "phi_below_zero"')
+        raise ValueError('unknown argument for parameter "phi_below_zero"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
 
     #  Handling of case 2:
     idx2 = phi_vec > phi_c_const
@@ -362,7 +440,7 @@ def _handle_exceptions_part_1(
     elif phi_above_phi_c == "disregard":
         pass
     else:
-        raise ValueError('unknown argument for parameter "phi_above_phi_c"')
+        raise ValueError('unknown argument for parameter "phi_above_phi_c"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
 
     # Handling of case 3:
     idx3 = np.logical_or(k_sat > k_min, mu > mu_min)
@@ -373,7 +451,7 @@ def _handle_exceptions_part_1(
     elif k_sat_above_k_min == "disregard":
         pass
     else:
-        raise ValueError('unknown argument for parameter "k_sat_above_k_min"')
+        raise ValueError('unknown argument for parameter "k_sat_above_k_min"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
     return np.any(np.vstack((idx1, idx2, idx3)), axis=0)
 
 
@@ -385,8 +463,8 @@ def _handle_exceptions_part_2(
     k_low: np.ndarray,
     mu_low: np.ndarray,
     idx: np.ndarray,
-    above_upper_bound: str = "snap",
-    below_lower_bound: str = "disregard",
+    above_upper_bound: _BehaviorOptions = "snap",
+    below_lower_bound: _BehaviorOptions = "disregard",
 ) -> np.ndarray:
     # Handling of samples that violate the assumptions of the Patchy Cement
     # substitution:
@@ -408,8 +486,8 @@ def _handle_exceptions_part_2(
     # Handling of case 5:
     idx5k = np.zeros_like(k_dry).astype(bool)
     idx5mu = np.zeros_like(k_dry).astype(bool)
-    np.less(k_dry, k_low, out=idx5k, where=~idx_nan)
-    np.less(mu, mu_low, out=idx5mu, where=~idx_nan)
+    _ = np.less(k_dry, k_low, out=idx5k, where=~idx_nan)
+    _ = np.less(mu, mu_low, out=idx5mu, where=~idx_nan)
     if below_lower_bound == "snap":
         k_dry[idx5k] = k_low[idx5k]
         mu[idx5mu] = mu_low[idx5mu]
@@ -417,14 +495,14 @@ def _handle_exceptions_part_2(
     elif below_lower_bound == "disregard":
         idx5 = np.logical_or(idx5k, idx5mu)
     else:
-        raise ValueError('unknown argument for parameter "below_lower_bound"')
+        raise ValueError('unknown argument for parameter "below_lower_bound"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
 
     # Handling of case 6:
     if above_upper_bound == "snap":
         idx6k = np.zeros_like(k_dry).astype(bool)
         idx6mu = np.zeros_like(k_dry).astype(bool)
-        np.greater(k_dry, k_up, out=idx6k, where=~idx_nan)
-        np.greater(mu, mu_up, out=idx6mu, where=~idx_nan)
+        _ = np.greater(k_dry, k_up, out=idx6k, where=~idx_nan)
+        _ = np.greater(mu, mu_up, out=idx6mu, where=~idx_nan)
         k_dry[idx6k] = k_up[idx6k]
         mu[idx6mu] = mu_up[idx6mu]
         idx6 = np.zeros(k_dry.shape).astype(bool)
@@ -434,18 +512,18 @@ def _handle_exceptions_part_2(
             np.greater(mu, mu_up, where=~idx_nan),
         )
     else:
-        raise ValueError('unknown argument for parameter "above_upper_bound"')
+        raise ValueError('unknown argument for parameter "above_upper_bound"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
 
     # Exception for all cases 1-6:
     return np.any(np.vstack((idx, idx5, idx6, idx_nan)), axis=0)
 
 
 def _calculate_weight(
-    dry_modulus: np.ndarray,
-    low_modulus: np.ndarray,
-    high_modulus: np.ndarray,
-    force_full_range: str = False,
-) -> np.ndarray:
+    dry_modulus: npt.NDArray[np.float64],
+    low_modulus: npt.NDArray[np.float64],
+    high_modulus: npt.NDArray[np.float64],
+    force_full_range: bool = False,
+) -> npt.NDArray[np.float64]:
     """
     Calculates a weight for a value between a lower and upper bound. Used for moduli
 
@@ -464,8 +542,7 @@ def _calculate_weight(
     idx = np.abs(high_modulus - low_modulus) < 2.0 * np.finfo(float).eps
     if np.any(idx):
         warn(
-            f"weight estimation: high and low bound is identical for "
-            f"{np.sum(high_modulus == low_modulus)} samples"
+            f"weight estimation: high and low bound is identical for {np.sum(high_modulus == low_modulus)} samples"
         )
     weight = np.ones_like(dry_modulus)
     weight[~idx] = (dry_modulus[~idx] - low_modulus[~idx]) / (

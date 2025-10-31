@@ -1,19 +1,32 @@
+from typing import Literal, cast
+
+import numpy as np
+import numpy.typing as npt
+
 from rock_physics_open.equinor_utilities import gen_utilities, std_functions
+
+CoordinateNumberFunction = Literal["PorBased", "ConstVal"]
 
 
 def friable_model(
-    k_min,
-    mu_min,
-    rho_min,
-    k_fl,
-    rho_fl,
-    phi,
-    p_eff,
-    phi_c,
-    coord_num_func,
-    n,
-    shear_red,
-):
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    p_eff: npt.NDArray[np.float64],
+    phi_c: float,
+    coord_num_func: CoordinateNumberFunction,
+    n: float,
+    shear_red: float,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Friable (non-cemented) sandstone model. All porosity variation is due to sorting, i.e. porosity filled with
     smaller grains. This model is pressure sensitive, but without asymptotic behaviour, which could be expected.
@@ -69,25 +82,54 @@ def friable_model(
     Returns
     -------
     tuple
-        vp, vs, rho, ai, vpvs  : (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+        vp, vs, rho, ai, vpvs  : np.ndarray
         vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
     """
     k_dry, mu = friable_model_dry(
-        k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear_red
+        k_min=k_min,
+        mu_min=mu_min,
+        phi=phi,
+        p_eff=p_eff,
+        phi_c=phi_c,
+        coord_num_func=coord_num_func,
+        n=n,
+        shear_red=shear_red,
     )
 
     # Saturated rock incompressibility is calculated with Gassmann
-    k = std_functions.gassmann(k_dry, phi, k_fl, k_min)
+    k = std_functions.gassmann(
+        k_dry=k_dry,
+        por=phi,
+        k_fl=k_fl,
+        k_min=k_min,
+    )
 
     # Bulk density
-    rhob = std_functions.rho_b(phi, rho_fl, rho_min)
+    rhob = std_functions.rho_b(
+        phi=phi,
+        rho_f=rho_fl,
+        rho_mat=rho_min,
+    )
 
-    vp, vs, ai, vpvs = std_functions.velocity(k, mu, rhob)
+    vp, vs, ai, vpvs = std_functions.velocity(
+        k=k,
+        mu=mu,
+        rhob=rhob,
+    )
 
     return vp, vs, rhob, ai, vpvs
 
 
-def friable_model_dry(k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear_red):
+def friable_model_dry(
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    p_eff: npt.NDArray[np.float64],
+    phi_c: float,
+    coord_num_func: CoordinateNumberFunction,
+    n: float | None,
+    shear_red: npt.NDArray[np.float64] | float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Dry rock version of friable sandstone model.
 
@@ -132,20 +174,26 @@ def friable_model_dry(k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear
     Returns
     -------
     tuple
-        k, mu : (np.ndarray, np.ndarray).
+        k, mu : np.ndarray.
         Bulk modulus k [Pa], shear modulus mu [Pa] of dry rock.
     """
     # Expand floats to arrays, check for equal length
-    phi, phi_c, shear_red, k_min, mu_min, p_eff = gen_utilities.dim_check_vector(
-        (phi, phi_c, shear_red, k_min, mu_min, p_eff)
+    phi, phi_c_, shear_red_, k_min, mu_min, p_eff, n_ = cast(
+        list[npt.NDArray[np.float64]],
+        gen_utilities.dim_check_vector(
+            (phi, phi_c, shear_red, k_min, mu_min, p_eff, n)
+        ),
     )
     # Valid porosity values are less or equal to the critical porosity
     # Use filter_input_log to remove values that do not comply with this
     (
         idx_phi,
-        (phi, phi_c, shear_red, k_min, mu_min, p_eff, _),
-    ) = gen_utilities.filter_input_log(
-        (phi, phi_c, shear_red, k_min, mu_min, p_eff, phi_c - phi)
+        (phi, phi_c_, shear_red_, k_min, mu_min, p_eff, _),
+    ) = cast(
+        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
+        gen_utilities.filter_input_log(
+            (phi, phi_c_, shear_red_, k_min, mu_min, p_eff, phi_c - phi)
+        ),
     )
 
     # Dry rock properties of high-porosity end member calculated with
@@ -154,12 +202,21 @@ def friable_model_dry(k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear
     # Override coordination number calculation based on porosity
     if coord_num_func == "ConstVal":
         k_hm, mu_hm = std_functions.hertz_mindlin(
-            k_min, mu_min, phi_c, p_eff, shear_red, n
+            k=k_min,
+            mu=mu_min,
+            phi_c=phi_c_,
+            p=p_eff,
+            shear_red=shear_red,
+            coord=n_,
         )
     else:
         # Porosity based coordination number
         k_hm, mu_hm = std_functions.hertz_mindlin(
-            k_min, mu_min, phi_c, p_eff, shear_red
+            k=k_min,
+            mu=mu_min,
+            phi_c=phi_c_,
+            p=p_eff,
+            shear_red=shear_red,
         )
 
     # Hashin-Shtrikman lower bound describes the dry rock property mixing from
@@ -172,6 +229,8 @@ def friable_model_dry(k_min, mu_min, phi, p_eff, phi_c, coord_num_func, n, shear
         k_min, mu_min, k_hm, mu_hm, f1, bound="lower"
     )
 
-    k_dry, mu = gen_utilities.filter_output(idx_phi, (k_dry, mu))
+    k_dry, mu = cast(
+        list[npt.NDArray[np.float64]], gen_utilities.filter_output(idx_phi, (k_dry, mu))
+    )
 
     return k_dry, mu

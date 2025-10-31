@@ -1,11 +1,21 @@
 import numpy as np
+import numpy.typing as npt
 
 from .pq import p_q_fcn
 
 
 def self_consistent_approximation_model(
-    k1, mu1, rho1, k2, mu2, rho2, frac1, asp1, asp2, tol
-):
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    rho1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    rho2: npt.NDArray[np.float64],
+    frac1: npt.NDArray[np.float64],
+    asp1: npt.NDArray[np.float64],
+    asp2: npt.NDArray[np.float64],
+    tol: float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     SCA - Effective elastic moduli using Berryman's Self-Consistent
     (Coherent Potential) Approximation method.
@@ -36,7 +46,7 @@ def self_consistent_approximation_model(
     Returns
     -------
     tuple
-        k, mu, rho : (np.ndarray, np.ndarray, np.ndarray).
+        k, mu, rho : np.ndarray
         k: effective medium bulk modulus [Pa], mu: effective medium shear modulus [Pa], rho: bulk density [kg/m^3].
 
     Comments
@@ -58,11 +68,23 @@ def self_consistent_approximation_model(
     k_new = np.zeros(np.sum(idx))
     delta = np.absolute(k_sc[idx] - k_new)
     # Express tolerance in terms of k1
-    tol = tol * k1[idx]
+    tol_ = tol * k1[idx]
 
-    while np.any(delta > tol) and (n_iter < 3000):
-        p1, q1 = p_q_fcn(k_sc[idx], mu_sc[idx], k1[idx], mu1[idx], asp1[idx])
-        p2, q2 = p_q_fcn(k_sc[idx], mu_sc[idx], k2[idx], mu2[idx], asp2[idx])
+    while np.any(delta > tol_) and (n_iter < 3000):
+        p1, q1 = p_q_fcn(
+            k=k_sc[idx],
+            mu=mu_sc[idx],
+            k2=k1[idx],
+            mu2=mu1[idx],
+            asp=asp1[idx],
+        )
+        p2, q2 = p_q_fcn(
+            k=k_sc[idx],
+            mu=mu_sc[idx],
+            k2=k2[idx],
+            mu2=mu2[idx],
+            asp=asp2[idx],
+        )
 
         k_new = (f1[idx] * k1[idx] * p1 + f2[idx] * k2[idx] * p2) / (
             f1[idx] * p1 + f2[idx] * p2

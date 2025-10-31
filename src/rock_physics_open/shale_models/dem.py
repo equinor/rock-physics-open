@@ -1,12 +1,23 @@
 import sys
 
 import numpy as np
+import numpy.typing as npt
 from scipy.integrate import odeint
 
 from .pq import p_q_fcn
 
 
-def dem_model(k1, mu1, rho1, k2, mu2, rho2, frac2, asp2, tol):
+def dem_model(
+    k1: npt.NDArray[np.float64],
+    mu1: npt.NDArray[np.float64],
+    rho1: npt.NDArray[np.float64],
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    rho2: npt.NDArray[np.float64],
+    frac2: npt.NDArray[np.float64],
+    asp2: npt.NDArray[np.float64],
+    tol: float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     DEM - Effective elastic moduli using Differential Effective Medium formulation.
 
@@ -34,7 +45,7 @@ def dem_model(k1, mu1, rho1, k2, mu2, rho2, frac2, asp2, tol):
     Returns
     -------
     tuple
-        k, mu, rho : (np.ndarray, np.ndarray, np.ndarray).
+        k, mu, rho : np.ndarray
         k: effective medium bulk modulus [Pa], mu: effective medium shear modulus [Pa], rho: bulk density [kg/m^3].
 
     Comments
@@ -136,7 +147,13 @@ def dem_model(k1, mu1, rho1, k2, mu2, rho2, frac2, asp2, tol):
     return k, mu, rhob
 
 
-def _demy_prime(y, t, k2, mu2, asp2):
+def _demy_prime(
+    y: npt.NDArray[np.float64],
+    t: float,
+    k2: npt.NDArray[np.float64],
+    mu2: npt.NDArray[np.float64],
+    asp2: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Used by DEM model.
 

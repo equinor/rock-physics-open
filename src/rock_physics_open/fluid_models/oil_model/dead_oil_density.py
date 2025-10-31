@@ -1,10 +1,11 @@
 import numpy as np
+import numpy.typing as npt
 
 
 def pressure_adjusted_dead_oil_density(
-    pressure: np.ndarray | float,
-    reference_density: np.ndarray | float,
-) -> np.ndarray | float:
+    pressure: npt.NDArray[np.float64],
+    reference_density: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Adjusts density of a dead oil (without dissolved gas) to a given pressure.
 
@@ -14,7 +15,7 @@ def pressure_adjusted_dead_oil_density(
         and atmospheric pressure.
     :param pressure: Pressure [Pa] to adjust to.
     :return: Density of oil at given pressure and 21 degrees Celsius (~70 degrees
-    Farenheit). [kg/m^3]
+    Fahrenheit). [kg/m^3]
     """
     pressure_mpa = pressure / 1e6
     density_gcc = reference_density / 1000.0
@@ -27,9 +28,9 @@ def pressure_adjusted_dead_oil_density(
 
 
 def temperature_adjusted_dead_oil_density(
-    temperature: np.ndarray | float,
-    density_at_21c: np.ndarray,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    density_at_21c: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     Adjusts density of a dead oil (without dissolved gas) to a given temperature.
 
@@ -46,10 +47,10 @@ def temperature_adjusted_dead_oil_density(
 
 
 def dead_oil_density(
-    temperature: np.ndarray | float,
-    pressure: np.ndarray | float,
-    reference_density: np.ndarray | float,
-) -> np.ndarray | float:
+    temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    reference_density: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
     """
     The density of oil without dissolved gas (dead).
 
@@ -61,5 +62,11 @@ def dead_oil_density(
     :param temperature: Temperature [°C] of oil.
     :return: density of dead oil at given conditions (kg/m^3).
     """
-    density_p = pressure_adjusted_dead_oil_density(pressure, reference_density)
-    return temperature_adjusted_dead_oil_density(temperature, density_p)
+    density_p = pressure_adjusted_dead_oil_density(
+        pressure=pressure,
+        reference_density=reference_density,
+    )
+    return temperature_adjusted_dead_oil_density(
+        temperature=temperature,
+        density_at_21c=density_p,
+    )

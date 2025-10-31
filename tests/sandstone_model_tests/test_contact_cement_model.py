@@ -28,22 +28,22 @@ shear_red = 0.25
 
 def test_contact_cement_model():
     args = contact_cement_model(
-        k_min,
-        mu_min,
-        rho_min,
-        k_cem,
-        mu_cem,
-        rho_cem,
-        k_fl,
-        rho_fl,
-        phi,
-        frac_cem,
-        phi_c,
-        n,
-        shear_red,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_cem=k_cem,
+        mu_cem=mu_cem,
+        rho_cem=rho_cem,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        frac_cem=frac_cem,
+        phi_c=phi_c,
+        n=n,
+        shear_red=shear_red,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
