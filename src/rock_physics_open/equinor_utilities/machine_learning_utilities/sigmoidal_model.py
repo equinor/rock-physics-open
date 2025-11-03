@@ -2,6 +2,7 @@ import pickle
 from typing import Any, Self, final
 
 import numpy as np
+import numpy.typing as npt
 from typing_extensions import override
 
 from .base_pressure_model import BasePressureModel
@@ -105,7 +106,9 @@ class SigmoidalPressureModel(BasePressureModel):
         return self._p_eff_bias
 
     @override
-    def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
+    def validate_input(
+        self, inp_arr: npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.float64]:
         """
         Validate input for sigmoidal model.
 
@@ -132,7 +135,7 @@ class SigmoidalPressureModel(BasePressureModel):
             )
         return inp_arr
 
-    def _sigmoid_phi(self, phi: np.ndarray) -> np.ndarray:
+    def _sigmoid_phi(self, phi: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """
         Calculate velocity amplitude from porosity using sigmoid function.
 
@@ -152,7 +155,9 @@ class SigmoidalPressureModel(BasePressureModel):
             + self._phi_bias
         )
 
-    def _sigmoid_p_eff(self, p_eff: np.ndarray, amplitude: np.ndarray) -> np.ndarray:
+    def _sigmoid_p_eff(
+        self, p_eff: npt.NDArray[np.float64], amplitude: npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.float64]:
         """
         Calculate velocity from effective pressure using sigmoid function with amplitude.
 
@@ -175,7 +180,9 @@ class SigmoidalPressureModel(BasePressureModel):
         )
 
     @override
-    def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
+    def predict_abs(
+        self, inp_arr: npt.NDArray[np.float64], case: str = "in_situ"
+    ) -> npt.NDArray[np.float64]:
         """
         Calculate absolute velocity for specified pressure case.
 

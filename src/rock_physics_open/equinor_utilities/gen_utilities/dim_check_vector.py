@@ -8,7 +8,7 @@ import pandas as pd
 @overload
 def dim_check_vector(
     args: list[Any] | tuple[Any, ...],
-    force_type: np.dtype | None = ...,
+    force_type: np.dtype[Any] | None = ...,
 ) -> list[npt.NDArray[Any] | pd.DataFrame]:
     """Overload for when the input is a list or tuple."""
 
@@ -16,7 +16,7 @@ def dim_check_vector(
 @overload
 def dim_check_vector(
     args: pd.DataFrame,
-    force_type: np.dtype | None = ...,
+    force_type: np.dtype[Any] | None = ...,
 ) -> pd.DataFrame:
     """Overload for when the input is a pandas DataFrame."""
 
@@ -24,14 +24,14 @@ def dim_check_vector(
 @overload
 def dim_check_vector(
     args: npt.NDArray[Any],
-    force_type: np.dtype | None = ...,
+    force_type: np.dtype[Any] | None = ...,
 ) -> npt.NDArray[Any]:
     """Overload for when the input is a numpy array."""
 
 
 def dim_check_vector(
     args: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
-    force_type: np.dtype | None = None,
+    force_type: np.dtype[Any] | None = None,
 ) -> npt.NDArray[Any] | pd.DataFrame | list[npt.NDArray[Any] | pd.DataFrame]:
     """
     Check that all inputs are of the same (one-dimensional) size. Raise ValueError in case there are several lengths
@@ -102,7 +102,7 @@ def dim_check_vector(
             if isinstance(item, pd.DataFrame):
                 output_arg.append(
                     pd.DataFrame(
-                        np.tile(np.array(item), repeat_tuple),
+                        np.tile(np.array(item, dtype=np.float64), repeat_tuple),
                         columns=item.columns,
                         index=np.arange(max_length),
                     )

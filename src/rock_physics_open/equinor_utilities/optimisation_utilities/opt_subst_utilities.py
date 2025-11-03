@@ -193,7 +193,7 @@ def gen_sub_routine(
 
 def save_opt_params(
     opt_type: str,
-    opt_params: np.ndarray,
+    opt_params: npt.NDArray[np.float64],
     file_name: str = "opt_params.pkl",
     well_name: str = "Unknown well",
 ):

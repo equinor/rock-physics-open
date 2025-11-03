@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Self
 
 import numpy as np
+import numpy.typing as npt
 
 
 class BasePressureModel(ABC):
@@ -42,7 +43,7 @@ class BasePressureModel(ABC):
         """Model description."""
         return self._description
 
-    def predict(self, inp_arr: np.ndarray) -> np.ndarray:
+    def predict(self, inp_arr: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """
         Predict differential change: result(depleted) - result(in_situ).
 
@@ -61,7 +62,7 @@ class BasePressureModel(ABC):
             arr, case="in_situ"
         )
 
-    def predict_max(self, inp_arr: np.ndarray) -> np.ndarray:
+    def predict_max(self, inp_arr: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """
         Predict using model_max_pressure instead of depleted pressure.
 
@@ -91,7 +92,9 @@ class BasePressureModel(ABC):
         )
 
     @abstractmethod
-    def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
+    def validate_input(
+        self, inp_arr: npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.float64]:
         """
         Validate input array format for this specific model.
 
@@ -112,7 +115,9 @@ class BasePressureModel(ABC):
         """
 
     @abstractmethod
-    def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
+    def predict_abs(
+        self, inp_arr: npt.NDArray[np.float64], case: str = "in_situ"
+    ) -> npt.NDArray[np.float64]:
         """
         Predict absolute values for specified pressure case.
 

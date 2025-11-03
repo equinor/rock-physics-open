@@ -69,6 +69,9 @@ Repository = "https://github.com/equinor/rock-physics-open"
 Homepage = "https://github.com/equinor/rock-physics-open"
 Changelog = "https://github.com/equinor/rock-physics-open/blob/main/CHANGELOG.md"
 
+[project.optional-dependencies]
+tensorflow = ["tensorflow==2.19.1"]
+
 [dependency-groups]
 dev = [
     "basedpyright>=1.31.4",
@@ -133,6 +136,7 @@ allowedUntypedLibraries = [
     "matplotlib",
     "pyplot",
     "plt",
+    "keras",
 ]
 reportAny = false
 reportExplicitAny = false

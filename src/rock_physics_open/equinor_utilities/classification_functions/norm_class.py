@@ -57,7 +57,15 @@ def norm_class(
         delta = obs - class_mean[i, :]
         dist[:, i] = (
             -0.5 * np.log(np.linalg.det(class_cov[:, :, i]))
-            - 0.5 * np.sqrt(np.einsum("nj,jk,nk->n", delta, cov_inv, delta))
+            - 0.5
+            * np.sqrt(
+                np.einsum(  # pyright: ignore[reportUnknownMemberType]
+                    "nj,jk,nk->n",
+                    delta,
+                    cov_inv,
+                    delta,
+                )
+            )
             + np.log(prior_prob[i])
         )
 

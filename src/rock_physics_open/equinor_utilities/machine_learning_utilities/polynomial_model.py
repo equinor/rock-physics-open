@@ -2,6 +2,7 @@ import pickle
 from typing import Any, Self, final
 
 import numpy as np
+import numpy.typing as npt
 from typing_extensions import override
 
 from .base_pressure_model import BasePressureModel
@@ -46,7 +47,9 @@ class PolynomialPressureModel(BasePressureModel):
         return self._weights
 
     @override
-    def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
+    def validate_input(
+        self, inp_arr: npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.float64]:
         """
         Validate input for polynomial model.
 
@@ -74,7 +77,9 @@ class PolynomialPressureModel(BasePressureModel):
         return inp_arr
 
     @override
-    def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
+    def predict_abs(
+        self, inp_arr: npt.NDArray[np.float64], case: str = "in_situ"
+    ) -> npt.NDArray[Any]:
         """
         Calculate absolute velocity for specified pressure case.
 

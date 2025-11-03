@@ -9,14 +9,18 @@ import numpy.typing as npt
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, RobustScaler
 
+from rock_physics_open.equinor_utilities.machine_learning_utilities.base_pressure_model import (
+    BasePressureModel,
+)
+
 from .dummy_vars import generate_dummy_vars
-from .import_ml_models import AnyModel, import_model
+from .import_ml_models import SupportsPredict, import_model
 
 
 def _read_models(
     *model_files: str, model_dir: str | Path | None = None
 ) -> tuple[
-    list[AnyModel],
+    list[BasePressureModel | SupportsPredict],
     list[RobustScaler],
     list[OneHotEncoder | None],
     list[str],
@@ -32,7 +36,7 @@ def _read_models(
         model_dir, _ = os.path.split(model_files[0])
     os.chdir(model_dir)
     # Allocate lists and read model
-    reg_models: list[AnyModel] = []
+    reg_models: list[BasePressureModel | SupportsPredict] = []
     scalers: list[RobustScaler] = []
     ohes: list[OneHotEncoder | None] = []
     label_vars: list[str] = []
@@ -87,7 +91,7 @@ def _perform_regression(
     cat_var: str | list[str],
     ohe: Sequence[OneHotEncoder | None],
     scaler: Sequence[RobustScaler | None],
-    reg_model: Sequence[AnyModel],
+    reg_model: Sequence[SupportsPredict | BasePressureModel],
 ) -> pd.DataFrame:
     depth = inp_frame.index.to_numpy()
 

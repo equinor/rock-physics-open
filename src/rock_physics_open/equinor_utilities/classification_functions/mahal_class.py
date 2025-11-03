@@ -50,7 +50,14 @@ def mahal_class(
     for i in range(p):
         cov_inv = np.linalg.inv(class_cov[:, :, i])
         delta = obs - class_mean[i, :]
-        dist[:, i] = np.sqrt(np.einsum("nj,jk,nk->n", delta, cov_inv, delta))
+        dist[:, i] = np.sqrt(
+            np.einsum(  # pyright: ignore[reportUnknownMemberType]
+                "nj,jk,nk->n",
+                delta,
+                cov_inv,
+                delta,
+            )
+        )
 
     # Find the shortest distance, assign class, calculate posterior probability and
     # filter out observations with distance greater than the threshold

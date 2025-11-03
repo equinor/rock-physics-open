@@ -2,6 +2,7 @@ import pickle
 from typing import Any, Self, final
 
 import numpy as np
+import numpy.typing as npt
 from typing_extensions import override
 
 from .base_pressure_model import BasePressureModel
@@ -54,7 +55,9 @@ class ExponentialPressureModel(BasePressureModel):
         return self._b_factor
 
     @override
-    def validate_input(self, inp_arr: np.ndarray) -> np.ndarray:
+    def validate_input(
+        self, inp_arr: npt.NDArray[np.float64]
+    ) -> npt.NDArray[np.float64]:
         """
         Validate input for exponential model.
 
@@ -82,7 +85,9 @@ class ExponentialPressureModel(BasePressureModel):
         return inp_arr
 
     @override
-    def predict_abs(self, inp_arr: np.ndarray, case: str = "in_situ") -> np.ndarray:
+    def predict_abs(
+        self, inp_arr: npt.NDArray[np.float64], case: str = "in_situ"
+    ) -> npt.NDArray[np.float64]:
         """
         Calculate absolute velocity for specified pressure case.
 

@@ -72,7 +72,7 @@ def get_snapshot_name(
     return str(dir_name / base_name) if include_snapshot_dir else base_name
 
 
-def store_snapshot(snapshot_name: str, *args: np.ndarray) -> bool:
+def store_snapshot(snapshot_name: str, *args: npt.NDArray[np.float64]) -> bool:
     """
     Examples
     --------
