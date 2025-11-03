@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/equinor/rock-physics-open/compare/v0.3.1...v0.3.2) (2025-11-03)
+
+
+### Bug Fixes
+
+* Add type annotation equinor_utilities ([5b30f46](https://github.com/equinor/rock-physics-open/commit/5b30f4637b829c086685426bd02ae805339b19a4))
+
 ## [0.3.1](https://github.com/equinor/rock-physics-open/compare/v0.3.0...v0.3.1) (2025-10-28)
 
 
