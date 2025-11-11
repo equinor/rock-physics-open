@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/equinor/rock-physics-open/compare/v0.3.2...v0.3.3) (2025-11-11)
+
+
+### Bug Fixes
+
+* correct bug in label_vars and label_units ([09ee80b](https://github.com/equinor/rock-physics-open/commit/09ee80b9751deb93786fde9d5fd946bd413b05ba))
+
 ## [0.3.2](https://github.com/equinor/rock-physics-open/compare/v0.3.1...v0.3.2) (2025-11-03)
 
 
