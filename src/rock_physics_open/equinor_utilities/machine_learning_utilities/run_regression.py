@@ -59,11 +59,11 @@ def _read_models(
 
         # Need to modify names
         col_names, col_units = ([] for _ in range(2))
-        for i in range(len(label_var)):
+        for i in range(len(label_vars)):
             col_names.append(
-                label_var[i] + "_" + model_files[i].replace(label_var[i], "")
+                label_vars[i] + "_" + model_files[i].replace(label_vars[i], "")
             )
-            col_units.append(label_unit[i])
+            col_units.append(label_units[i])
 
     os.chdir(orig_dir)
 
