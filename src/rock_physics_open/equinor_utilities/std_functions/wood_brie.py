@@ -1,7 +1,10 @@
 from collections.abc import Sequence
+from typing import TypeVar, overload
 
 import numpy as np
 import numpy.typing as npt
+
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
 
 
 def brie(
@@ -84,7 +87,27 @@ def wood(
     return k, rho
 
 
-def multi_wood(fractions: Sequence[float], bulk_moduli: Sequence[float]) -> float:
+_T = TypeVar("_T", float, Array1D)
+
+
+@overload
+def multi_wood(
+    fractions: Sequence[Array1D],
+    bulk_moduli: Sequence[Array1D],
+) -> Array1D: ...
+
+
+@overload
+def multi_wood(
+    fractions: Sequence[float],
+    bulk_moduli: Sequence[float],
+) -> float: ...
+
+
+def multi_wood(
+    fractions: Sequence[_T],
+    bulk_moduli: Sequence[_T],
+) -> float | Array1D:
     assert len(fractions) == len(bulk_moduli)
     sum_fractions = sum(fractions)
     ratio_sum = sum(
