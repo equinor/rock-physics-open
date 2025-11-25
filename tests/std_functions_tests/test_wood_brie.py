@@ -1,7 +1,9 @@
+from typing import final
+
 import numpy as np
 from numpy.random import default_rng
 
-from rock_physics_open.equinor_utilities.std_functions import brie, wood
+from rock_physics_open.equinor_utilities.std_functions import brie, multi_wood, wood
 
 
 class TestWoodBrie:
@@ -75,3 +77,36 @@ class TestWoodBrie:
         )
         np.testing.assert_almost_equal(k_w, k_w_ref)
         np.testing.assert_almost_equal(k_b / 1e9, k_b_ref)
+
+
+@final
+class TestMultiWood:
+    s_gi = 0.0
+    s_oi = 0.5
+    s_wi = 0.5
+    oil_init_k = 492_032_461.8739312
+    gas_init_k = 208_287_817.8755032
+    brine_init_k = 2_814_732_817.889945
+    expected_value = 837_640_292.3902907
+
+    def test_multi_wood_array(self):
+        """Test multi_wood with numpy array inputs."""
+        result = multi_wood(
+            fractions=[np.array(self.s_oi), np.array(self.s_gi), np.array(self.s_wi)],
+            bulk_moduli=[
+                np.array(self.oil_init_k),
+                np.array(self.gas_init_k),
+                np.array(self.brine_init_k),
+            ],
+        )
+        expected = np.array([self.expected_value])
+        np.testing.assert_almost_equal(result, expected)
+
+    def test_multi_wood_scalar(self):
+        """Test multi_wood with scalar inputs."""
+        result = multi_wood(
+            fractions=[self.s_oi, self.s_gi, self.s_wi],
+            bulk_moduli=[self.oil_init_k, self.gas_init_k, self.brine_init_k],
+        )
+        expected = self.expected_value
+        np.testing.assert_almost_equal(result, expected)
