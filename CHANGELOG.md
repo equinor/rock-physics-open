@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/equinor/rock-physics-open/compare/v0.3.3...v0.3.4) (2025-12-04)
+
+
+### Bug Fixes
+
+* Allow float and numpy array inputs for multi-wood. Add tests for multi-wood ([3ec9433](https://github.com/equinor/rock-physics-open/commit/3ec9433a4997bef5a0c1dee3ece02dca154a2f90))
+
 ## [0.3.3](https://github.com/equinor/rock-physics-open/compare/v0.3.2...v0.3.3) (2025-11-11)
 
 
