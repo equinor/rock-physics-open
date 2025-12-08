@@ -908,6 +908,7 @@ dependencies = [
     { name = "scipy" },
     { name = "sympy" },
     { name = "tmatrix" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -920,7 +921,6 @@ dev = [
     { name = "pytest-cov" },
     { name = "ruff" },
     { name = "scipy-stubs" },
-    { name = "typing-extensions" },
 ]
 
 [package.metadata]
@@ -932,6 +932,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.10.1,<2" },
     { name = "sympy", specifier = ">=1.13.3" },
     { name = "tmatrix", specifier = ">=1.0.0" },
+    { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -944,7 +945,6 @@ dev = [
     { name = "pytest-cov", specifier = ">=6.2.1" },
     { name = "ruff", specifier = ">=0.12.11" },
     { name = "scipy-stubs", specifier = ">=1.16.1.1" },
-    { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 
 [[package]]
