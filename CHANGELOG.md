@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.5](https://github.com/equinor/rock-physics-open/compare/v0.3.4...v0.3.5) (2025-12-09)
+
+
+### Bug Fixes
+
+* Add type annotations fluid/sandstone/shale models ([906d1cf](https://github.com/equinor/rock-physics-open/commit/906d1cf63f2da520b41e16e50849988942cbfb62))
+* Move typing-extensions to dependencies ([c55ecf8](https://github.com/equinor/rock-physics-open/commit/c55ecf8e06cd55f17c1775eadd44ce47b5bb7883))
+
 ## [0.3.4](https://github.com/equinor/rock-physics-open/compare/v0.3.3...v0.3.4) (2025-12-04)
 
 
