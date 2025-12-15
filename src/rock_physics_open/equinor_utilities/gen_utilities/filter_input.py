@@ -66,9 +66,11 @@ def filter_input_log(
         raise ValueError(size_error)
 
     # Generate pandas series from numpy arrays
-    args = [pd.Series(log) if isinstance(log, np.ndarray) else log for log in args]
+    args_: list[pd.Series | pd.DataFrame] = [
+        pd.Series(log) if isinstance(log, np.ndarray) else log for log in args
+    ]
     # Merge into a data frame
-    logs = pd.concat(args, axis=1)
+    logs = pd.concat(args_, axis=1)
 
     # If any of the input logs are of type boolean, False means that they should not be included,
     # regardless of filter flags

@@ -57,7 +57,7 @@ dependencies = [
     "numpy >= 1.26.4",
     "pandas >= 2.0.2",
     "matplotlib >= 3.7.1",
-    "scipy >= 1.10.1, < 2",
+    "scipy >= 1.16.3, < 2",
     "scikit-learn >= 1.2.2",
     "sympy >= 1.13.3",           # TODO: remove? (only used 1 place in span_wagner co2 equations)
     "tmatrix >= 1.0.0",
@@ -79,7 +79,7 @@ dev = [
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
     "ruff>=0.12.11",
-    "scipy-stubs>=1.16.1.1",
+    "scipy-stubs>=1.16.3.3",
 ]
 
 [tool.ruff]
@@ -123,10 +123,13 @@ include = [
     "src/rock_physics_open/fluid_models",
     "src/rock_physics_open/sandstone_models",
     "src/rock_physics_open/shale_models",
+    "src/rock_physics_open/ternary_plots",
+    "src/rock_physics_open/span_wagner",
     "tests/gen_utilities_tests",
     "tests/fluid_model_tests",
     "tests/sandstone_model_tests",
     "tests/shale_model_tests",
+    "tests/span_wagner",
 ]
 exclude = ["src/rock_physics_open/version.py"]
 allowedUntypedLibraries = [
@@ -138,6 +141,8 @@ allowedUntypedLibraries = [
     "matplotlib",
     "pyplot",
     "plt",
+    "scipy",
+    "sympy",
 ]
 typeCheckingMode = "recommended"
 reportAny = false

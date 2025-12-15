@@ -85,7 +85,7 @@ def vp_vs_rho_stats(
     ]
     est_frame = pd.DataFrame(columns=est_frame_columns, index=estimated_set_names)
     est_frame.index.name = "Estimated set name"
-    est_frame.iloc[:, 0] = well_names  # pyright: ignore[reportArgumentType]
+    est_frame.iloc[:, 0] = well_names
 
     # If inputs are found to satisfy expectations in _verify, and they are numpy arrays, cast to lists, and run through
     if isinstance(vp_observed, np.ndarray):

@@ -1,20 +1,25 @@
+from typing import cast
+
 import numpy as np
+import numpy.typing as npt
 from matplotlib import pyplot as plt
+from matplotlib.colorbar import Colorbar
+from matplotlib.text import Text
 
-from .ternary_plot_utilities import _set_ternary_figure, _triangle_transform
+from .ternary_plot_utilities import set_ternary_figure, triangle_transform
 
 
-def _shale_prop_ternary(
-    quartz,
-    carb,
-    clay,
-    kero,
-    phit,
-    col_code,
-    name_col_code,
-    well_name,
-    draw_figures=True,
-):
+def shale_prop_ternary(
+    quartz: npt.NDArray[np.float64],
+    carb: npt.NDArray[np.float64],
+    clay: npt.NDArray[np.float64],
+    kero: npt.NDArray[np.float64],
+    phit: npt.NDArray[np.float64],
+    col_code: npt.NDArray[np.float64],
+    name_col_code: str,
+    well_name: str,
+    draw_figures: bool = True,
+) -> npt.NDArray[np.float64]:
     """Calculate hardness.
 
     Parameters
@@ -35,6 +40,8 @@ def _shale_prop_ternary(
         Plot annotation of log used for colour coding.
     well_name : str
         Plot heading with well name.
+    draw_figures : bool
+        Decide if figures are drawn or not, default is True.
 
     Returns
     -------
@@ -43,8 +50,11 @@ def _shale_prop_ternary(
     """
     KEROMAX = 0.25
 
-    _, _ = _set_ternary_figure(
-        1, 1, "Hardness vs. Organic Content Ternary Plot", well_name
+    _, _ = set_ternary_figure(
+        delta_x=1,
+        delta_y=1,
+        title="Hardness vs. Organic Content Ternary Plot",
+        well_name=well_name,
     )
 
     # Define patches
@@ -167,62 +177,55 @@ def _shale_prop_ternary(
     )
     start_x = start_x.flatten()
     start_y = start_y.flatten()
-    vertices = []
-    for i in range(len(start_x)):
-        vertices.append(corner_points + [start_x[i], start_y[i]])
+    vertices = [corner_points + [start_x[i], start_y[i]] for i in range(len(start_x))]
+    vertices_xy = [triangle_transform(v) for v in vertices]
 
-    vertices_xy = []
-    for i in range(len(vertices)):
-        vertices_xy.append(_triangle_transform(vertices[i]))
-
-    h_p = []
-    for i in range(len(vertices)):
-        # h_p.append(plt.fill(vertices_xy[i][:,0],vertices_xy[i][:,1],facecolor=col[i,:],edgecolor='k',linewidth=0.5))
-        h_p.append(
-            plt.fill(vertices_xy[i][:, 0], vertices_xy[i][:, 1], color=col[i, :])
-        )
+    _ = [
+        plt.fill(vertices_xy[i][:, 0], vertices_xy[i][:, 1], color=col[i, :])
+        for i in range(len(vertices))
+    ]
 
     # Draw lines around patches
-    x = np.array([[0], [1]])
-    y = np.array([[0], [0]])
+    x = np.array([[0], [1]], dtype=np.float64)
+    y = np.array([[0], [0]], dtype=np.float64)
     for i in np.arange(0, 1, 0.2):
         xy = np.column_stack((x, y + i))
-        t_xy = _triangle_transform(xy)
-        plt.plot(t_xy[:, 0], t_xy[:, 1], "k", linewidth=1)
-    x = np.array([[0], [0]])
-    y = np.array([[0], [1]])
+        t_xy = triangle_transform(xy)
+        _ = plt.plot(t_xy[:, 0], t_xy[:, 1], "k", linewidth=1)
+    x = np.array([[0], [0]], dtype=np.float64)
+    y = np.array([[0], [1]], dtype=np.float64)
     for i in np.arange(0, 1.1, 0.25):
         xy = np.column_stack((x + i, y))
-        t_xy = _triangle_transform(xy)
-        plt.plot(t_xy[:, 0], t_xy[:, 1], "k", linewidth=1)
+        t_xy = triangle_transform(xy)
+        _ = plt.plot(t_xy[:, 0], t_xy[:, 1], "k", linewidth=1)
 
     # Annotate axes
     xi = np.linspace(0, 1, 5)
     yi = np.linspace(0, 0.25, 6)
     for j in range(len(xi)):
-        plt.text(xi[j], -0.025, "%.2f" % (xi[j]))
+        _ = plt.text(xi[j], -0.025, "%.2f" % (xi[j]))
     for j in range(len(yi)):
-        plt.text(
+        _ = plt.text(
             1 - 0.5 / 0.25 * yi[j] + 0.015,
             yi[j] * np.sqrt(3) / 2 / 0.25,
             "%.2f" % (yi[j]),
         )
-    handles = []
+    handles: list[Text] = []
     # Axes labels
     handles.append(
         plt.text(
-            0.5,
-            -0.07,
-            "Hardness percentage\nClay+TOC+Phit <== ==> Quartz+Feldspar+Carbonate",
+            x=0.5,
+            y=-0.07,
+            s="Hardness percentage\nClay+TOC+Phit <== ==> Quartz+Feldspar+Carbonate",
             horizontalalignment="center",
             verticalalignment="center",
         )
     )
     handles.append(
         plt.text(
-            0.95,
-            np.sqrt(3) / 4,
-            "Organic percentage",
+            x=0.95,
+            y=np.sqrt(3) / 4,
+            s="Organic percentage",
             horizontalalignment="center",
             verticalalignment="center",
             rotation=-62,
@@ -238,10 +241,10 @@ def _shale_prop_ternary(
             [1.00, 0.60],
         ]
     )
-    bbt = _triangle_transform(bb)
+    bbt = triangle_transform(bb)
     bet = bbt + df
     for j in range(bb.shape[0]):
-        plt.plot(
+        _ = plt.plot(
             [
                 bbt[j, 0],
                 bet[j, 0],
@@ -260,10 +263,10 @@ def _shale_prop_ternary(
             [0.00, 0.60],
         ]
     )
-    bbt = _triangle_transform(bb)
+    bbt = triangle_transform(bb)
     bet = bbt + df
     for j in range(bb.shape[0]):
-        plt.plot(
+        _ = plt.plot(
             [
                 bbt[j, 0],
                 bet[j, 0],
@@ -296,7 +299,7 @@ def _shale_prop_ternary(
             [1.0, 0.1],
         ]
     )
-    text_pos = _triangle_transform(text_pos)
+    text_pos = triangle_transform(text_pos)
     text_pos = text_pos + np.array(
         [
             [-0.05, 0.0],
@@ -304,10 +307,10 @@ def _shale_prop_ternary(
         ]
     ).reshape(2, 2).repeat(3, axis=0)
     for i in range(len(names)):
-        plt.text(
-            text_pos[i, 0],
-            text_pos[i, 1],
-            names[i],
+        _ = plt.text(
+            x=text_pos[i, 0],
+            y=text_pos[i, 1],
+            s=names[i],
             horizontalalignment="center",
             verticalalignment="center",
             fontsize=10,
@@ -324,11 +327,19 @@ def _shale_prop_ternary(
     kero = np.minimum(kero, KEROMAX)
     kero_scal = kero / KEROMAX
 
-    data_xy = _triangle_transform(np.column_stack((hard, kero_scal)))
-    plt.scatter(data_xy[:, 0], data_xy[:, 1], s=64, c=col_code, zorder=4)
+    data_xy = triangle_transform(np.column_stack((hard, kero_scal)))
+    _ = plt.scatter(data_xy[:, 0], data_xy[:, 1], s=64, c=col_code, zorder=4)
 
-    hcb = plt.colorbar(pad=0.1)
-    hcb.set_label(name_col_code, fontname="sans-serif", fontweight="bold", fontsize=11)
+    hcb = cast(  # Casting due to incomplete typing in matplotlib
+        Colorbar,
+        plt.colorbar(pad=0.1),
+    )
+    hcb.set_label(
+        label=name_col_code,
+        fontname="sans-serif",
+        fontweight="bold",
+        fontsize=11,
+    )
 
     # plt.show()<= Show command is issued in controlling class method
     if draw_figures:

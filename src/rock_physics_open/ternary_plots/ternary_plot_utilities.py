@@ -2,9 +2,17 @@ import ctypes
 import os
 import platform
 import re
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+from matplotlib.text import Text
+
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2d
 
 HORZRES = 8
 VERTRES = 10
@@ -14,8 +22,13 @@ VERTRES = 10
 # LOGPIXELSY = 90
 
 
-def _set_ternary_figure(delta_x, delta_y, title, well_name):
-    """Find screen sixe, and make a suitable figure size and position, shift window with
+def set_ternary_figure(
+    delta_x: int,
+    delta_y: int,
+    title: str,
+    well_name: str,
+) -> tuple[Figure, Axes]:
+    """Find screen size, and make a suitable figure size and position, shift window with
     number of steps given by deltaX and deltaY.
     """
 
@@ -33,7 +46,7 @@ def _set_ternary_figure(delta_x, delta_y, title, well_name):
         raise ValueError("Unrecognised operating system")
 
     # Add figure
-    fig = plt.figure(title, facecolor=[0.9, 0.9, 0.9])
+    fig = plt.figure(title, facecolor=(0.9, 0.9, 0.9))
     # Set figure size and position
     mngr = plt.get_current_fig_manager()
     if platform.system() == "Windows":
@@ -41,28 +54,31 @@ def _set_ternary_figure(delta_x, delta_y, title, well_name):
         hei = int(pix_y * 0.6)
         start_x = int(pix_x * (0.1 + delta_x / 5))
         start_y = int(pix_y * (0.1 + delta_y / 10))
-
-        mngr.window.wm_geometry("{}x{}+{}+{}".format(wid, hei, start_x, start_y))
+        mngr.window.wm_geometry(  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType] | Incomplete type hints in matplotlib
+            "{}x{}+{}+{}".format(wid, hei, start_x, start_y),
+        )
     else:
         wid = int(pix_x * 0.2)
         hei = int(pix_y * 0.6)
         start_x = int(pix_x * (0.1 + delta_x / 5))
         start_y = int(pix_y * (0.1 + delta_y / 10))
-        mngr.window.wm_geometry("{}x{}+{}+{}".format(wid, hei, start_x, start_y))
+        mngr.window.wm_geometry(  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType] | Incomplete type hints in matplotlib
+            "{}x{}+{}+{}".format(wid, hei, start_x, start_y),
+        )
 
     # Set default colour map
     plt.jet()
 
     ax = plt.axes(frameon=False, aspect="equal")
-    ax.set_title(well_name)
-    plt.ylim([-0.02, 1])
-    plt.xlim([0, 1])
+    _ = ax.set_title(well_name)
+    _ = plt.ylim((-0.02, 1))
+    _ = plt.xlim((0, 1))
     ax.set_axis_off()
 
     return fig, ax
 
 
-def _ternary_coord_trans(*args):
+def ternary_coord_trans(*args: Array1D | Array2d) -> Array2d:
     """Routine to transform ternary coordinates to xy coordinates.
     Inputs can either be 3 separate coordinate arrays or a nX3 array
     The sum of the input coordinates should be one - the routine will normalise the inputs
@@ -85,7 +101,7 @@ def _ternary_coord_trans(*args):
         try:
             tern_coord = np.array(np.column_stack(args[:]))
         except ValueError:
-            print(
+            raise ValueError(
                 f"{__file__}: Could not combine inputs to _ternary_coord_trans routine"
             )
     elif len(args) == 1:
@@ -100,7 +116,7 @@ def _ternary_coord_trans(*args):
     return np.array(tern_coord @ trans_mat)
 
 
-def _triangle_transform(xy1):
+def triangle_transform(xy1: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
 
     Parameters
@@ -120,15 +136,15 @@ def _triangle_transform(xy1):
     return xy
 
 
-def _make_mesh(ax):
+def make_mesh(ax: Axes) -> tuple[list[Any], list[Any]]:
     """Make coordinate mesh."""
     # Make coordinate mesh
     i = np.linspace(0, 1, 11).reshape(11, 1)
-    text_handles = []
-    line_handles = []
+    text_handles: list[Text] = []
+    line_handles: list[list[Line2D]] = []
     # 1
-    xy1 = _ternary_coord_trans(i, np.zeros(len(i)), 1 - i)
-    xy2 = _ternary_coord_trans(i, 1 - i, np.zeros(len(i)))
+    xy1 = ternary_coord_trans(i, np.zeros(len(i)), 1 - i)
+    xy2 = ternary_coord_trans(i, 1 - i, np.zeros(len(i)))
     for j in range(len(i)):
         line_handles.append(
             ax.plot(
@@ -145,8 +161,8 @@ def _make_mesh(ax):
             )
         )
     # 2
-    xy1 = _ternary_coord_trans(np.zeros(len(i)), i, 1 - i)
-    xy2 = _ternary_coord_trans(1 - i, i, np.zeros(len(i)))
+    xy1 = ternary_coord_trans(np.zeros(len(i)), i, 1 - i)
+    xy2 = ternary_coord_trans(1 - i, i, np.zeros(len(i)))
     for j in range(len(i)):
         line_handles.append(
             ax.plot(
@@ -163,8 +179,8 @@ def _make_mesh(ax):
             )
         )
     # 3
-    xy1 = _ternary_coord_trans(1 - i, np.zeros(len(i)), i)
-    xy2 = _ternary_coord_trans(np.zeros(len(i)), 1 - i, i)
+    xy1 = ternary_coord_trans(1 - i, np.zeros(len(i)), i)
+    xy2 = ternary_coord_trans(np.zeros(len(i)), 1 - i, i)
     for j in range(len(i)):
         line_handles.append(
             ax.plot(
@@ -181,15 +197,15 @@ def _make_mesh(ax):
             )
         )
     # Tick mark text
-    xy1 = _ternary_coord_trans(1 - i, i, np.zeros(len(i)))
+    xy1 = ternary_coord_trans(1 - i, i, np.zeros(len(i)))
     for j in range(len(i)):
         text_handles.append(ax.text(xy1[j, 0], xy1[j, 1] - 0.025, "%.1f" % (i[j, 0])))
-    xy1 = _ternary_coord_trans(i, np.zeros(len(i)), 1 - i)
+    xy1 = ternary_coord_trans(i, np.zeros(len(i)), 1 - i)
     for j in range(len(i)):
         text_handles.append(
             ax.text(xy1[j, 0] - 0.05, xy1[j, 1] + 0.025, "%.1f" % (i[j, 0]))
         )
-    xy1 = _ternary_coord_trans(np.zeros(len(i)), 1 - i, i)
+    xy1 = ternary_coord_trans(np.zeros(len(i)), 1 - i, i)
     for j in range(len(i)):
         text_handles.append(ax.text(xy1[j, 0], xy1[j, 1] + 0.025, "%.1f" % (i[j, 0])))
     plt.setp(text_handles, fontsize=10)

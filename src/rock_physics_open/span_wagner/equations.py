@@ -3,13 +3,21 @@ Package for calculating the residual helmholtz energy for CO2. The module uses s
 in Span & Wagner [2], as well as its derivatives.
 """
 
+from typing import Any, Callable, Literal
+
 import numpy as np
+import numpy.typing as npt
 import sympy as sp
 
-from . import coefficients
+from .coefficients import coeff_vars
 
 
-def residual_helmholtz_energy(delta_, tau_, diff_delta, diff_tau):
+def residual_helmholtz_energy(
+    delta_: npt.NDArray[np.float64],
+    tau_: npt.NDArray[np.float64],
+    diff_delta: int,
+    diff_tau: int,
+) -> npt.NDArray[np.float64]:
     """
     Equation 6.1 from Span & Wagner [2]. Calculates the residual helmholtz energy of co2 or its derivatives. tau_ and
     delta_ must have be numpy arrays of shape (N, 1). This allows for vectorization.
@@ -81,22 +89,25 @@ bigphi_expr = sp.exp(-C4 * (delta - 1) ** 2 - D4 * (tau - 1) ** 2)
 s4 = n4 * bigdelta_expr**b4 * delta * bigphi_expr
 
 
-def _lambdify(expr, diff_delta, diff_tau):
+def _lambdify(
+    expr: sp.Expr,
+    diff_delta: Literal[0, 1, 2],
+    diff_tau: Literal[0, 1, 2],
+) -> Callable[..., Any]:
     diff = [delta] * diff_delta + [tau] * diff_tau
     if len(diff) > 0:
-        expr = expr.diff(*diff)
-    expr = expr.powsimp()
-    coeff_vars = [getattr(coefficients, s.name) for s in coeff_symbols]
-    _sympy_lambda = sp.utilities.lambdify(
+        expr = expr.diff(*diff)  # pyright: ignore[reportUnknownVariableType] | Sympy typing is incomplete
+    expr = expr.powsimp()  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType] | Sympy typing is incomplete
+    _sympy_lambda = sp.utilities.lambdify(  # pyright: ignore[reportUnknownVariableType] | Sympy typing is incomplete
         list(coeff_symbols) + [tau, delta],
         expr,
-        modules=["numpy", {"DiracDelta": lambda x: x == 0}],
+        modules=["numpy", {"DiracDelta": lambda x: x == 0}],  # pyright: ignore[reportUnknownLambdaType] | Sympy typing is incomplete
     )
-    return lambda _tau, _delta: _sympy_lambda(*coeff_vars, _tau, _delta)
+    return lambda _tau, _delta: _sympy_lambda(*coeff_vars, _tau, _delta)  # pyright: ignore[reportUnknownVariableType, reportUnknownLambdaType] | Sympy typing is incomplete
 
 
-_LAMBDIFIED_EXPRESSIONS = {
-    (e, dd, dt): _lambdify(e, dd, dt)
+_LAMBDIFIED_EXPRESSIONS: dict[tuple[Any, int, int], Callable[..., Any]] = {
+    (e, dd, dt): _lambdify(expr=e, diff_delta=dd, diff_tau=dt)
     for e in (s1, s2, s3, s4)
     for dd in (0, 1, 2)
     for dt in (0, 1, 2)

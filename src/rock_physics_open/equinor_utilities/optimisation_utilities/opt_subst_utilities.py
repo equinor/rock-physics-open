@@ -2,7 +2,7 @@ import os
 import pickle
 import sys
 from pathlib import Path
-from typing import Any, Callable, Literal, cast
+from typing import Any, Callable, Literal, Required, TypedDict, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -194,12 +194,33 @@ def gen_sub_routine(
 OptType = Literal["min", "exp", "pat_cem", "const_cem", "friable"]
 
 
+class OptParamsDict(TypedDict, total=False):
+    well_name: Required[str]
+    opt_ver: Required[OptType]
+    opt_vec: Required[npt.NDArray[np.float64]]
+    f_ani: float
+    f_con: float
+    alpha_opt: npt.NDArray[np.float64]
+    v_opt: float
+    k_carb: float
+    mu_carb: float
+    rho_carb: float
+    k_sh: float
+    mu_sh: float
+    rho_sh: float
+    weight_k: float
+    weight_mu: float
+    shear_red: float
+    frac_cem: float
+    phi_c: float
+
+
 def save_opt_params(
     opt_type: OptType,
-    opt_params: np.ndarray,
+    opt_params: npt.NDArray[np.float64],
     file_name: str = "opt_params.pkl",
     well_name: str = "Unknown well",
-):
+) -> None:
     """
     Utility to save optimal parameters as a pickle file in a more readable format so that the optimisation method can be
     recognised.
@@ -222,7 +243,7 @@ def save_opt_params(
     """
     # Save the optimal parameters with info
     if opt_type == "min":  # optimisation with mineral input from well
-        opt_param_dict = {
+        opt_param_dict: OptParamsDict = {
             "well_name": well_name,
             "opt_ver": opt_type,
             "f_ani": opt_params[0],
@@ -335,7 +356,13 @@ def opt_param_info():
     return parameter_translation_dict, value_translation_dict, type_translation_dict
 
 
-def load_opt_params(file_name: str):
+def load_opt_params(
+    file_name: str,
+) -> tuple[
+    OptType,
+    npt.NDArray[np.float64],
+    OptParamsDict,
+]:
     """Utility to load parameter file from optimisation run.
 
     Parameters
@@ -349,7 +376,7 @@ def load_opt_params(file_name: str):
         opt_type: model type, no_sets: number of inclusion sets, opt_param: with all parameters for model.
     """
     with open(file_name, "rb") as fin:
-        param_dict = pickle.load(fin)
+        param_dict: OptParamsDict = pickle.load(fin)
         opt_type = param_dict["opt_ver"]
         opt_param = param_dict["opt_vec"]
         opt_dict = param_dict
