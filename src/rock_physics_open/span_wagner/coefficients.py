@@ -5,10 +5,10 @@ Coefficients defined in tables of Span & Wagner. Coefficients are divided into g
 the table. This is also convenient when evaluating the Helmholtz energy expressions (phi functions).
 """
 
-from numpy import array
+import numpy as np
 
 """ Ideal gas part (table 27) """
-a0 = array(
+a0 = np.array(
     [
         [
             8.37304456,
@@ -22,7 +22,7 @@ a0 = array(
         ]
     ]
 )
-theta0 = array(
+theta0 = np.array(
     [
         [
             3.15163,
@@ -37,7 +37,7 @@ theta0 = array(
 """ Residual part (table 31) """
 
 # First group
-n1 = array(
+n1 = np.array(
     [
         [
             0.38856823203161 * 1e0,
@@ -50,11 +50,11 @@ n1 = array(
         ]
     ]
 )
-d1 = array([[1, 1, 1, 1, 2, 2, 3]])
-t1 = array([[0.00, 0.75, 1.00, 2.00, 0.75, 2.00, 0.75]])
+d1 = np.array([[1, 1, 1, 1, 2, 2, 3]])
+t1 = np.array([[0.00, 0.75, 1.00, 2.00, 0.75, 2.00, 0.75]])
 
 # Second group
-n2 = array(
+n2 = np.array(
     [
         [
             0.21658961543220 * 1e1,
@@ -87,10 +87,10 @@ n2 = array(
         ]
     ]
 )
-d2 = array(
+d2 = np.array(
     [[1, 2, 4, 5, 5, 5, 6, 6, 6, 1, 1, 4, 4, 4, 7, 8, 2, 3, 3, 5, 5, 6, 7, 8, 10, 4, 8]]
 )
-t2 = array(
+t2 = np.array(
     [
         [
             1.50,
@@ -123,12 +123,12 @@ t2 = array(
         ]
     ]
 )
-c2 = array(
+c2 = np.array(
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 6]]
 )
 
 # Third group
-n3 = array(
+n3 = np.array(
     [
         [
             -0.21365488688320 * 1e3,
@@ -139,15 +139,15 @@ n3 = array(
         ]
     ]
 )
-d3 = array([[2, 2, 2, 3, 3]])
-t3 = array([[1.00, 0.00, 1.00, 3.00, 3.00]])
-alpha3 = array([[25, 25, 25, 15, 20]])
-beta3 = array([[325, 300, 300, 275, 275]])
-gamma3 = array([[1.16, 1.19, 1.19, 1.25, 1.22]])
-epsilon3 = array([[1.00, 1.00, 1.00, 1.00, 1.00]])
+d3 = np.array([[2, 2, 2, 3, 3]])
+t3 = np.array([[1.00, 0.00, 1.00, 3.00, 3.00]])
+alpha3 = np.array([[25, 25, 25, 15, 20]])
+beta3 = np.array([[325, 300, 300, 275, 275]])
+gamma3 = np.array([[1.16, 1.19, 1.19, 1.25, 1.22]])
+epsilon3 = np.array([[1.00, 1.00, 1.00, 1.00, 1.00]])
 
 # Fourth group
-n4 = array(
+n4 = np.array(
     [
         [
             -0.66642276540751 * 1e0,
@@ -156,10 +156,36 @@ n4 = array(
         ]
     ]
 )
-a4 = array([[3.500, 3.500, 3.000]])
-b4 = array([[0.875, 0.925, 0.875]])
-beta4 = array([[0.300, 0.300, 0.300]])
-A4 = array([[0.700, 0.700, 0.700]])
-B4 = array([[0.3, 0.3, 1.0]])
-C4 = array([[10.0, 10.0, 12.5]])
-D4 = array([[275, 275, 275]])
+a4 = np.array([[3.500, 3.500, 3.000]])
+b4 = np.array([[0.875, 0.925, 0.875]])
+beta4 = np.array([[0.300, 0.300, 0.300]])
+A4 = np.array([[0.700, 0.700, 0.700]])
+B4 = np.array([[0.3, 0.3, 1.0]])
+C4 = np.array([[10.0, 10.0, 12.5]])
+D4 = np.array([[275, 275, 275]])
+
+
+coeff_vars = [
+    n1,
+    t1,
+    d1,
+    n2,
+    d2,
+    t2,
+    c2,
+    n3,
+    d3,
+    t3,
+    alpha3,
+    epsilon3,
+    beta3,
+    gamma3,
+    n4,
+    b4,
+    a4,
+    beta4,
+    A4,
+    B4,
+    C4,
+    D4,
+]

@@ -1,14 +1,28 @@
+from typing import cast
+
 import numpy as np
+import numpy.typing as npt
 from matplotlib import path as pa, pyplot as plt
+from matplotlib.colorbar import Colorbar
+from matplotlib.text import Text
+
+from rock_physics_open.equinor_utilities.various_utilities.types import Array2d
 
 from .ternary_plot_utilities import (
-    _make_mesh,
-    _set_ternary_figure,
-    _ternary_coord_trans,
+    make_mesh,
+    set_ternary_figure,
+    ternary_coord_trans,
 )
 
 
-def _ternary_patches(quartz, carb, clay, kero, well_name, draw_figures=True):
+def ternary_patches(
+    quartz: npt.NDArray[np.float64],
+    carb: npt.NDArray[np.float64],
+    clay: npt.NDArray[np.float64],
+    kero: npt.NDArray[np.float64],
+    well_name: str,
+    draw_figures: bool = True,
+) -> npt.NDArray[np.float64]:
     """Class display of the shale.
 
     Parameters
@@ -23,13 +37,20 @@ def _ternary_patches(quartz, carb, clay, kero, well_name, draw_figures=True):
         Kerogen volume fraction [fraction].
     well_name : str
         Plot heading with well name.
+    draw_figures : bool
+        Decide if figures are drawn or not, default is True.
 
     Returns
     -------
     np.ndarray
         Lithology class [int].
     """
-    fig, ax = _set_ternary_figure(0, 0, "Lithological Class Ternary Plot", well_name)
+    _, ax = set_ternary_figure(
+        delta_x=0,
+        delta_y=0,
+        title="Lithological Class Ternary Plot",
+        well_name=well_name,
+    )
 
     # Define patches 1 - 16
     names = [
@@ -76,7 +97,7 @@ def _ternary_patches(quartz, carb, clay, kero, well_name, draw_figures=True):
         )
     )
 
-    vertices = [
+    vertices: list[Array2d] = [
         np.array(
             [
                 [1.0, 0.0, 0.0],
@@ -200,55 +221,57 @@ def _ternary_patches(quartz, carb, clay, kero, well_name, draw_figures=True):
         ),
     ]
 
-    vertices_xy = []
-    for i in range(len(vertices)):
-        vertices_xy.append(_ternary_coord_trans(vertices[i]))
+    vertices_xy = [ternary_coord_trans(v) for v in vertices]
 
-    h_p = []
-    h_t = []
-    for i in range(len(vertices)):
-        h_p.append(
-            plt.fill(
-                vertices_xy[i][:, 0],
-                vertices_xy[i][:, 1],
-                facecolor=col[i, :],
-                edgecolor="k",
-            )
+    _ = [
+        plt.fill(
+            vertices_xy[i][:, 0],
+            vertices_xy[i][:, 1],
+            facecolor=col[i, :],
+            edgecolor="k",
         )
-        h_t.append(
-            plt.text(
-                np.mean(vertices_xy[i][:, 0]),
-                np.mean(vertices_xy[i][:, 1]),
-                names[i],
-                horizontalalignment="center",
-                verticalalignment="center",
-                fontsize=8,
-                rotation=text_ang[i],
-            )
+        for i in range(len(vertices))
+    ]
+    _ = [
+        plt.text(
+            x=float(np.mean(vertices_xy[i][:, 0])),
+            y=float(np.mean(vertices_xy[i][:, 1])),
+            s=names[i],
+            horizontalalignment="center",
+            verticalalignment="center",
+            fontsize=8,
+            rotation=text_ang[i],
         )
+        for i in range(len(vertices))
+    ]
 
     # Make coordinate mesh
-    _, _ = _make_mesh(ax)
+    _, _ = make_mesh(ax)
 
     # Annotate the axes
-    label_handles = []
+    label_handles: list[Text] = []
     label_handles.append(
-        plt.text(0.5, -0.075, "Carbonate", horizontalalignment="center")
+        plt.text(
+            x=0.5,
+            y=-0.075,
+            s="Carbonate",
+            horizontalalignment="center",
+        )
     )
     label_handles.append(
         plt.text(
-            0.15,
-            np.sqrt(3) / 4 + 0.05,
-            "Quartz",
+            x=0.15,
+            y=np.sqrt(3) / 4 + 0.05,
+            s="Quartz",
             horizontalalignment="center",
             rotation=60,
         )
     )
     label_handles.append(
         plt.text(
-            0.85,
-            np.sqrt(3) / 4 + 0.05,
-            "Clay",
+            x=0.85,
+            y=np.sqrt(3) / 4 + 0.05,
+            s="Clay",
             horizontalalignment="center",
             rotation=-60,
         )
@@ -256,8 +279,8 @@ def _ternary_patches(quartz, carb, clay, kero, well_name, draw_figures=True):
     plt.setp(label_handles, fontname="sans-serif", fontweight="bold", fontsize=11)
 
     # Plot data
-    data_xy = _ternary_coord_trans(quartz, carb, clay)
-    plt.scatter(data_xy[:, 0], data_xy[:, 1], s=64, c=kero, zorder=4)
+    data_xy = ternary_coord_trans(quartz, carb, clay)
+    _ = plt.scatter(x=data_xy[:, 0], y=data_xy[:, 1], s=64, c=kero, zorder=4)
 
     # Classification - start at 2001 to match predefined lithology classes in
     startclass = 2000
@@ -268,7 +291,10 @@ def _ternary_patches(quartz, carb, clay, kero, well_name, draw_figures=True):
         in_path = class_path.contains_points(data_xy)
         lith_class[in_path] = i + startclass
 
-    hcb = plt.colorbar()
+    hcb = cast(  # Casting due to incomplete typing in matplotlib
+        Colorbar,
+        plt.colorbar(),
+    )
     hcb.set_label("Kerogen", fontname="sans-serif", fontweight="bold", fontsize=11)
 
     # plt.show() <= Show command must be issued from the controlling class method

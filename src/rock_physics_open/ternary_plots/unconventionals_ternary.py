@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 
-from .gen_ternary_plot import _ternary_plot
-from .shale_prop_ternary import _shale_prop_ternary
-from .ternary_patches import _ternary_patches
+from .gen_ternary_plot import ternary_plot
+from .shale_prop_ternary import shale_prop_ternary
+from .ternary_patches import ternary_patches
 
 
 def run_ternary(
@@ -50,11 +50,11 @@ def run_ternary(
     """
     matplotlib.use("TkAgg")
 
-    lith_class = _ternary_patches(
+    lith_class = ternary_patches(
         quartz, carb, clay, kero, well_name, draw_figures=draw_figures
     )
 
-    hard = _shale_prop_ternary(
+    hard = shale_prop_ternary(
         quartz=quartz,
         carb=carb,
         clay=clay,
@@ -66,7 +66,7 @@ def run_ternary(
         draw_figures=draw_figures,
     )
 
-    _ternary_plot(
+    ternary_plot(
         data1=quartz,
         data2=carb,
         data3=clay,
