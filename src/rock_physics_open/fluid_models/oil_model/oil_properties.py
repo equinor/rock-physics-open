@@ -19,7 +19,7 @@ def oil_properties(
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     :param temperature: Temperature [°C] of oil.
-    :param pressure: Pressure [Pa] of oil
+    :param pressure: Formation pressure [Pa] of oil
     :param rho0: Density of the oil without dissolved gas at 15.6 degrees Celsius and
                  atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
@@ -71,7 +71,7 @@ def dead_oil(
         at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Pressure [Pa] of oil
+    :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
     :return: dead_oil_density [kg/m^3], dead_oil_velocity [m/s]
     """
@@ -100,7 +100,7 @@ def live_oil(
         at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Pressure [Pa] of oil
+    :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
     :return: live_oil_density , live_oil_velocity
     """
@@ -109,7 +109,7 @@ def live_oil(
         < bp_standing(reference_density, gas_oil_ratio, gas_gravity, temperature)
     ):
         warnings.warn(
-            "Pressure is below bubble point of oil, estimated elastic properties can be inaccurate",
+            "Formation pressure is below bubble point of oil, estimated elastic properties can be inaccurate",
             stacklevel=1,
         )
     live_oil_den = live_oil_density(
@@ -146,7 +146,7 @@ def oil_viscosity(
     Based on Beggs and Robinson 1975
 
     :param temperature: Temperature [°C] of oil
-    :param pressure: Pressure [Pa] of oil
+    :param pressure: Formation pressure [Pa] of oil
     :param reference_density: Density of the oil without dissolved gas
     """
     # Change unit in pressure to MPa

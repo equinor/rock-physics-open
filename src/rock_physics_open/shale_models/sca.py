@@ -37,7 +37,7 @@ def self_consistent_approximation_model(
     frac1 : np.ndarray
         Fraction of inclusions [fraction].
     asp1 : np.ndarray
-        Aspect ratio of inclusions [ratio].
+        Aspect ratio of background matrix [ratio].
     asp2 : np.ndarray
         Aspect ratio of inclusions [ratio].
     tol: float

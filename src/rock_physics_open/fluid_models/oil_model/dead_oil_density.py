@@ -13,7 +13,7 @@ def pressure_adjusted_dead_oil_density(
 
     :param reference_density: The density [kg/m^3] of the dead oil at 15.6 degrees Celsius
         and atmospheric pressure.
-    :param pressure: Pressure [Pa] to adjust to.
+    :param pressure: Formation pressure [Pa] to adjust to.
     :return: Density of oil at given pressure and 21 degrees Celsius (~70 degrees
     Fahrenheit). [kg/m^3]
     """
@@ -58,7 +58,7 @@ def dead_oil_density(
 
     :param reference_density: Density of oil at 15.6 degrees Celsius and atmospheric
         pressure [kg/m^3]
-    :param pressure: Pressure [Pa] of oil
+    :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
     :return: density of dead oil at given conditions (kg/m^3).
     """

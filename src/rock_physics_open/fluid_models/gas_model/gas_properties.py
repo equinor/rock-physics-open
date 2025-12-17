@@ -20,7 +20,7 @@ def gas_properties(
 ]:
     """
     :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Confining pressure (Pa)
+    :param pressure: Formation pressure (Pa)
     :param temperature: Temperature (Celsius).
     :param model: for future use
     :return: vel_gas [m/s], den_gas [kg/m^3], k_gas [Pa], eta_gas [cP]
