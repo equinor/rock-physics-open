@@ -16,7 +16,7 @@ def brine_properties(
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     :param salinity: Salinity of solution as [ppm] of NaCl.
-    :param pressure: Pressure [Pa]
+    :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
     :param p_nacl: NaCl percentage, for future use
     :param p_kcl: KCl percentage, for future use
@@ -45,7 +45,7 @@ def brine_density(
     """
     density of sodium chloride solutions, equation 27 in Batzle & Wang [1].
     :param salinity: Salinity of solution in ppm
-    :param pressure: Pressure [Pa]
+    :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
     :return: density of solution in [kg/m^3].
     """
@@ -76,7 +76,7 @@ def brine_primary_velocity(
     Primary wave velocity of sodium chloride solutions, equation 29 in Batzle & Wang [1]
 
     :param salinity: Salinity of solution as [ppm] of sodium chloride
-    :param pressure: Pressure [Pa]
+    :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
     :return: velocity of solution in m/s.
     """
@@ -112,7 +112,7 @@ def water_density(
 ) -> npt.NDArray[Any]:
     """
     Density of water,, equation 27a in Batzle & Wang [1].
-    :param pressure: Pressure [Pa]
+    :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
     :return: Density of water in [kg/m^3].
     """
@@ -134,7 +134,7 @@ def water_primary_velocity(
 ) -> npt.NDArray[Any]:
     """
     Primary wave velocity of water, table 1 and equation 28 in Batzle & Wang [1].
-    :param pressure: Pressure [Pa]
+    :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
     :return: primary wave velocity of water in m/s.
     """
@@ -163,7 +163,7 @@ def water(
     pressure: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    :param pressure: Pressure [Pa]
+    :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
     :return: water_velocity [m/s], water_density [kg/m^3], water_bulk_modulus [Pa]
     """

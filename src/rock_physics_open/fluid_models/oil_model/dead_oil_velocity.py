@@ -14,7 +14,7 @@ def dead_oil_velocity(
 
     :param reference_density: Density of oil at 15.6 degrees Celsius and atmospheric
         pressure [kg/m^3]
-    :param pressure: Pressure [Pa] of oil
+    :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
     :return: primary velocity of dead oil in m/s.
     """
