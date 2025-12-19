@@ -31,51 +31,51 @@ pressure = np.array([18.0e6, 28.0e6])
 
 def test_run_t_matrix():
     args = run_t_matrix(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl,
-        rho_fl,
-        phi,
-        perm,
-        visco,
-        alpha,
-        v,
-        tau,
-        frequency,
-        angle,
-        frac_inc_con,
-        frac_inc_ani,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        perm=perm,
+        visco=visco,
+        alpha=alpha,
+        v=v,
+        tau=tau,
+        frequency=frequency,
+        angle=angle,
+        frac_inc_con=frac_inc_con,
+        frac_inc_ani=frac_inc_ani,
         pressure=pressure,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+        assert compare_snapshots(tuple(args), read_snapshot(get_snapshot_name()))
 
 
 def test_run_t_matrix_porosity_vectorised():
     args = t_matrix_porosity_vectorised(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl,
-        rho_fl,
-        phi,
-        perm * np.ones_like(phi),
-        visco * np.ones_like(phi),
-        alpha,
-        v,
-        tau,
-        frequency,
-        angle,
-        frac_inc_con,
-        frac_inc_ani,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        perm=perm * np.ones_like(phi),
+        visco=visco * np.ones_like(phi),
+        alpha=alpha,
+        v=v,
+        tau=tau,
+        frequency=frequency,
+        angle=angle,
+        frac_inc_con=frac_inc_con,
+        frac_inc_ani=frac_inc_ani,
         pressure=pressure,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

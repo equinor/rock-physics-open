@@ -1,31 +1,58 @@
 import sys
+from typing import Any, Literal, cast
 
 import numpy as np
 
-from rock_physics_open import t_matrix_models
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    TMatrixCallable,
+)
+
+from .t_matrix_C import t_matrix_porosity_c_alpha_v
 
 
 def parse_t_matrix_inputs(
-    k_min,
-    mu_min,
-    rho_min,
-    k_fl,
-    rho_fl,
-    phi,
-    perm,
-    visco,
-    alpha,
-    v,
-    tau,
-    frequency,
-    angle,
-    frac_inc_con,
-    frac_inc_ani,
-    pressure,
-    scenario,
-    fcn,
-):
+    k_min: Array1D[np.float64],
+    mu_min: Array1D[np.float64],
+    rho_min: Array1D[np.float64],
+    k_fl: Array1D[np.float64],
+    rho_fl: Array1D[np.float64],
+    phi: Array1D[np.float64],
+    perm: Array1D[np.float64] | float,
+    visco: Array1D[np.float64] | float,
+    alpha: Array1D[np.float64] | Array2D[np.float64],
+    v: Array1D[np.float64] | Array2D[np.float64],
+    tau: Array1D[np.float64],
+    frequency: float,
+    angle: float,
+    frac_inc_con: Array1D[np.float64] | float,
+    frac_inc_ani: Array1D[np.float64] | float,
+    pressure: Array1D[np.float64] | None,
+    scenario: int | None,
+    fcn: TMatrixCallable | str | None,
+) -> tuple[
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array2D[np.float64],
+    Array2D[np.float64],
+    float,
+    float,
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64] | None,
+    TMatrixCallable,
+    Literal[0, 1, 2],
+    Literal[0, 1, 2],
+]:
     """Function to do all necessary checking of input type, dimension, reshaping etc. that clutter up the start of T-Matrix
     NB: Setting scenario will override the settings for alpha, v and tau.
 
@@ -65,8 +92,8 @@ def parse_t_matrix_inputs(
          > 1 value list or numpy array in ascending order, effective pressure [Pa].
     scenario : int
         pre-set scenarios for alpha, v and tau
-    fcn : callable
-        function with which to run the T-Matrix model.
+    fcn : callable | str | None.
+        function with which to run the T-Matrix model or string with function name within t_matrix_models. If None, the C++ implementation is used.
 
     Returns
     -------
@@ -74,7 +101,11 @@ def parse_t_matrix_inputs(
         All inputs in correct dimension and data type plus ctrl_connected, ctrl_anisotropy - control parameters.
     """
 
-    def _assert_type(arg, exp_dtype, err_str="check inputs, wrong type encountered"):
+    def _assert_type(
+        arg: Any,
+        exp_dtype: type | tuple[type, ...],
+        err_str: str = "check inputs, wrong type encountered",
+    ) -> None:
         """Assert type.
 
         Parameters
@@ -97,35 +128,48 @@ def parse_t_matrix_inputs(
     # 1: Check all single float values, silently cast int to float
     # Permeability and viscosity: Check that they are floats and convert them to to SI units
     _assert_type(
-        perm, (float, int), "expect permeability given as single float in units mD"
+        arg=perm,
+        exp_dtype=(float, int),
+        err_str="expect permeability given as single float in units mD",
     )
     perm = perm * 0.986923e-15
 
     _assert_type(
-        visco, (float, int), "expect viscosity given as single float in units cP"
+        arg=visco,
+        exp_dtype=(float, int),
+        err_str="expect viscosity given as single float in units cP",
     )
     visco = visco * 1.0e-2
 
     _assert_type(
-        frequency, (float, int), "expect frequency given as single float value in Hz"
+        arg=frequency,
+        exp_dtype=(float, int),
+        err_str="expect frequency given as single float value in Hz",
     )
     frequency = float(frequency)
 
     _assert_type(
-        angle, (float, int), "expect angle given as single float value in degrees"
+        arg=angle,
+        exp_dtype=(float, int),
+        err_str="expect angle given as single float value in degrees",
     )
     angle = float(angle)
 
     # 2: Determine the T-Matrix function, use the C++ implementation as default in case of None
     # If it given as a string, it must belong to the t_matrix_models module
     if not fcn:  # None
-        t_matrix_fcn = t_matrix_models.t_matrix_porosity_c_alpha_v
+        t_matrix_fcn = t_matrix_porosity_c_alpha_v
     elif not callable(fcn):
         fcn_err_str = (
             "T-Matrix function should be given as the callable function or a string "
             "to the function name within t_matrix_models "
         )
         _assert_type(fcn, str, fcn_err_str)
+        # Import here to avoid circular import
+        import importlib
+
+        t_matrix_models = importlib.import_module("rock_physics_open.t_matrix_models")
+
         if not hasattr(t_matrix_models, fcn):
             raise ValueError(fcn_err_str)
         t_matrix_fcn = getattr(t_matrix_models, fcn)
@@ -156,20 +200,23 @@ def parse_t_matrix_inputs(
             visco,
             frac_inc_con,
             frac_inc_ani,
-        ) = gen_utilities.dim_check_vector(
-            (
-                k_min,
-                mu_min,
-                rho_min,
-                k_fl,
-                rho_fl,
-                phi,
-                perm,
-                visco,
-                frac_inc_con,
-                frac_inc_ani,
+        ) = cast(  # Casting since dim_check_vector typing is incomplete
+            list[Array1D[np.float64]],
+            gen_utilities.dim_check_vector(
+                (
+                    k_min,
+                    mu_min,
+                    rho_min,
+                    k_fl,
+                    rho_fl,
+                    phi,
+                    perm,
+                    visco,
+                    frac_inc_con,
+                    frac_inc_ani,
+                ),
+                force_type=np.dtype(float),
             ),
-            force_type=np.dtype(float),
         )
     except ValueError:
         raise ValueError("t-matrix inputs: {}".format(str(sys.exc_info())))
@@ -196,30 +243,32 @@ def parse_t_matrix_inputs(
     # where the first dimension must coincide with the log_length
     # tau should be a 1D vector with length equal to the number of inclusions per sample
     _assert_type(
-        alpha,
-        np.ndarray,
-        "alpha should be a 1D or 2D numpy array of matching size with v",
+        arg=alpha,
+        exp_dtype=np.ndarray,
+        err_str="alpha should be a 1D or 2D numpy array of matching size with v",
     )
     _assert_type(
-        v, np.ndarray, "v should be a 1D or 2D numpy array og matching size with alpha"
+        arg=v,
+        exp_dtype=np.ndarray,
+        err_str="v should be a 1D or 2D numpy array og matching size with alpha",
     )
     _assert_type(
-        tau,
-        (float, np.ndarray),
-        "tau should be a single float or 1D numpy array with length matching "
-        "the number of inclusions",
+        arg=tau,
+        exp_dtype=(float, np.ndarray),
+        err_str="tau should be a single float or 1D numpy array with length matching the number of inclusions",
     )
 
     alpha_shape = alpha.shape
     # First make sure that alpha and v have the same number of elements
     try:
-        alpha, v = gen_utilities.dim_check_vector(
-            (alpha, v), force_type=np.dtype(float)
+        alpha, v = cast(  # casting since dim_check_vector typing is incomplete
+            list[Array1D[np.float64]],
+            gen_utilities.dim_check_vector((alpha, v), force_type=np.dtype(float)),
         )
     except ValueError:
         raise ValueError("t-matrix inputs: {}".format(str(sys.exc_info())))
-    alpha = alpha.reshape(alpha_shape)
-    v = v.reshape(alpha_shape)
+    alpha = alpha.reshape(alpha_shape)  # pyright: ignore[reportAssignmentType] | Should be same shape as before
+    v = v.reshape(alpha_shape)  # pyright: ignore[reportAssignmentType] | Should be same shape as before
     # If they are 2D arrays, the first dimension should match log_length
     if alpha.ndim == 2:
         if not (alpha_shape[0] == log_length or alpha_shape[0] == 1):
@@ -237,7 +286,7 @@ def parse_t_matrix_inputs(
     if isinstance(tau, float):
         tau = np.ones(alpha_shape) * tau
     else:
-        if not tau.ndim == 1 and tau.shape[0] == alpha.shape[1]:
+        if not tau.ndim == 1 and tau.shape[0] == alpha.shape[1]:  # pyright: ignore[reportGeneralTypeIssues] | alpha is Array2D
             raise ValueError(
                 "t-matrix inputs: number of elements in tau is not matching number of inclusions"
             )
@@ -247,10 +296,9 @@ def parse_t_matrix_inputs(
     # in the case there is no pressure modelling
     if pressure is not None:
         _assert_type(
-            pressure,
-            (list, np.ndarray),
-            "pressure should be a list or numpy array of at least two "
-            "elements in ascending order",
+            arg=pressure,
+            exp_dtype=(list, np.ndarray),
+            err_str="pressure should be a list or numpy array of at least two elements in ascending order",
         )
         pressure = np.sort(np.array(pressure).flatten())
         if not pressure.shape[0] > 1:
@@ -283,7 +331,7 @@ def parse_t_matrix_inputs(
         phi,
         perm,
         visco,
-        alpha,
+        alpha,  # pyright: ignore[reportReturnType] | alpha is Array1D or Array2D
         v,
         tau,
         frequency,

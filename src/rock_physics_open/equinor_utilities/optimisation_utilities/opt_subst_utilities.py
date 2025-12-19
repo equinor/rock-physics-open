@@ -2,13 +2,13 @@ import os
 import pickle
 import sys
 from pathlib import Path
-from typing import Any, Callable, Literal, Required, TypedDict, cast
+from typing import Any, Literal, Required, TypedDict, cast
 
 import numpy as np
 import numpy.typing as npt
 from scipy.optimize import curve_fit
 
-OptCallable = Callable[[npt.NDArray[np.float64]], npt.NDArray[np.float64]]
+from rock_physics_open.equinor_utilities.various_utilities.types import OptCallable
 
 
 def curve_fit_wrapper(
@@ -215,6 +215,51 @@ class OptParamsDict(TypedDict, total=False):
     phi_c: float
 
 
+class ParameterTranslationDict(TypedDict):
+    opt_ver: str
+    no_incl_sets: str
+    ang_sym: str
+    f_ani: str
+    f_con: str
+    alpha_opt: str
+    v_opt: str
+    k_carb: str
+    mu_carb: str
+    rho_carb: str
+    k_sh: str
+    mu_sh: str
+    rho_sh: str
+    k_sst: str
+    mu_sst: str
+    rho_sst: str
+    frac_cem: str
+    phi_c: str
+    shear_red: str
+    weight_k: str
+    weight_mu: str
+
+
+class ValueTranslationDict(TypedDict):
+    ang_sym: float
+    k_carb: float
+    mu_carb: float
+    rho_carb: float
+    k_sh: float
+    mu_sh: float
+    rho_sh: float
+    k_sst: float
+    mu_sst: float
+    rho_sst: float
+
+
+class TypeTranslationDict(TypedDict):
+    min: str
+    exp: str
+    pat_cem: str
+    const_cem: str
+    friable: str
+
+
 def save_opt_params(
     opt_type: OptType,
     opt_params: npt.NDArray[np.float64],
@@ -304,14 +349,16 @@ def save_opt_params(
         pickle.dump(opt_param_dict, file_out)
 
 
-def opt_param_info():
+def opt_param_info() -> tuple[
+    ParameterTranslationDict, ValueTranslationDict, TypeTranslationDict
+]:
     """Hard coded dictionaries returned.
     Returns
     -------
     tuple
         parameter_translation_dict, value_translation_dict, type_translation_dict.
     """
-    parameter_translation_dict = {
+    parameter_translation_dict: ParameterTranslationDict = {
         "opt_ver": "Optimisation version",
         "no_incl_sets": "Number of inclusion sets",
         "ang_sym": "Angle of symmetry plane [°]",
@@ -334,7 +381,7 @@ def opt_param_info():
         "weight_k": "Bulk modulus weight for constant cement model",
         "weight_mu": "Shear modulus weight for constant cement model",
     }
-    value_translation_dict = {
+    value_translation_dict: ValueTranslationDict = {
         "ang_sym": 90.0,
         "k_carb": 95.0e9,
         "mu_carb": 45.0e9,
@@ -346,7 +393,7 @@ def opt_param_info():
         "mu_sst": 50.0e9,
         "rho_sst": 2750.0,
     }
-    type_translation_dict = {
+    type_translation_dict: TypeTranslationDict = {
         "min": "PETEC (Mineral input) optimisation",
         "exp": "Exploration type optimisation",
         "pat_cem": "Patchy cement model",
@@ -357,7 +404,7 @@ def opt_param_info():
 
 
 def load_opt_params(
-    file_name: str,
+    file_name: str | Path,
 ) -> tuple[
     OptType,
     npt.NDArray[np.float64],

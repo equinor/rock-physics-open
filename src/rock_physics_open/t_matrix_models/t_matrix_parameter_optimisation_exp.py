@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
@@ -6,19 +8,23 @@ from rock_physics_open.equinor_utilities.optimisation_utilities import (
     opt_param_info,
     save_opt_params,
 )
+from rock_physics_open.equinor_utilities.optimisation_utilities.opt_subst_utilities import (
+    opt_param_to_ascii,
+)
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
 
 from .curvefit_t_matrix_exp import curvefit_t_matrix_exp
 from .t_matrix_parameter_optimisation_min import DEF_VP_VS_RATIO
 
 
 def t_matrix_optimisation_exp(
-    k_fl: np.ndarray,
-    rho_fl: np.ndarray,
-    por: np.ndarray,
-    vsh: np.ndarray,
-    vp: np.ndarray,
-    vs: np.ndarray,
-    rhob: np.ndarray,
+    k_fl: Array1D[np.float64],
+    rho_fl: Array1D[np.float64],
+    por: Array1D[np.float64],
+    vsh: Array1D[np.float64],
+    vp: Array1D[np.float64],
+    vs: Array1D[np.float64],
+    rhob: Array1D[np.float64],
     angle: float = 0.0,
     k_r: float = 50.0,
     eta_f: float = 1.0,
@@ -27,44 +33,53 @@ def t_matrix_optimisation_exp(
     file_out_str: str = "opt_params_exp.pkl",
     display_results: bool = False,
     well_name: str = "Unknown well",
-    **opt_kwargs,
-):
+    **opt_kwargs: Any,
+) -> tuple[
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+]:
     """T-Matrix optimisation adapted to an exploration setting, where detailed well information is generally not known.
     Inclusion parameters are optimised for the whole well.
 
     Parameters
     ----------
-    por :
+    por : np.ndarray
         Inclusion porosity [ratio].
-    vsh :
+    vsh : np.ndarray
         Shale volume [ratio].
-    k_fl :
+    k_fl : np.ndarray
         Fluid bulk modulus [Pa].
-    rho_fl :
+    rho_fl : np.ndarray
         Fluid density [kg/m^3].
-    vp :
+    vp : np.ndarray
         Compressional velocity log [m/s].
-    vs :
+    vs : np.ndarray
         Shear velocity log [m/s].
-    rhob :
+    rhob : np.ndarray
         Bulk density log [kg/m^3].
     angle : float
         Angle of symmetry plane [degrees]
-    k_r :
+    k_r : float
         Permeability [mD].
-    eta_f :
+    eta_f : float
         Fluid viscosity [cP].
-    tau :
+    tau : float
         Relaxation time constant [s].
-    freq :
+    freq : float
         Signal frequency [Hz].
-    file_out_str :
+    file_out_str : str
         Output file name (string) to store optimal parameters (pickle format).
-    display_results :
-        D isplay optimal parameters in a window after run.
-    well_name :
+    display_results : bool
+        Display optimal parameters in a window after run.
+    well_name : str
         Name of well to be displayed in info box title.
-    opt_kwargs :
+    opt_kwargs : Any
         Additional keywords to be passed to optimisation function
 
     Returns
@@ -79,11 +94,14 @@ def t_matrix_optimisation_exp(
     # rho_min = (rhob - por * rho_fl) / (1 - por)
     # EXP adapted inputs: include fluid data and other params in x_data
     # expand single value parameters to match logs length
-    por, angle, k_r, eta_f, tau, freq, def_vpvs = gen_utilities.dim_check_vector(
-        (por, angle, k_r, eta_f, tau, freq, DEF_VP_VS_RATIO)
+    por, angle_, k_r_, eta_f_, tau_, freq_, def_vpvs = cast(
+        list[Array1D[np.float64]],
+        gen_utilities.dim_check_vector(
+            (por, angle, k_r, eta_f, tau, freq, DEF_VP_VS_RATIO)
+        ),
     )
     x_data = np.stack(
-        (por, vsh, k_fl, rho_fl, angle, k_r, eta_f, tau, freq, def_vpvs), axis=1
+        (por, vsh, k_fl, rho_fl, angle_, k_r_, eta_f_, tau_, freq_, def_vpvs), axis=1
     )
     # Set weight to vs to give vp and vs similar influence on optimisation
     y_data = np.stack([vp, vs * DEF_VP_VS_RATIO], axis=1)
@@ -97,7 +115,7 @@ def t_matrix_optimisation_exp(
     vel_mod = None
     vel_res = None
     opt_params = None
-    scale_val = opt_param_info()[1]
+    _, scale_val, _ = opt_param_info()
     while not valid_result and percentiles:
         try:
             # Make sure that parameters are not in conflict with T Matrix assumptions
@@ -141,16 +159,26 @@ def t_matrix_optimisation_exp(
             x0 = (upper_bound + lower_bound) / 2.0
             # Optimisation step without fluid substitution
             vel_mod, vel_res, opt_params = gen_opt_routine(
-                opt_fun, x_data, y_data, x0, lower_bound, upper_bound, **opt_kwargs
+                opt_function=opt_fun,
+                x_data_orig=x_data,
+                y_data=y_data,
+                x_init=x0,
+                low_bound=lower_bound,
+                high_bound=upper_bound,
+                **opt_kwargs,
             )
             valid_result = True
         except ValueError:
-            percentiles.pop(0)
+            _ = percentiles.pop(0)
             valid_result = False
 
     if not valid_result:
         raise ValueError(
             f"{__file__}: unable to find stable value for T Matrix optimisation, second inclusion"
+        )
+    if vel_mod is None or vel_res is None or opt_params is None:
+        raise ValueError(
+            f"{__file__}: expected optimisation routine to return values, but got None"
         )
 
     # Reshape outputs and remove weight from vs
@@ -167,10 +195,16 @@ def t_matrix_optimisation_exp(
     ai_mod = vp_mod * rhob_mod
     rhob_res = rhob_mod - rhob
     # Save the optimal parameters
-    save_opt_params("exp", opt_params, file_out_str, well_name=well_name)
+    save_opt_params(
+        opt_type="exp",
+        opt_params=opt_params,
+        file_name=file_out_str,
+        well_name=well_name,
+    )
     if display_results:
-        from .opt_subst_utilities import opt_param_to_ascii
-
-        opt_param_to_ascii(file_out_str, well_name=well_name)
+        opt_param_to_ascii(
+            in_file=file_out_str,
+            well_name=well_name,
+        )
 
     return vp_mod, vs_mod, rhob_mod, ai_mod, vpvs_mod, vp_res, vs_res, rhob_res

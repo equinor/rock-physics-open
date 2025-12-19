@@ -1,25 +1,30 @@
+from typing import cast
+
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 from rock_physics_open.equinor_utilities.optimisation_utilities import opt_param_info
 from rock_physics_open.equinor_utilities.std_functions import hashin_shtrikman_average
-from rock_physics_open.t_matrix_models import t_matrix_porosity_c_alpha_v
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2D
+
+from .t_matrix_C import t_matrix_porosity_c_alpha_v
 
 
 def curvefit_t_matrix_exp(
-    x_data,
-    frac_ani,
-    frac_con,
-    alpha1,
-    alpha2,
-    v1,
-    k_c,
-    mu_c,
-    rho_c,
-    k_sh,
-    mu_sh,
-    rho_sh,
-):
+    x_data: Array2D[np.float64],
+    frac_ani: float,
+    frac_con: float,
+    alpha1: float,
+    alpha2: float,
+    v1: float,
+    k_c: float,
+    mu_c: float,
+    rho_c: float,
+    k_sh: float,
+    mu_sh: float,
+    rho_sh: float,
+) -> Array1D[np.float64]:
     """Optimisation of input parameters to T-Matrix for carbonate in case where the mineral composition for each
     sample is not known, so that effective mineral moduli for each sample are part of the parameters to be optimised
     for. The optimisation is also made for the inclusion parameters in addition to fraction of connected and anisotropic
@@ -58,7 +63,7 @@ def curvefit_t_matrix_exp(
         Modelled velocity, vp and vs.
     """
     # Restore original value range for parameters - must match the scaling performed in calling function
-    scale_val = opt_param_info()[1]
+    _, scale_val, _ = opt_param_info()
     k_c *= scale_val["k_carb"]
     mu_c *= scale_val["mu_carb"]
     rho_c *= scale_val["rho_carb"]
@@ -83,11 +88,28 @@ def curvefit_t_matrix_exp(
 
     # Mineral properties
     # Expand elastic properties to vectors of the same length as the x_data inputs
-    k_c, mu_c, rho_c, k_sh, mu_sh, rho_sh, _ = dim_check_vector(
-        (k_c, mu_c, rho_c, k_sh, mu_sh, rho_sh, phi)
+    k_c_, mu_c_, rho_c_, k_sh_, mu_sh_, rho_sh_, _ = cast(
+        list[npt.NDArray[np.float64]],
+        dim_check_vector(
+            (
+                k_c,
+                mu_c,
+                rho_c,
+                k_sh,
+                mu_sh,
+                rho_sh,
+                phi,
+            )
+        ),
     )
-    k_min, mu_min = hashin_shtrikman_average(k_sh, mu_sh, k_c, mu_c, vsh)
-    rho_min = vsh * rho_sh + (1.0 - vsh) * rho_c
+    k_min, mu_min = hashin_shtrikman_average(
+        k1=k_sh_,
+        mu1=mu_sh_,
+        k2=k_c_,
+        mu2=mu_c_,
+        f=vsh,
+    )
+    rho_min = vsh * rho_sh_ + (1.0 - vsh) * rho_c_
 
     # Inclusion aspect ratios and concentrations
     log_len = phi.shape[0]
@@ -100,21 +122,21 @@ def curvefit_t_matrix_exp(
 
     try:
         vp, vsv, _, _ = t_matrix_porosity_c_alpha_v(
-            k_min,
-            mu_min,
-            rho_min,
-            k_fl,
-            rho_fl,
-            phi,
-            perm,
-            visco,
-            alpha,
-            v,
-            tau,
-            freq,
-            angle_sym_plane,
-            frac_con,
-            frac_ani,
+            k_min=k_min,
+            mu_min=mu_min,
+            rho_min=rho_min,
+            k_fl=k_fl,
+            rho_fl=rho_fl,
+            phi=phi,
+            perm=perm,
+            visco=visco,
+            alpha=alpha,
+            v=v,
+            tau=tau,
+            frequency=freq,
+            angle=angle_sym_plane,
+            frac_inc_con=frac_con,
+            frac_inc_ani=frac_ani,
         )
     except ValueError:
         vp = np.zeros(k_min.shape)

@@ -1,13 +1,28 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    Array3D,
+    Array4D,
+)
+
 from .array_functions import array_matrix_mult
 from .check_and_tile import check_and_tile
 
 
-def calc_z_vec(s0, td, td_bar, omega, gamma, v, tau):
+def calc_z_vec(
+    s0: Array3D[np.float64],
+    td: Array4D[np.float64],
+    td_bar: Array4D[np.float64],
+    omega: float,
+    gamma: Array2D[np.float64],
+    v: Array2D[np.float64],
+    tau: Array1D[np.float64],
+) -> tuple[Array4D[np.complex128], Array4D[np.complex128]]:
     """Returns the z tensor (6x6x(numbers of empty cavities) matrix) for more explanation see e.g.
     Agersborg et al. 2009 or "The effects of drained and undrained loading in
-    visco-elsatic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
+    visco-elastic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
     (2005). Int. J. Solids and Structures (42). p. 1597-1611.
 
     Parameters
@@ -44,7 +59,19 @@ def calc_z_vec(s0, td, td_bar, omega, gamma, v, tau):
         ).reshape(log_length, 1, 1)
 
     for j in range(alpha_length):
-        z[:, :, :, j] = array_matrix_mult(td[:, :, :, j], s0, i2_i2, s0, sum_z)
-        z_bar[:, :, :, j] = array_matrix_mult(td_bar[:, :, :, j], s0, i2_i2, s0, sum_z)
+        z[:, :, :, j] = array_matrix_mult(
+            td[:, :, :, j],
+            s0,
+            i2_i2,
+            s0,
+            sum_z,  # pyright: ignore[reportArgumentType] | sum_z is 3D array after summation
+        )
+        z_bar[:, :, :, j] = array_matrix_mult(
+            td_bar[:, :, :, j],
+            s0,
+            i2_i2,
+            s0,
+            sum_z,  # pyright: ignore[reportArgumentType] | sum_z is 3D array after summation
+        )
 
     return z, z_bar

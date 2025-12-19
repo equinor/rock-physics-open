@@ -1,9 +1,18 @@
 import numpy as np
 
-from rock_physics_open.t_matrix_models import t_matrix_porosity_c_alpha_v
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2D
+
+from .t_matrix_C import t_matrix_porosity_c_alpha_v
 
 
-def curve_fit_2_inclusion_sets(x_data, frac_ani, frac_con, alpha1, alpha2, v1):
+def curve_fit_2_inclusion_sets(
+    x_data: Array2D[np.float64],
+    frac_ani: float,
+    frac_con: float,
+    alpha1: float,
+    alpha2: float,
+    v1: float,
+) -> Array1D[np.float64]:
     """Optimisation of input parameters to T-Matrix for carbonate in case where the mineral composition for each
     sample is known, so that effective mineral moduli for each sample are part of the inputs. The optimisation
     is made for the inclusion parameters in addition to fraction of connected and anisotropic porosity and the
@@ -53,8 +62,7 @@ def curve_fit_2_inclusion_sets(x_data, frac_ani, frac_con, alpha1, alpha2, v1):
     # - the sum of v's should add up to unity
     if not (alpha1 > alpha2 and 0.0 < v1 <= 1.0):
         raise ValueError(
-            "curvefit_t_matrix: alpha 1 must have higher value than alpha 2, and v1 must be a "
-            "positive fraction"
+            "curvefit_t_matrix: alpha 1 must have higher value than alpha 2, and v1 must be a positive fraction"
         )
     alpha = np.array([alpha1, alpha2]).reshape(1, 2)
     v = np.array([v1, 1.0 - v1]).reshape(1, 2)
@@ -63,21 +71,21 @@ def curve_fit_2_inclusion_sets(x_data, frac_ani, frac_con, alpha1, alpha2, v1):
 
     try:
         vp, vsv, _, _ = t_matrix_porosity_c_alpha_v(
-            k_min,
-            mu_min,
-            rho_min,
-            k_fl,
-            rho_fl,
-            phi,
-            perm,
-            visco,
-            alpha_vec,
-            v_vec,
-            tau,
-            freq,
-            angle_sym_plane,
-            frac_con,
-            frac_ani,
+            k_min=k_min,
+            mu_min=mu_min,
+            rho_min=rho_min,
+            k_fl=k_fl,
+            rho_fl=rho_fl,
+            phi=phi,
+            perm=perm,
+            visco=visco,
+            alpha=alpha_vec,
+            v=v_vec,
+            tau=tau,
+            frequency=freq,
+            angle=angle_sym_plane,
+            frac_inc_con=frac_con,
+            frac_inc_ani=frac_ani,
         )
     except ValueError:
         vp = np.zeros(k_min.shape)

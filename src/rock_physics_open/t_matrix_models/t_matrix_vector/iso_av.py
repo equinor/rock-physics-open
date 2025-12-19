@@ -1,7 +1,17 @@
+from typing import TypeVar
+
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import Array3D, Array4D
 
-def iso_av_vec(t):
+_T = TypeVar(
+    "_T",
+    Array3D[np.float64],
+    Array4D[np.float64],
+)
+
+
+def iso_av_vec(t: _T) -> _T:
     """Returns a (nx6x6) matrix t_bar averaged over all the orientations (isotropy).
 
 
@@ -33,7 +43,7 @@ def iso_av_vec(t):
     np.ndarray
         Averaged value.
     """
-    t_bar = np.zeros(t.shape)
+    t_bar = np.zeros_like(t)
 
     lambda_var = (
         t[:, 0, 0] + t[:, 2, 2] + 5 * t[:, 0, 1] + 8 * t[:, 0, 2] - 2 * t[:, 3, 3]

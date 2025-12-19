@@ -1,10 +1,16 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array3D
+
 from .array_functions import array_inverse, array_matrix_mult
 from .g_tensor import g_tensor_vec
 
 
-def pressure_input_utility(k_min, mu_min, log_length):
+def pressure_input_utility(
+    k_min: Array1D[np.float64],
+    mu_min: Array1D[np.float64],
+    log_length: int,
+) -> tuple[Array3D[np.float64], Array3D[np.float64], Array3D[np.float64]]:
     """Utility that calculates some of the elastic properties needed for T-Matrix pressure estimation.
 
     Parameters
@@ -39,6 +45,6 @@ def pressure_input_utility(k_min, mu_min, log_length):
         c0[:, 2, i] = c12
 
     s0 = array_matrix_mult(i4, array_inverse(c0))
-    gd = g_tensor_vec(c0, s0, 1.0)
+    gd = g_tensor_vec(c0=c0, s_0=s0, alpha=1.0)
 
     return c0, s0, gd

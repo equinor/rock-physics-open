@@ -1,10 +1,14 @@
+from typing import Any, cast
+
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
 from rock_physics_open.equinor_utilities.optimisation_utilities import (
     gen_opt_routine,
+    opt_param_to_ascii,
     save_opt_params,
 )
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
 
 from .curvefit_t_matrix_min import curve_fit_2_inclusion_sets
 
@@ -14,15 +18,15 @@ DEF_VP_VS_RATIO = 1.8
 
 
 def t_matrix_optimisation_petec(
-    k_min: np.ndarray,
-    mu_min: np.ndarray,
-    rho_min: np.ndarray,
-    k_fl: np.ndarray,
-    rho_fl: np.ndarray,
-    por: np.ndarray,
-    vp: np.ndarray,
-    vs: np.ndarray,
-    rhob: np.ndarray,
+    k_min: Array1D[np.float64],
+    mu_min: Array1D[np.float64],
+    rho_min: Array1D[np.float64],
+    k_fl: Array1D[np.float64],
+    rho_fl: Array1D[np.float64],
+    por: Array1D[np.float64],
+    vp: Array1D[np.float64],
+    vs: Array1D[np.float64],
+    rhob: Array1D[np.float64],
     angle: float = 0.0,
     k_r: float = 50.0,
     eta_f: float = 1.0,
@@ -31,8 +35,17 @@ def t_matrix_optimisation_petec(
     file_out_str: str = "opt_params_min.pkl",
     display_results: bool = False,
     well_name: str = "Unknown well",
-    **opt_kwargs,
-):
+    **opt_kwargs: Any,
+) -> tuple[
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+]:
     """T-Matrix optimisation adapted to a case with detailed information available, such as in a development or production
     setting. Mineral and fluid composition should be known on a sample basis. Inclusion parameters are regarded as
     unknown and they are optimised for.
@@ -46,7 +59,7 @@ def t_matrix_optimisation_petec(
     rho_min :
         Effective mineral bulk density [kg/m^3].
     k_fl :
-        Effective fluid bulk modulud [Pa].
+        Effective fluid bulk modulus [Pa].
     rho_fl :
         Effective fluid density [kg/m^3].
     por :
@@ -88,8 +101,19 @@ def t_matrix_optimisation_petec(
     rhob_mod = rho_min * (1 - por) + rho_fl * por
     rhob_res = rhob - rhob_mod
     # PETEC adapted inputs: include fluid data and other params in x_data
-    por, angle, k_r, eta_f, tau, freq, def_vp_vs_ratio = gen_utilities.dim_check_vector(
-        (por, angle, k_r, eta_f, tau, freq, DEF_VP_VS_RATIO)
+    por, angle_, k_r_, eta_f_, tau_, freq_, def_vp_vs_ratio = cast(
+        list[Array1D[np.float64]],
+        gen_utilities.dim_check_vector(
+            (
+                por,
+                angle,
+                k_r,
+                eta_f,
+                tau,
+                freq,
+                DEF_VP_VS_RATIO,
+            )
+        ),
     )
     x_data = np.stack(
         (
@@ -99,11 +123,11 @@ def t_matrix_optimisation_petec(
             rho_min,
             k_fl,
             rho_fl,
-            angle,
-            k_r,
-            eta_f,
-            tau,
-            freq,
+            angle_,
+            k_r_,
+            eta_f_,
+            tau_,
+            freq_,
             def_vp_vs_ratio,
         ),
         axis=1,
@@ -133,16 +157,26 @@ def t_matrix_optimisation_petec(
             x0 = (upper_bound + lower_bound) / 2.0
             # Optimisation step without fluid substitution
             vel_mod, vel_res, opt_params = gen_opt_routine(
-                opt_fun, x_data, y_data, x0, lower_bound, upper_bound, **opt_kwargs
+                opt_function=opt_fun,
+                x_data_orig=x_data,
+                y_data=y_data,
+                x_init=x0,
+                low_bound=lower_bound,
+                high_bound=upper_bound,
+                **opt_kwargs,
             )
             valid_result = True
         except ValueError:
-            percentiles.pop(0)
+            _ = percentiles.pop(0)
             valid_result = False
 
     if not valid_result:
         raise ValueError(
             f"{__file__}: unable to find stable value for T Matrix optimisation, second inclusion"
+        )
+    if vel_mod is None or vel_res is None or opt_params is None:
+        raise ValueError(
+            f"{__file__}: expected optimisation routine to return values, but got None"
         )
 
     # Reshape outputs and remove weight from vs
@@ -153,10 +187,13 @@ def t_matrix_optimisation_petec(
     vs_res = vs_res / DEF_VP_VS_RATIO
     vpvs_mod = vp_mod / vs_mod
     # Save the optimal parameters
-    save_opt_params("min", opt_params, file_out_str, well_name=well_name)
+    save_opt_params(
+        opt_type="min",
+        opt_params=opt_params,
+        file_name=file_out_str,
+        well_name=well_name,
+    )
     if display_results:
-        from .opt_subst_utilities import opt_param_to_ascii
-
-        opt_param_to_ascii(file_out_str, well_name=well_name)
+        opt_param_to_ascii(in_file=file_out_str, well_name=well_name)
 
     return vp_mod, vs_mod, rhob_mod, ai_mod, vpvs_mod, vp_res, vs_res, rhob_res

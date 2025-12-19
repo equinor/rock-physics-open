@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
 from matplotlib.text import Text
 
-from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2d
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2D
 
 HORZRES = 8
 VERTRES = 10
@@ -78,7 +78,9 @@ def set_ternary_figure(
     return fig, ax
 
 
-def ternary_coord_trans(*args: Array1D | Array2d) -> Array2d:
+def ternary_coord_trans(
+    *args: Array1D[np.float64] | Array2D[np.float64],
+) -> Array2D[np.float64]:
     """Routine to transform ternary coordinates to xy coordinates.
     Inputs can either be 3 separate coordinate arrays or a nX3 array
     The sum of the input coordinates should be one - the routine will normalise the inputs

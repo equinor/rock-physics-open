@@ -8,7 +8,7 @@ import scipy.optimize
 from scipy.interpolate import RegularGridInterpolator
 
 from rock_physics_open.equinor_utilities.conversions import celsius_to_kelvin
-from rock_physics_open.equinor_utilities.various_utilities.types import Array2d
+from rock_physics_open.equinor_utilities.various_utilities.types import Array2D
 
 from .coefficients import (
     a0,
@@ -376,7 +376,7 @@ def _determine_density_bounds(
     absolute_temperature: npt.NDArray[np.float64],
     pressure: npt.NDArray[np.float64],
     force_vapor: bool | Literal["auto"],
-) -> Array2d:
+) -> Array2D[np.float64]:
     """
     Calculate the upper and lower bound on density
     """
@@ -408,7 +408,7 @@ def _determine_density_bounds(
 
 
 def _find_initial_density_values(
-    bounds: Array2d,
+    bounds: Array2D[np.float64],
     absolute_temperature: npt.NDArray[np.float64],
     pressure: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
@@ -430,7 +430,7 @@ def _find_initial_density_values(
         force_vapor="auto",
         raise_error=False,
     ).reshape(temps.size, press.size)
-    points: Array2d = np.array((temps, press))
+    points: Array2D[np.float64] = np.array((temps, press))
     rgi = RegularGridInterpolator(points, densi, method="linear")
     iv = rgi(np.array((absolute_temperature, pressure)).T)
     oob = (iv < bounds[:, 0]) | (iv > bounds[:, 1]) | np.isnan(iv)

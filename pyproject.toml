@@ -60,7 +60,7 @@ dependencies = [
     "scipy >= 1.16.3, < 2",
     "scikit-learn >= 1.2.2",
     "sympy >= 1.13.3",           # TODO: remove? (only used 1 place in span_wagner co2 equations)
-    "tmatrix >= 1.0.0",
+    "tmatrix ~= 1.1.0",
     "typing-extensions>=4.15.0",
 ]
 
@@ -125,11 +125,13 @@ include = [
     "src/rock_physics_open/shale_models",
     "src/rock_physics_open/ternary_plots",
     "src/rock_physics_open/span_wagner",
+    "src/rock_physics_open/t_matrix_models",
     "tests/gen_utilities_tests",
     "tests/fluid_model_tests",
     "tests/sandstone_model_tests",
     "tests/shale_model_tests",
     "tests/span_wagner",
+    "tests/t_matrix_model_tests",
 ]
 exclude = ["src/rock_physics_open/version.py"]
 allowedUntypedLibraries = [

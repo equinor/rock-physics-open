@@ -1,12 +1,13 @@
-import inspect
 import sys
 from ctypes import c_double, c_int
+from typing import Any, cast
 
 import numpy as np
 import numpy.ctypeslib as npct
-from tmatrix._tmatrix import tmatrix_porosity_noscenario
+from tmatrix import tmatrix_porosity_noscenario
 
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2D
 
 # Definition of input types for the T Matrix function
 # this will affect the tests on the input data, dim_check_vector is therefore set up to
@@ -16,33 +17,28 @@ array_1d_int = npct.ndpointer(dtype=c_int, ndim=1, flags="CONTIGUOUS")
 array_2d_double = npct.ndpointer(dtype=c_double, ndim=2, flags="CONTIGUOUS")
 
 
-# noinspection PyUnusedLocal
-def T_matrix_porosity_C_scenario(*args):
-    """Deprecated."""
-    raise DeprecationWarning(
-        "{}: deprecated function, all T-Matrix runs should be parsed through run_t_matrix".format(
-            inspect.stack()[0][3]
-        )
-    )
-
-
 def t_matrix_porosity_c_alpha_v(
-    k_min,
-    mu_min,
-    rho_min,
-    k_fl,
-    rho_fl,
-    phi,
-    perm,
-    visco,
-    alpha,
-    v,
-    tau,
-    frequency,
-    angle,
-    frac_inc_con,
-    frac_inc_ani,
-):
+    k_min: Array1D[np.float64],
+    mu_min: Array1D[np.float64],
+    rho_min: Array1D[np.float64],
+    k_fl: Array1D[np.float64],
+    rho_fl: Array1D[np.float64],
+    phi: Array1D[np.float64],
+    perm: Array1D[np.float64],
+    visco: Array1D[np.float64],
+    alpha: Array2D[np.float64],
+    v: Array2D[np.float64],
+    tau: Any,
+    frequency: float,
+    angle: float,
+    frac_inc_con: float,
+    frac_inc_ani: float,
+) -> tuple[
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+]:
     """This function can be called directly from top level, but the present recommendation is to go though the run_t_matrix
     in order to check inputs. It is used directly from the optimisation functions for efficiency. This gives direct
     access to the C++ compiled library for T-Matrix.
@@ -59,7 +55,7 @@ def t_matrix_porosity_c_alpha_v(
         N length array, fluid bulk modulus [Pa]
     rho_fl: np.ndarray
         N length array, fluid density [kg/m^3]
-    phi:np.ndaray
+    phi : np.ndarray
         N length array, porosity
     perm: np.ndarray
         N length array, permeability [mD]
@@ -71,7 +67,7 @@ def t_matrix_porosity_c_alpha_v(
         fraction of porosity with given aspect ratio
     tau: float
         relaxation time
-    frequency:  float
+    frequency: float
         float single value, signal frequency [Hz]
     angle: float
         float single value, angle of symmetry plane (0 = HTI, 90 = VTI medium) [deg]
@@ -95,13 +91,16 @@ def t_matrix_porosity_c_alpha_v(
     # alpha and v
 
     # frac_inc_con and frac_inc_ani must be of the same length
-    frac_inc_con, frac_inc_ani = gen_utilities.dim_check_vector(
-        (frac_inc_con, frac_inc_ani)
+    frac_inc_con_, frac_inc_ani_ = (
+        cast(  # casting since dim_check_vector typing is incomplete
+            list[Array1D[np.float64]],
+            gen_utilities.dim_check_vector((frac_inc_con, frac_inc_ani)),
+        )
     )
 
     # test for frac_inc_con and frac_inc_ani being of the same length as the logs
     log_length = len(phi)
-    if frac_inc_con.shape[0] == log_length:
+    if frac_inc_con_.shape[0] == log_length:
         (
             k_min,
             mu_min,
@@ -111,22 +110,25 @@ def t_matrix_porosity_c_alpha_v(
             phi,
             perm,
             visco,
-            frac_inc_con,
-            frac_inc_ani,
-        ) = gen_utilities.dim_check_vector(
-            (
-                k_min,
-                mu_min,
-                rho_min,
-                k_fl,
-                rho_fl,
-                phi,
-                perm,
-                visco,
-                frac_inc_con,
-                frac_inc_ani,
+            frac_inc_con_,
+            frac_inc_ani_,
+        ) = cast(  # casting since dim_check_vector typing is incomplete
+            list[Array1D[np.float64]],
+            gen_utilities.dim_check_vector(
+                (
+                    k_min,
+                    mu_min,
+                    rho_min,
+                    k_fl,
+                    rho_fl,
+                    phi,
+                    perm,
+                    visco,
+                    frac_inc_con_,
+                    frac_inc_ani_,
+                ),
+                force_type=np.dtype("float64"),
             ),
-            force_type=np.dtype("float64"),
         )
         frac_inc_length = log_length
     else:  # Single float value of frac_inc_con, frac_inc_ani or matching number of inclusions
@@ -139,11 +141,14 @@ def t_matrix_porosity_c_alpha_v(
             phi,
             perm,
             visco,
-        ) = gen_utilities.dim_check_vector(
-            (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco),
-            np.dtype("float64"),
+        ) = cast(  # casting since dim_check_vector typing is incomplete
+            list[Array1D[np.float64]],
+            gen_utilities.dim_check_vector(
+                (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco),
+                np.dtype("float64"),
+            ),
         )
-        frac_inc_length = frac_inc_ani.shape[0]
+        frac_inc_length = frac_inc_ani_.shape[0]
 
     # Create output array, gather mineral and fluid properties in 2D arrays
     out_arr = np.zeros((log_length, 4), dtype=float, order="C")
@@ -152,8 +157,9 @@ def t_matrix_porosity_c_alpha_v(
 
     # Make sure that alpha and v are of the same shape - more about length of alpha further down
     alpha_shape = alpha.shape
-    alpha, v = gen_utilities.dim_check_vector(
-        (alpha, v), force_type=np.dtype("float64")
+    alpha, v = cast(  # casting since dim_check_vector typing is incomplete
+        list[Array2D[np.float64]],
+        gen_utilities.dim_check_vector((alpha, v), force_type=np.dtype("float64")),
     )
     alpha = alpha.reshape(alpha_shape)
     v = v.reshape(alpha_shape)
@@ -164,9 +170,9 @@ def t_matrix_porosity_c_alpha_v(
     if len(alpha) != log_length and len(alpha) < 5:
         # Interpret alpha as a vector of aspect ratios
         alpha_vec = (
-            np.ones((log_length, len(alpha)), dtype=float, order="c") * alpha.flatten()
+            np.ones((log_length, len(alpha)), dtype=float, order="C") * alpha.flatten()
         )
-        v_vec = np.ones((log_length, len(alpha)), dtype=float, order="c") * v.flatten()
+        v_vec = np.ones((log_length, len(alpha)), dtype=float, order="C") * v.flatten()
         alpha = alpha_vec
         v = v_vec
 
@@ -176,25 +182,25 @@ def t_matrix_porosity_c_alpha_v(
         v = v.reshape((len(alpha), 1))
 
     # Have to declare the number of alphas per sample, even if it is constant
-    alpha_length_array = np.ones(log_length, dtype=c_int, order="c") * alpha.shape[1]
+    alpha_length_array = np.ones(log_length, dtype=c_int, order="C") * alpha.shape[1]
     alpha_length = alpha.shape[0]
 
     try:
         tmatrix_porosity_noscenario(
-            out_arr,
-            log_length,
-            min_prop,
-            fl_prop,
-            phi,
-            alpha,
-            v,
-            alpha_length_array,
-            alpha_length,
-            frequency,
-            angle,
-            frac_inc_con,
-            frac_inc_ani,
-            frac_inc_length,
+            out_np=out_arr,
+            out_N=log_length,
+            mineral_property_np=min_prop,
+            fluid_property_np=fl_prop,
+            phi_vector_np=phi,
+            alpha_np=alpha,
+            v_np=v,
+            alpha_size_np=alpha_length_array,
+            alpha_N=alpha_length,
+            frequency=frequency,
+            angle=angle,
+            inc_con_np=frac_inc_con_,
+            inc_ani_np=frac_inc_ani_,
+            inc_con_N=frac_inc_length,
         )
     except ValueError:
         # Get more info in case this goes wrong

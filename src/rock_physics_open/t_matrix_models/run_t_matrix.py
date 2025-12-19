@@ -1,28 +1,96 @@
+from typing import overload
+
 import numpy as np
+import numpy.typing as npt
+
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    TMatrixCallable,
+)
 
 from .parse_t_matrix_inputs import parse_t_matrix_inputs
 from .t_matrix_vector import calc_pressure_vec, pressure_input_utility
 
 
+@overload
 def run_t_matrix(
-    k_min,
-    mu_min,
-    rho_min,
-    k_fl,
-    rho_fl,
-    phi,
-    perm,
-    visco,
-    alpha,
-    v,
-    tau,
-    frequency,
-    angle,
-    frac_inc_con,
-    frac_inc_ani,
-    pressure=None,
-    scenario=None,
-    fcn=None,
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    perm: npt.NDArray[np.float64] | float,
+    visco: npt.NDArray[np.float64] | float,
+    alpha: npt.NDArray[np.float64],
+    v: npt.NDArray[np.float64],
+    tau: npt.NDArray[np.float64],
+    frequency: float,
+    angle: float,
+    frac_inc_con: npt.NDArray[np.float64] | float,
+    frac_inc_ani: npt.NDArray[np.float64] | float,
+    pressure: npt.NDArray[np.float64],
+    scenario: int | None = None,
+    fcn: TMatrixCallable | str | None = None,
+) -> list[Array2D[np.float64]]: ...
+
+
+@overload
+def run_t_matrix(
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    perm: npt.NDArray[np.float64] | float,
+    visco: npt.NDArray[np.float64] | float,
+    alpha: npt.NDArray[np.float64],
+    v: npt.NDArray[np.float64],
+    tau: npt.NDArray[np.float64],
+    frequency: float,
+    angle: float,
+    frac_inc_con: npt.NDArray[np.float64] | float,
+    frac_inc_ani: npt.NDArray[np.float64] | float,
+    pressure: None = None,
+    scenario: int | None = None,
+    fcn: TMatrixCallable | str | None = None,
+) -> tuple[
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+]: ...
+
+
+def run_t_matrix(
+    k_min: npt.NDArray[np.float64],
+    mu_min: npt.NDArray[np.float64],
+    rho_min: npt.NDArray[np.float64],
+    k_fl: npt.NDArray[np.float64],
+    rho_fl: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    perm: npt.NDArray[np.float64] | float,
+    visco: npt.NDArray[np.float64] | float,
+    alpha: npt.NDArray[np.float64],
+    v: npt.NDArray[np.float64],
+    tau: npt.NDArray[np.float64],
+    frequency: float,
+    angle: float,
+    frac_inc_con: npt.NDArray[np.float64] | float,
+    frac_inc_ani: npt.NDArray[np.float64] | float,
+    pressure: npt.NDArray[np.float64] | None = None,
+    scenario: int | None = None,
+    fcn: TMatrixCallable | str | None = None,
+) -> (
+    list[Array2D[np.float64]]
+    | tuple[
+        Array1D[np.float64],
+        Array1D[np.float64],
+        Array1D[np.float64],
+        Array1D[np.float64],
+    ]
 ):
     """Function to run T-Matrix in different flavours, with or without pressure steps included.
     A frontend to running T-Matrix model, including testing of all input parameters in the parse_t_matrix_inputs.
@@ -63,8 +131,8 @@ def run_t_matrix(
         > 1 value list or numpy array in ascending order, effective pressure [Pa], by default None.
     scenario : int, optional
         Pre-set scenarios for alpha, v and tau, by default None.
-    fcn : callable, optional
-        Function with which to run the T-Matrix model, by default None.
+    fcn : callable | str, optional
+        Function with which to run the T-Matrix model or string with function name within t_matrix_models, by default None.
 
     Returns
     -------
@@ -78,59 +146,59 @@ def run_t_matrix(
         rho_min,
         k_fl,
         rho_fl,
-        phi,
-        perm,
-        visco,
+        phi_,
+        perm_,
+        visco_,
         alpha,
         v,
         tau,
         frequency,
         angle,
-        frac_inc_con,
-        frac_inc_ani,
+        frac_inc_con_,
+        frac_inc_ani_,
         pressure,
         fcn,
         ctrl_connected,
-        ctrl_anisotropy,
+        _,
     ) = parse_t_matrix_inputs(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl,
-        rho_fl,
-        phi,
-        perm,
-        visco,
-        alpha,
-        v,
-        tau,
-        frequency,
-        angle,
-        frac_inc_con,
-        frac_inc_ani,
-        pressure,
-        scenario,
-        fcn,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        perm=perm,
+        visco=visco,
+        alpha=alpha,
+        v=v,
+        tau=tau,
+        frequency=frequency,
+        angle=angle,
+        frac_inc_con=frac_inc_con,
+        frac_inc_ani=frac_inc_ani,
+        pressure=pressure,
+        scenario=scenario,
+        fcn=fcn,
     )
 
     # If there are no pressure steps to consider the whole task can be assigned to the T-Matrix function
     if pressure is None:
         vp, vsv, vsh, rho = fcn(
-            k_min,
-            mu_min,
-            rho_min,
-            k_fl,
-            rho_fl,
-            phi,
-            perm,
-            visco,
-            alpha,
-            v,
-            tau,
-            frequency,
-            angle,
-            frac_inc_con,
-            frac_inc_ani,
+            k_min=k_min,
+            mu_min=mu_min,
+            rho_min=rho_min,
+            k_fl=k_fl,
+            rho_fl=rho_fl,
+            phi=phi_,
+            perm=perm_,
+            visco=visco_,
+            alpha=alpha,
+            v=v,
+            tau=tau,
+            frequency=frequency,
+            angle=angle,
+            frac_inc_con=frac_inc_con_,
+            frac_inc_ani=frac_inc_ani_,
         )
         return vp, vsv, vsh, rho
 
@@ -139,7 +207,7 @@ def run_t_matrix(
     # isolated part, but this is not included directly in Calculo's implementation in C++. For the time being,
     # this possibility is not included here
 
-    log_length = phi.shape[0]
+    log_length = phi_.shape[0]
     pressure_steps = pressure.shape[0]
     # It is the change from initial pressure (first value in the pressure vector) that is input to the function
     # that estimates matrix pressure sensitivity
@@ -156,21 +224,21 @@ def run_t_matrix(
 
     for i in range(pressure_steps):
         vp[:, i], vs_v[:, i], vs_h[:, i], rho_b_est[:, i] = fcn(
-            k_min,
-            mu_min,
-            rho_min,
-            k_fl,
-            rho_fl,
-            phi,
-            perm,
-            visco,
-            alpha,
-            v,
-            tau,
-            frequency,
-            angle,
-            frac_inc_con,
-            frac_inc_ani,
+            k_min=k_min,
+            mu_min=mu_min,
+            rho_min=rho_min,
+            k_fl=k_fl,
+            rho_fl=rho_fl,
+            phi=phi_,
+            perm=perm_,
+            visco=visco_,
+            alpha=alpha,
+            v=v,
+            tau=tau,
+            frequency=frequency,
+            angle=angle,
+            frac_inc_con=frac_inc_con_,
+            frac_inc_ani=frac_inc_ani_,
         )
 
         if i != pressure_steps - 1:
@@ -178,25 +246,25 @@ def run_t_matrix(
             if ctrl_connected != 0:
                 v_con = v * (phi * frac_inc_con).reshape(log_length, 1)
             else:
-                v_con = np.zeros(v.shape)
+                v_con = np.zeros_like(v)
             if ctrl_connected != 2:
                 v_iso = v * (phi * (1 - frac_inc_con)).reshape(log_length, 1)
             else:
-                v_iso = np.zeros(v.shape)
-            alpha_con, v_con, alpha_iso, v_iso, tau, gamma = calc_pressure_vec(
-                alpha,
-                alpha,
-                v_con,
-                v_iso,
-                c0,
-                s0,
-                gd,
-                delta_pres[i],
-                tau,
-                np.zeros_like(tau),
-                k_fl,
-                ctrl_connected,
-                frac_inc_ani,
+                v_iso = np.zeros_like(v)
+            alpha_con, v_con, alpha_iso, v_iso, tau, _ = calc_pressure_vec(
+                alpha_con=alpha,
+                alpha_iso=alpha,
+                v_con=v_con,
+                v_iso=v_iso,
+                c0=c0,
+                s_0=s0,
+                gd=gd,
+                d_p=delta_pres[i],
+                tau=tau,
+                gamma=np.zeros_like(tau),
+                k_fl=k_fl,
+                ctrl=ctrl_connected,
+                frac_ani=float(frac_inc_ani),
             )
 
             # Post-process outputs from calc_pressure_vec to match required inputs to the T-Matrix function
@@ -229,9 +297,9 @@ def run_t_matrix(
             frac_inc_con = np.mean(v_con / (v_con + v_iso), axis=1)
 
     # Return variables for each pressure step
-    vp_out = []
-    vs_v_out = []
-    vs_h_out = []
+    vp_out: list[Array2D[np.float64]] = []
+    vs_v_out: list[Array2D[np.float64]] = []
+    vs_h_out: list[Array2D[np.float64]] = []
 
     # Only one rho is needed - no change
     rho_out = rho_b_est[:, 0]
