@@ -1,7 +1,12 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import Array3D, Array4D
 
-def check_and_tile(s, t):
+
+def check_and_tile(
+    s: Array3D[np.float64],
+    t: Array4D[np.float64],
+) -> tuple[Array3D[np.float64], int, int]:
     """Utility  - code that was repeated in the T-Matrix functions.
 
     Parameters

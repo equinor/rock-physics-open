@@ -1,7 +1,23 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    Array3D,
+    Array4D,
+)
 
-def calc_t_vec(td, theta, x, z, omega, gamma, tau, k_fluid):
+
+def calc_t_vec(
+    td: Array4D[np.float64],
+    theta: Array3D[np.complex128],
+    x: Array4D[np.float64],
+    z: Array4D[np.complex128],
+    omega: float,
+    gamma: Array2D[np.float64],
+    tau: Array1D[np.float64],
+    k_fluid: Array1D[np.float64],
+) -> Array4D[np.complex128]:
     """
     Returns the t-matrices (6x6x(numbers of connected pores)) of the
     connected pores.
@@ -61,11 +77,11 @@ def calc_t_vec(td, theta, x, z, omega, gamma, tau, k_fluid):
     alpha_len = td.shape[3]
 
     # Reshape to enable broadcast
-    k_fluid = k_fluid.reshape((log_len, 1, 1, 1))
-    gamma = gamma.reshape((log_len, 1, 1, alpha_len))
-    tau = tau.reshape((1, 1, 1, alpha_len))
-    theta = theta.reshape((log_len, 1, 1, 1))
+    k_fluid_ = k_fluid.reshape((log_len, 1, 1, 1))
+    gamma_ = gamma.reshape((log_len, 1, 1, alpha_len))
+    tau_ = tau.reshape((1, 1, 1, alpha_len))
+    theta_ = theta.reshape((log_len, 1, 1, 1))
 
-    return td + (theta * z + 1j * omega * tau * k_fluid * x) / (
-        1 + 1j * omega * gamma * tau
+    return td + (theta_ * z + 1j * omega * tau_ * k_fluid_ * x) / (
+        1 + 1j * omega * gamma_ * tau
     )

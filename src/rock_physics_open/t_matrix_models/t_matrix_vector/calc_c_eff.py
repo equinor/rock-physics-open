@@ -1,12 +1,27 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    Array3D,
+    Array4D,
+)
+
 from .array_functions import array_inverse, array_matrix_mult
 from .calc_t import calc_t_vec
 from .calc_theta import calc_theta_vec
 from .calc_z import calc_z_vec
 
 
-def calc_c_eff_vec(c0, c1, gd, t, t_bar, v, frac_aniso):
+def calc_c_eff_vec(
+    c0: Array3D[np.float64],
+    c1: Array3D[np.float64],
+    gd: Array3D[np.float64],
+    t: Array4D[np.complex128],
+    t_bar: Array4D[np.complex128],
+    v: Array2D[np.float64],
+    frac_aniso: float,
+) -> Array3D[np.float64]:
     """
     Equation  4 (page 222) Jakobsen et al. 2003 (The acoustic signature of fluid flow in complex
     porous media).
@@ -72,35 +87,35 @@ def calc_c_eff_vec(c0, c1, gd, t, t_bar, v, frac_aniso):
 
     log_length = c0.shape[0]
     alpha_len = v.shape[1]
-    v = v.reshape((log_length, 1, 1, alpha_len))
+    v_ = v.reshape((log_length, 1, 1, alpha_len))
     i4 = np.eye(6)
 
-    c1 = c1 + np.sum(frac_aniso * v * t + (1.0 - frac_aniso) * v * t_bar, axis=3)
+    c1 = c1 + np.sum(frac_aniso * v_ * t + (1.0 - frac_aniso) * v_ * t_bar, axis=3)
 
     return c0 + array_matrix_mult(c1, array_inverse(i4 + array_matrix_mult(gd, c1)))
 
 
 def calc_c_eff_visco_vec(
-    vs,
-    k_r,
-    eta_f,
-    v,
-    gamma,
-    tau,
-    kd_uuvv,
-    kappa,
-    kappa_f,
-    c0,
-    s0,
-    c1,
-    td,
-    td_bar,
-    x,
-    x_bar,
-    gd,
-    frequency,
-    frac_ani,
-):
+    vs: Array1D[np.float64],
+    k_r: Array1D[np.float64],
+    eta_f: Array1D[np.float64],
+    v: Array2D[np.float64],
+    gamma: Array2D[np.float64],
+    tau: Array1D[np.float64],
+    kd_uuvv: Array2D[np.float64],
+    kappa: Array1D[np.float64],
+    kappa_f: Array1D[np.float64],
+    c0: Array3D[np.float64],
+    s0: Array3D[np.float64],
+    c1: Array3D[np.float64],
+    td: Array4D[np.float64],
+    td_bar: Array4D[np.float64],
+    x: Array4D[np.float64],
+    x_bar: Array4D[np.float64],
+    gd: Array3D[np.float64],
+    frequency: float,
+    frac_ani: float,
+) -> Array3D[np.float64]:
     """
     Returns the effective stiffness tensor C* for a visco-elastic system (6x6xnumber of frequencies).
 
@@ -109,7 +124,7 @@ def calc_c_eff_visco_vec(
     vs : np.ndarray
         The velocity used to calculate the wave number.
     k_r : np.ndarray
-        Klinkenberg permability.
+        Klinkenberg permeability.
     eta_f : np.ndarray
         Viscosity (P).
     v : np.ndarray
@@ -155,9 +170,53 @@ def calc_c_eff_visco_vec(
 
     omega = 2 * np.pi * frequency
     k = omega / vs
-    theta = calc_theta_vec(v, omega, gamma, tau, kd_uuvv, dr, k, kappa, kappa_f)
-    z, z_bar = calc_z_vec(s0, td, td_bar, omega, gamma, v * frac_ani, tau)
-    t = calc_t_vec(td, theta, x, z, omega, gamma, tau, kappa_f)
-    t_bar = calc_t_vec(td_bar, theta, x_bar, z_bar, omega, gamma, tau, kappa_f)
+    theta = calc_theta_vec(
+        v=v,
+        omega=omega,
+        gamma=gamma,
+        tau=tau,
+        kd_uuvv=kd_uuvv,
+        dr=dr,
+        k=k,
+        kappa=kappa,
+        kappa_f=kappa_f,
+    )
+    z, z_bar = calc_z_vec(
+        s0=s0,
+        td=td,
+        td_bar=td_bar,
+        omega=omega,
+        gamma=gamma,
+        v=v * frac_ani,
+        tau=tau,
+    )
+    t = calc_t_vec(
+        td=td,
+        theta=theta,
+        x=x,
+        z=z,
+        omega=omega,
+        gamma=gamma,
+        tau=tau,
+        k_fluid=kappa_f,
+    )
+    t_bar = calc_t_vec(
+        td=td_bar,
+        theta=theta,
+        x=x_bar,
+        z=z_bar,
+        omega=omega,
+        gamma=gamma,
+        tau=tau,
+        k_fluid=kappa_f,
+    )
 
-    return calc_c_eff_vec(c0, c1, gd, t, t_bar, v, frac_ani)
+    return calc_c_eff_vec(
+        c0=c0,
+        c1=c1,
+        gd=gd,
+        t=t,
+        t_bar=t_bar,
+        v=v,
+        frac_aniso=frac_ani,
+    )

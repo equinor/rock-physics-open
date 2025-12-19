@@ -6,7 +6,7 @@ from matplotlib import path as pa, pyplot as plt
 from matplotlib.colorbar import Colorbar
 from matplotlib.text import Text
 
-from rock_physics_open.equinor_utilities.various_utilities.types import Array2d
+from rock_physics_open.equinor_utilities.various_utilities.types import Array2D
 
 from .ternary_plot_utilities import (
     make_mesh,
@@ -97,7 +97,7 @@ def ternary_patches(
         )
     )
 
-    vertices: list[Array2d] = [
+    vertices: list[Array2D[np.float64]] = [
         np.array(
             [
                 [1.0, 0.0, 0.0],

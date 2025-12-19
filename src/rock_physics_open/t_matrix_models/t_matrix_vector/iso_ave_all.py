@@ -1,9 +1,16 @@
+from typing import Literal
+
 import numpy as np
+
+from rock_physics_open.equinor_utilities.various_utilities.types import Array4D
 
 from .iso_av import iso_av_vec
 
 
-def iso_av_all_vec(x, case_iso):
+def iso_av_all_vec(
+    x: Array4D[np.float64],
+    case_iso: Literal[0, 1, 2],
+) -> Array4D[np.float64]:
     """Returns an multi dimensional matrix with isotropic elements. (nx6x6x(numbers of inclusions) matrix).
     Not used in the present implementation - direct call to iso_av_vec from main function instead
 

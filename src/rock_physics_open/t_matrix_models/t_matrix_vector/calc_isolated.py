@@ -1,11 +1,27 @@
+from typing import Literal
+
 import numpy as np
+
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    Array3D,
+)
 
 from .array_functions import array_inverse, array_matrix_mult
 from .g_tensor import g_tensor_vec
 from .iso_av import iso_av_vec
 
 
-def calc_isolated_part_vec(c0, s_0, kappa_f, alpha, v, case_iso, frac_ani):
+def calc_isolated_part_vec(
+    c0: Array3D[np.float64],
+    s_0: Array3D[np.float64],
+    kappa_f: Array1D[np.float64],
+    alpha: Array2D[np.float64],
+    v: Array2D[np.float64],
+    case_iso: Literal[0, 1, 2],
+    frac_ani: float,
+) -> Array3D[np.float64]:
     """
     Returns the first order correction tensor: sum of the concentrations and
     t-matrices of the isolated porosity (6x6 matrix).
@@ -61,9 +77,7 @@ def calc_isolated_part_vec(c0, s_0, kappa_f, alpha, v, case_iso, frac_ani):
     c1 = np.zeros_like(c0)
 
     # Will need G tensor for each alpha
-    g_arr = []
-    for i in range(alpha_len):
-        g_arr.append(g_tensor_vec(c0, s_0, alpha[:, i]))
+    g_arr = [g_tensor_vec(c0=c0, s_0=s_0, alpha=alpha[:, i]) for i in range(alpha_len)]
 
     if case_iso != 1:
         # if there is only isotropic or anisotropic inclusions

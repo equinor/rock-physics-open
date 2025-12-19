@@ -1,8 +1,10 @@
 import warnings
+from typing import Literal, TypedDict, cast
 
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2D
 
 from .array_functions import array_inverse, array_matrix_mult
 from .calc_c_eff import calc_c_eff_visco_vec
@@ -17,29 +19,48 @@ from .pressure_input import pressure_input_utility
 from .velocity_vti_angles import velocity_vti_angles_vec
 
 
+class CaseDict(TypedDict):
+    iso: Literal[0, 1, 2]
+    con: Literal[0, 1, 2]
+
+
+class ShapeParamsDict(TypedDict):
+    alpha_con: Array1D[np.float64]
+    alpha_iso: Array1D[np.float64]
+    v_con: Array1D[np.float64]
+    v_iso: Array1D[np.float64]
+    tau_con: Array1D[np.float64]
+    tau_iso: Array1D[np.float64]
+
+
 def t_matrix_porosity_vectorised(
-    k_min,
-    mu_min,
-    rho_min,
-    k_fl,
-    rho_fl,
-    phi,
-    perm,
-    visco,
-    alpha,
-    v,
-    tau,
-    frequency,
-    angle,
-    frac_inc_con,
-    frac_inc_ani,
-    pressure=None,
-):
+    k_min: Array1D[np.float64],
+    mu_min: Array1D[np.float64],
+    rho_min: Array1D[np.float64],
+    k_fl: Array1D[np.float64],
+    rho_fl: Array1D[np.float64],
+    phi: Array1D[np.float64],
+    perm: Array1D[np.float64],
+    visco: Array1D[np.float64],
+    alpha: Array1D[np.float64],
+    v: Array1D[np.float64],
+    tau: Array1D[np.float64],
+    frequency: float,
+    angle: float,
+    frac_inc_con: float,
+    frac_inc_ani: float,
+    pressure: Array1D[np.float64] | None = None,
+) -> tuple[
+    Array2D[np.float64],
+    Array2D[np.float64],
+    Array2D[np.float64],
+    Array2D[np.float64],
+]:
     """Vectorised version of T-Matrix, pure Python version - mainly intended for cases where it is wished to follow
     the entire process through and study intermediate results. The C++ implementation is significantly faster.
 
     Description of inputs:
-    Mineral propeties (effective properties, assumed mixed).
+    Mineral properties (effective properties, assumed mixed).
     Fluid properties (effective properties, assume mixed).
 
     Parameters
@@ -72,7 +93,7 @@ def t_matrix_porosity_vectorised(
         Single float, angle of symmetry plane (0 = HTI, 90 = VTI medium).
     frac_inc_con : float or np.ndarray
         Single float or N length array, fraction of inclusions that are connected.
-    frac_inc_ani : float or np.ndaray
+    frac_inc_ani : float or np.ndarray
         Single float or N length array, fraction of inclusions that are anisotropic.
     pressure : np.ndarray, optional
         L length array (normally 2), by default None.
@@ -94,8 +115,11 @@ def t_matrix_porosity_vectorised(
         phi,
         perm,
         visco,
-    ) = gen_utilities.dim_check_vector(
-        (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco)
+    ) = cast(  # casting since dim_check_vector typing is incomplete
+        list[Array1D[np.float64]],
+        gen_utilities.dim_check_vector(
+            (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco)
+        ),
     )
 
     # Conversion to SI units
@@ -103,11 +127,14 @@ def t_matrix_porosity_vectorised(
     visco = visco * 1.0e-2
 
     # Alpha, v and tau should be of the same length
-    (alpha, v, tau) = gen_utilities.dim_check_vector((alpha, v, tau))
+    (alpha, v, tau) = cast(  # casting since dim_check_vector typing is incomplete
+        list[Array1D[np.float64]],
+        gen_utilities.dim_check_vector((alpha, v, tau)),
+    )
     shape_len = alpha.shape[0]
 
     # Shape parameters go into a dict, duplicate here, can be changed with pressure effect
-    shape_params = {
+    shape_params: ShapeParamsDict = {
         "alpha_con": alpha,
         "alpha_iso": alpha,
         "v_con": v * frac_inc_con,
@@ -117,25 +144,27 @@ def t_matrix_porosity_vectorised(
     }
     # Create case based on amount of anisotropic inclusions
     if frac_inc_ani == 0:
-        case = {"iso": 0}  # All isotropic
+        iso = 0
         angle = 0
     elif frac_inc_ani == 1:
-        case = {"iso": 2}  # All anisotropic
+        iso = 2
     else:
-        case = {"iso": 1}  # Mixed case
+        iso = 1
 
     # Create case based on amount of connected inclusions
     if frac_inc_con == 0:
-        case["con"] = 0
+        con = 0
     elif frac_inc_con == 1:
         # All connected
-        case["con"] = 2
+        con = 2
     else:
         # Mixed case
-        case["con"] = 1
+        con = 1
+
+    case: CaseDict = {"iso": iso, "con": con}
 
     pressure_steps = 1
-    delta_pres = 0.0
+    delta_pres = np.array(0.0)
     if pressure is not None:
         try:
             # Pressure should be an object with __len__ attribute, cast to np.array
@@ -159,21 +188,11 @@ def t_matrix_porosity_vectorised(
     i4 = np.tile(np.eye(6).reshape(1, 6, 6), (log_length, 1, 1))
 
     # Vectorise v and alpha
-    v_con = None
-    alpha_con = None
-    v_iso = None
-    alpha_iso = None
-    if case["con"] != 0:
-        v_con = phi.reshape(log_length, 1) * shape_params["v_con"].reshape(1, shape_len)
-        alpha_con = np.ones(v_con.shape) * shape_params["alpha_con"].reshape(
-            1, shape_len
-        )
+    v_con = phi.reshape(log_length, 1) * shape_params["v_con"].reshape(1, shape_len)
+    alpha_con = np.ones(v_con.shape) * shape_params["alpha_con"].reshape(1, shape_len)
 
-    if case["con"] != 2:
-        v_iso = phi.reshape(log_length, 1) * shape_params["v_iso"].reshape(1, shape_len)
-        alpha_iso = np.ones(v_iso.shape) * shape_params["alpha_iso"].reshape(
-            1, shape_len
-        )
+    v_iso = phi.reshape(log_length, 1) * shape_params["v_iso"].reshape(1, shape_len)
+    alpha_iso = np.ones(v_iso.shape) * shape_params["alpha_iso"].reshape(1, shape_len)
 
     for i in range(pressure_steps):
         # Check if v(j) > alpha(j)for maximum porosity. If true, set v(j) = alpha(j)/2 to make sure
@@ -201,29 +220,52 @@ def t_matrix_porosity_vectorised(
             # All isolated
             # Isolated part: calculated c1 tensor (sum over all the isolated t-matrices and concentrations
             c1 = calc_isolated_part_vec(
-                c0, s0, k_fl, alpha_iso, v_iso, case["iso"], frac_inc_ani
+                c0=c0,
+                s_0=s0,
+                kappa_f=k_fl,
+                alpha=alpha_iso,
+                v=v_iso,
+                case_iso=case["iso"],
+                frac_ani=frac_inc_ani,
             )
             c_eff = c0 + array_matrix_mult(
                 c1, array_inverse(i4 + array_matrix_mult(gd, c1))
             )
-            gamma = np.zeros_like(tau)
+            gamma = np.zeros((log_length, 1))
         else:
-            kd = calc_kd_vec(c0, i4, s0, alpha_con)
+            kd = calc_kd_vec(
+                c0=c0,
+                i4=i4,
+                s_0=s0,
+                alpha=alpha_con,
+            )
             kd_uuvv = calc_kd_uuvv_vec(kd)
-            gamma = (1 - k_fl / k_min).reshape(log_length, 1) + k_fl.reshape(
+            gamma: Array2D[np.float64] = (1 - k_fl / k_min).reshape(
                 log_length, 1
-            ) * kd_uuvv
+            ) + k_fl.reshape(log_length, 1) * kd_uuvv
             if case["con"] == 1:
                 # Mix
                 # Isolated part: calculated c1 tensor (sum over all the isolated t-matrices and concentrations
                 c1 = calc_isolated_part_vec(
-                    c0, s0, k_fl, alpha_iso, v_iso, case["iso"], frac_inc_ani
+                    c0=c0,
+                    s_0=s0,
+                    kappa_f=k_fl,
+                    alpha=alpha_iso,
+                    v=v_iso,
+                    case_iso=case["iso"],
+                    frac_ani=frac_inc_ani,
                 )
             else:  # case['con'] == 2
                 # All connected - only c1 differs from the most general case
                 c1 = np.zeros((log_length, 6, 6))
             # Connected part Calculate dry properties:
-            td = calc_td_vec(c0, i4, s0, kd, alpha_con)
+            td = calc_td_vec(
+                c0=c0,
+                i4=i4,
+                s_0=s0,
+                kd=kd,
+                alpha=alpha_con,
+            )
             # iso averaging the isotropic porosity
             td_bar = iso_av_vec(td)
             # Calculate the fluid effect
@@ -232,47 +274,49 @@ def t_matrix_porosity_vectorised(
             x_bar = iso_av_vec(x)
             # Frequency dependent stiffness
             c_eff = calc_c_eff_visco_vec(
-                vs_min,
-                perm,
-                visco,
-                v_con,
-                gamma,
-                tau,
-                kd_uuvv,
-                k_min,
-                k_fl,
-                c0,
-                s0,
-                c1,
-                td,
-                td_bar,
-                x,
-                x_bar,
-                gd,
-                frequency,
-                frac_inc_ani,
+                vs=vs_min,
+                k_r=perm,
+                eta_f=visco,
+                v=v_con,
+                gamma=gamma,
+                tau=tau,
+                kd_uuvv=kd_uuvv,
+                kappa=k_min,
+                kappa_f=k_fl,
+                c0=c0,
+                s0=s0,
+                c1=c1,
+                td=td,
+                td_bar=td_bar,
+                x=x,
+                x_bar=x_bar,
+                gd=gd,
+                frequency=frequency,
+                frac_ani=frac_inc_ani,
             )
         # Effective density
         rho_b_est[:, i] = phi_out * rho_fl + (1 - phi_out) * rho_min
         vp[:, i], vs_v[:, i], vs_h[:, i] = velocity_vti_angles_vec(
-            c_eff, rho_b_est[:, i], angle
+            c_eff=c_eff,
+            rho_eff=rho_b_est[:, i],
+            angle=angle,
         )
 
         if i != pressure_steps - 1:
             alpha_con, v_con, alpha_iso, v_iso, tau, gamma = calc_pressure_vec(
-                alpha_con,
-                alpha_iso,
-                v_con,
-                v_iso,
-                c0,
-                s0,
-                gd,
-                delta_pres[i],
-                tau,
-                gamma,
-                k_fl,
-                case["con"],
-                frac_inc_ani,
+                alpha_con=alpha_con,
+                alpha_iso=alpha_iso,
+                v_con=v_con,
+                v_iso=v_iso,
+                c0=c0,
+                s_0=s0,
+                gd=gd,
+                d_p=delta_pres[i],
+                tau=tau,
+                gamma=gamma,
+                k_fl=k_fl,
+                ctrl=case["con"],
+                frac_ani=frac_inc_ani,
             )
 
     return vp, vs_v, vs_h, rho_b_est

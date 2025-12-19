@@ -33,49 +33,49 @@ frac_inc_ani = 0.5
 
 def test_t_matrix_c():
     args = t_matrix_porosity_c_alpha_v(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl,
-        rho_fl,
-        phi,
-        perm,
-        visco,
-        alpha,
-        v,
-        float(tau[0]),
-        frequency,
-        angle,
-        frac_inc_con,
-        frac_inc_ani,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        perm=perm,
+        visco=visco,
+        alpha=alpha,
+        v=v,
+        tau=float(tau[0]),
+        frequency=frequency,
+        angle=angle,
+        frac_inc_con=frac_inc_con,
+        frac_inc_ani=frac_inc_ani,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
 def test_t_matrix_vectorised():
     args = t_matrix_porosity_vectorised(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl,
-        rho_fl,
-        phi,
-        perm,
-        visco,
-        alpha,
-        v,
-        tau,
-        frequency,
-        angle,
-        frac_inc_con,
-        frac_inc_ani,
+        k_min=k_min,
+        mu_min=mu_min,
+        rho_min=rho_min,
+        k_fl=k_fl,
+        rho_fl=rho_fl,
+        phi=phi,
+        perm=perm,
+        visco=visco,
+        alpha=alpha,
+        v=v,
+        tau=tau,
+        frequency=frequency,
+        angle=angle,
+        frac_inc_con=frac_inc_con,
+        frac_inc_ani=frac_inc_ani,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

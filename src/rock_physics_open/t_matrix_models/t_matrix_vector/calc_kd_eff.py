@@ -1,4 +1,13 @@
+from typing import Literal
+
 import numpy as np
+
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array2D,
+    Array3D,
+    Array4D,
+)
 
 from .array_functions import array_inverse, array_matrix_mult
 from .calc_isolated import calc_isolated_part_vec
@@ -6,8 +15,17 @@ from .g_tensor import g_tensor_vec
 
 
 def calc_kd_eff_vec(
-    c0, s_0, k_fl, alpha_con, alpha_iso, v_con, v_iso, gd, ctrl, frac_ani
-):
+    c0: Array3D[np.float64],
+    s_0: Array3D[np.float64],
+    k_fl: Array1D[np.float64],
+    alpha_con: Array2D[np.float64],
+    alpha_iso: Array2D[np.float64],
+    v_con: Array2D[np.float64],
+    v_iso: Array2D[np.float64],
+    gd: Array3D[np.float64],
+    ctrl: Literal[0, 1, 2],
+    frac_ani: float,
+) -> tuple[Array4D[np.float64] | None, Array4D[np.float64] | None]:
     """Returns the effective dry K-tensor (6x6x(numbers of inclusions) matrix.
     If there is no connected or no isolated pores, the function returns a NaN for
     the case which is not considered. E.g. if only isolated pores, the kd_eff_connected = NaN.
@@ -65,7 +83,13 @@ def calc_kd_eff_vec(
     c1_isolated = None
     if ctrl != 2:
         c1_isolated = calc_isolated_part_vec(
-            c0, s_0, k_fl, alpha_iso, v_iso, ctrl, frac_ani
+            c0=c0,
+            s_0=s_0,
+            kappa_f=k_fl,
+            alpha=alpha_iso,
+            v=v_iso,
+            case_iso=ctrl,
+            frac_ani=frac_ani,
         )
         c1dry = c1dry + c1_isolated
         if alpha_iso.ndim == 1 and alpha_iso.shape[0] != c0.shape[0]:
@@ -100,7 +124,11 @@ def calc_kd_eff_vec(
     if ctrl != 0:
         kd_eff_connected = np.zeros((log_len, 6, 6, alpha_con.shape[1]))
         for j in range(alpha_con.shape[1]):
-            g = g_tensor_vec(c0, s_0, alpha_con[:, j])
+            g = g_tensor_vec(
+                c0=c0,
+                s_0=s_0,
+                alpha=alpha_con[:, j],
+            )
             kd_eff_connected[:, :, :, j] = array_matrix_mult(
                 array_inverse(i4 + array_matrix_mult(g, c0)), temp
             )
@@ -108,7 +136,11 @@ def calc_kd_eff_vec(
     if ctrl != 2:
         kd_eff_isolated = np.zeros((log_len, 6, 6, alpha_iso.shape[1]))
         for j in range(alpha_iso.shape[1]):
-            g = g_tensor_vec(c0, s_0, alpha_iso[:, j])
+            g = g_tensor_vec(
+                c0=c0,
+                s_0=s_0,
+                alpha=alpha_iso[:, j],
+            )
             kd_eff_isolated[:, :, :, j] = array_matrix_mult(
                 array_inverse(i4 + array_matrix_mult(g, c0)), temp
             )

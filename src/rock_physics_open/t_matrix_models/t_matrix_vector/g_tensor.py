@@ -1,9 +1,15 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array3D
+
 from .array_functions import array_matrix_mult
 
 
-def g_tensor_vec(c0, s_0, alpha):
+def g_tensor_vec(
+    c0: Array3D[np.float64],
+    s_0: Array3D[np.float64],
+    alpha: Array1D[np.float64] | float,
+) -> Array3D[np.float64]:
     """Returns the Eshelby green's tensor (nx6x6 array).
 
     Parameters
@@ -12,7 +18,7 @@ def g_tensor_vec(c0, s_0, alpha):
         n stiffness tensors of the host material (nx6x6 array).
     s_0 : np.ndarray
         Inverse of stiffness tensor.
-    alpha : float
+    alpha : float | np.ndarray
         Aspect ratio for single inclusion.
 
     Returns
@@ -53,7 +59,7 @@ def g_tensor_vec(c0, s_0, alpha):
     s_55 = np.zeros(log_len)
     s_66 = np.zeros(log_len)
 
-    if isinstance(alpha, float):
+    if isinstance(alpha, (float, int)):
         alpha = np.ones(log_len) * alpha
     # Check for valid range of alpha - those outside are returned with zero matrices
     idx_in = (alpha >= 0) & (alpha < 1)

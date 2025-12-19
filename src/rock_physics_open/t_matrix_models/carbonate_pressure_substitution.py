@@ -1,3 +1,7 @@
+from pathlib import Path
+
+import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from rock_physics_open.equinor_utilities.machine_learning_utilities.run_regression import (
@@ -6,22 +10,28 @@ from rock_physics_open.equinor_utilities.machine_learning_utilities.run_regressi
 
 
 def carbonate_pressure_model(
-    rho_fluid,
-    vp_in_situ,
-    vs_in_situ,
-    rho_in_situ,
-    vp_fluid_sub,
-    vs_fluid_sub,
-    rho_fluid_sub,
-    phi,
-    pres_overburden,
-    pres_formation,
-    pres_form_depleted,
-    vp_model,
-    vs_model,
-    model_path,
-    b_add_fluid_sub=False,
-):
+    rho_fluid: npt.NDArray[np.float64],
+    vp_in_situ: npt.NDArray[np.float64],
+    vs_in_situ: npt.NDArray[np.float64],
+    rho_in_situ: npt.NDArray[np.float64],
+    vp_fluid_sub: npt.NDArray[np.float64],
+    vs_fluid_sub: npt.NDArray[np.float64],
+    rho_fluid_sub: npt.NDArray[np.float64],
+    phi: npt.NDArray[np.float64],
+    pres_overburden: npt.NDArray[np.float64],
+    pres_formation: npt.NDArray[np.float64],
+    pres_form_depleted: npt.NDArray[np.float64],
+    vp_model: Path,
+    vs_model: Path,
+    model_path: Path,
+    b_add_fluid_sub: bool = False,
+) -> tuple[
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+    npt.NDArray[np.float64],
+]:
     """
     Function for estimating relative changes in Vp and Vs as a function of formation pressure depletion for carbonates.
     The models that are used are based on laboratory plug measurements at close to in situ conditions,
@@ -70,7 +80,7 @@ def carbonate_pressure_model(
 
     Returns
     -------
-    Tuple[np.ndarray]
+    Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
         vp_pres_sub : pressure substituted p-velocity [m/s]
         vs_pres_sub : pressure substituted s-velocity [m/s]
         rho_pres_sub : fluid substituted density is returned as the pressure substitution does not change this [kg/m^3]
@@ -102,7 +112,10 @@ def carbonate_pressure_model(
     input_df = pd.DataFrame(input_dict)
 
     results_df = run_regression(
-        input_df, str(vp_model), str(vs_model), model_dir=str(model_path)
+        inp_df=input_df,
+        first_model_file_name=str(vp_model),
+        second_model_file_name=str(vs_model),
+        model_dir=str(model_path),
     )
     results_df.columns = ["vp_delta", "vs_delta"]
 
@@ -115,8 +128,8 @@ def carbonate_pressure_model(
         start_vs = vs_in_situ
         start_rho = rho_in_situ
 
-    vp_pres_sub = (start_vp + results_df["vp_delta"]).to_numpy()
-    vs_pres_sub = (start_vs + results_df["vs_delta"]).to_numpy()
+    vp_pres_sub = start_vp + results_df["vp_delta"].to_numpy()
+    vs_pres_sub = start_vs + results_df["vs_delta"].to_numpy()
     rho_pres_sub = start_rho
     ai_pres_sub = vp_pres_sub * rho_pres_sub
     vpvs_pres_sub = vp_pres_sub / vs_pres_sub

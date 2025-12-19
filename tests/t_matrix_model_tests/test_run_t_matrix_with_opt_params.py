@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import numpy as np
 
@@ -31,97 +32,106 @@ vsh = 0.1 * np.ones(101)
 angle = 45.0
 perm = 100.0
 visco = 100.0
-tau = 1e-7 * np.ones(101)
+tau = 1e-7
 freq = 1000
 pressure = np.array([20.0e6, 22.0e6])
 
 
-def test_run_t_matrix_with_opt_params_petec(monkeypatch, data_dir):
+def test_run_t_matrix_with_opt_params_petec(data_dir: Path):
     fname = data_dir.joinpath("petec_opt_param.pkl")
     args = run_t_matrix_with_opt_params_petec(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl_orig,
-        rho_fl_orig,
-        k_fl_sub,
-        rho_fl_sub,
-        vp,
-        vs,
-        rho,
-        phi,
-        angle,
-        perm,
-        visco,
-        tau,
-        freq,
-        fname,
+        min_k=k_min,
+        min_mu=mu_min,
+        min_rho=rho_min,
+        fl_k_orig=k_fl_orig,
+        fl_rho_orig=rho_fl_orig,
+        fl_k_sub=k_fl_sub,
+        fl_rho_sub=rho_fl_sub,
+        vp=vp,
+        vs=vs,
+        rhob=rho,
+        phi=phi,
+        angle=angle,
+        perm=perm,
+        visco=visco,
+        tau=tau,
+        freq=freq,
+        f_name=fname,
         fluid_sub=True,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_run_t_matrix_with_opt_params_exp(monkeypatch, data_dir):
+def test_run_t_matrix_with_opt_params_exp(data_dir: Path):
     fname = data_dir.joinpath("exp_opt_param.pkl")
     args = run_t_matrix_with_opt_params_exp(
-        k_fl_orig,
-        rho_fl_orig,
-        k_fl_sub,
-        rho_fl_sub,
-        vp,
-        vs,
-        rho,
-        phi,
-        vsh,
-        angle,
-        perm,
-        visco,
-        tau,
-        freq,
-        fname,
+        fl_k_orig=k_fl_orig,
+        fl_rho_orig=rho_fl_orig,
+        fl_k_sub=k_fl_sub,
+        fl_rho_sub=rho_fl_sub,
+        vp=vp,
+        vs=vs,
+        rhob=rho,
+        phi=phi,
+        vsh=vsh,
+        angle=angle,
+        perm=perm,
+        visco=visco,
+        tau=tau,
+        freq=freq,
+        f_name=fname,
         fluid_sub=True,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_run_t_matrix_opt_forward_model_petec(monkeypatch, data_dir):
+def test_run_t_matrix_opt_forward_model_petec(data_dir: Path):
     fname = data_dir.joinpath("petec_opt_param.pkl")
     args = run_t_matrix_forward_model_with_opt_params_petec(
-        k_min,
-        mu_min,
-        rho_min,
-        k_fl_orig,
-        rho_fl_orig,
-        phi,
-        angle,
-        perm,
-        visco,
-        tau,
-        freq,
-        fname,
+        min_k=k_min,
+        min_mu=mu_min,
+        min_rho=rho_min,
+        fl_k=k_fl_orig,
+        fl_rho=rho_fl_orig,
+        phi=phi,
+        angle=angle,
+        perm=perm,
+        visco=visco,
+        tau=tau,
+        freq=freq,
+        f_name=fname,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_run_t_matrix_opt_forward_model_exp(monkeypatch, data_dir):
+def test_run_t_matrix_opt_forward_model_exp(data_dir: Path):
     fname = data_dir.joinpath("exp_opt_param.pkl")
     args = run_t_matrix_forward_model_with_opt_params_exp(
-        k_fl_orig, rho_fl_orig, vsh, phi, angle, perm, visco, tau, freq, fname
+        fl_k=k_fl_orig,
+        fl_rho=rho_fl_orig,
+        phi=phi,
+        vsh=vsh,
+        angle=angle,
+        perm=perm,
+        visco=visco,
+        tau=tau,
+        freq=freq,
+        f_name=fname,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

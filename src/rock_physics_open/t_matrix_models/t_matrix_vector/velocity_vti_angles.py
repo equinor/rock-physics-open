@@ -1,7 +1,13 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array3D
 
-def velocity_vti_angles_vec(c_eff, rho_eff, angle):
+
+def velocity_vti_angles_vec(
+    c_eff: Array3D[np.float64],
+    rho_eff: Array1D[np.float64],
+    angle: float,
+) -> tuple[Array1D[np.float64], Array3D[np.float64], Array3D[np.float64]]:
     """Returns the P-velocity and  S-velocities.
 
     Parameters
@@ -10,19 +16,19 @@ def velocity_vti_angles_vec(c_eff, rho_eff, angle):
         Effective stiffness tensor (nx6x6 matrix).
     rho_eff : np.ndarray
         Effective density.
-    angle : np.ndarray or float
+    angle : float
         The angle between the wave vector and the axis of symmetry.
 
     Returns
     -------
-    tuple
-        vp_out, vsv_out, vsh_out : (np.ndarray, np.ndarray, np.ndarray).
+    tuple[np.ndarray, np.ndarray, np.ndarray]
+        vp_out, vsv_out, vsh_out
         vp_out, vsv_out, vsh_out : p-velocity, vertical polarisation s-velocity, horizontal polarisation s-velocity.
     """
     if not (
         c_eff.ndim == 3
         and rho_eff.ndim == 1
-        and isinstance(angle, (float, int))
+        and isinstance(angle, (float, int))  # pyright: ignore[reportUnnecessaryIsInstance] | kept for backwards compatibility
         and (c_eff.shape[0] == rho_eff.shape[0] and c_eff.shape[1] == c_eff.shape[2])
     ):
         raise ValueError("velocity_vti_angles: inconsistencies in input shapes")

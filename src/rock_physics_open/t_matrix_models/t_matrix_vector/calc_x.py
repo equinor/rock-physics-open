@@ -1,13 +1,18 @@
 import numpy as np
 
+from rock_physics_open.equinor_utilities.various_utilities.types import Array3D, Array4D
+
 from .array_functions import array_matrix_mult
 from .check_and_tile import check_and_tile
 
 
-def calc_x_vec(s_0, td):
+def calc_x_vec(
+    s_0: Array3D[np.float64],
+    td: Array4D[np.float64],
+) -> Array4D[np.float64]:
     """Returns the x-tensor (6x6x(numbers of empty cavities) matrix) for more explanation see e.g.
     Agersborg et al. 2009 or "The effects of drained and undrained loading in
-    visco-elsatic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
+    visco-elastic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
     (2005). Int. J. Solids and Structures (42). p. 1597-1611
 
     Parameters

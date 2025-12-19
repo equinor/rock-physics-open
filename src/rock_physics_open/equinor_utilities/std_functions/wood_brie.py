@@ -87,14 +87,14 @@ def wood(
     return k, rho
 
 
-_T = TypeVar("_T", float, Array1D)
+_T = TypeVar("_T", float, Array1D[np.float64])
 
 
 @overload
 def multi_wood(
-    fractions: Sequence[Array1D],
-    bulk_moduli: Sequence[Array1D],
-) -> Array1D: ...
+    fractions: Sequence[Array1D[np.float64]],
+    bulk_moduli: Sequence[Array1D[np.float64]],
+) -> Array1D[np.float64]: ...
 
 
 @overload
@@ -107,7 +107,7 @@ def multi_wood(
 def multi_wood(
     fractions: Sequence[_T],
     bulk_moduli: Sequence[_T],
-) -> float | Array1D:
+) -> float | Array1D[np.float64]:
     assert len(fractions) == len(bulk_moduli)
     sum_fractions = sum(fractions)
     ratio_sum = sum(

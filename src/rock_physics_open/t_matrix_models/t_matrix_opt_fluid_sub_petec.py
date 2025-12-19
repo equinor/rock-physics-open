@@ -1,3 +1,6 @@
+from pathlib import Path
+from typing import cast
+
 import numpy as np
 
 from rock_physics_open.equinor_utilities import gen_utilities
@@ -6,30 +9,43 @@ from rock_physics_open.equinor_utilities.optimisation_utilities import (
     gen_sub_routine,
     load_opt_params,
 )
+from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
 
 from .curvefit_t_matrix_min import curve_fit_2_inclusion_sets
 
 
 def run_t_matrix_with_opt_params_petec(
-    min_k,
-    min_mu,
-    min_rho,
-    fl_k_orig,
-    fl_rho_orig,
-    fl_k_sub,
-    fl_rho_sub,
-    vp,
-    vs,
-    rhob,
-    phi,
-    angle,
-    perm,
-    visco,
-    tau,
-    freq,
-    f_name,
-    fluid_sub=True,
-):
+    min_k: Array1D[np.float64],
+    min_mu: Array1D[np.float64],
+    min_rho: Array1D[np.float64],
+    fl_k_orig: Array1D[np.float64],
+    fl_rho_orig: Array1D[np.float64],
+    fl_k_sub: Array1D[np.float64],
+    fl_rho_sub: Array1D[np.float64],
+    vp: Array1D[np.float64],
+    vs: Array1D[np.float64],
+    rhob: Array1D[np.float64],
+    phi: Array1D[np.float64],
+    angle: float,
+    perm: float,
+    visco: float,
+    tau: float,
+    freq: float,
+    f_name: str | Path,
+    fluid_sub: bool = True,
+) -> tuple[
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+    Array1D[np.float64],
+]:
     """
         Based on the input file with parameters for the optimally fitted model, the correct modelling version is run.
         Fluid substitution follows, in case it is selected. If not, the vp_sub and vs_sub will contain the same values as
@@ -83,11 +99,12 @@ def run_t_matrix_with_opt_params_petec(
             Tuple of np.ndarrays: vp and vs for pressure substituted case, vp, vs and density for fluid substituted case, vp and vs for
             optimal fitted model, vp and vs residuals (observed logs minus modelled values).
     """
-    opt_type, opt_params, opt_dict = load_opt_params(f_name)
+    _, opt_params, _ = load_opt_params(f_name)
     y_data = np.stack([vp, vs], axis=1)
     y_shape = y_data.shape
-    phi, angle, perm, visco, tau, freq, def_vpvs = gen_utilities.dim_check_vector(
-        (phi, angle, perm, visco, tau, freq, 1.0)
+    phi, angle_, perm_, visco_, tau_, freq_, def_vpvs = cast(
+        list[Array1D[np.float64]],
+        gen_utilities.dim_check_vector((phi, angle, perm, visco, tau, freq, 1.0)),
     )
 
     rho_sub = rhob + (fl_rho_sub - fl_rho_orig) * phi
@@ -104,11 +121,11 @@ def run_t_matrix_with_opt_params_petec(
             min_rho,
             fl_k_orig,
             fl_rho_orig,
-            angle,
-            perm,
-            visco,
-            tau,
-            freq,
+            angle_,
+            perm_,
+            visco_,
+            tau_,
+            freq_,
             def_vpvs,
         ),
         axis=1,
@@ -122,20 +139,22 @@ def run_t_matrix_with_opt_params_petec(
                 min_rho,
                 fl_k_sub,
                 fl_rho_sub,
-                angle,
-                perm,
-                visco,
-                tau,
-                freq,
+                angle_,
+                perm_,
+                visco_,
+                tau_,
+                freq_,
                 def_vpvs,
             ),
             axis=1,
         )
-    rho_mod = min_rho * (1.0 - phi) + fl_rho_orig * phi
 
-    if fluid_sub:
         v_sub, v_mod, v_res = gen_sub_routine(
-            opt_fcn, x_data, x_data_new, y_data, opt_params
+            opt_function=opt_fcn,
+            xdata_orig=x_data,
+            xdata_new=x_data_new,
+            ydata=y_data,
+            opt_params=opt_params,
         )
         vp_sub, vs_sub = [arr.flatten() for arr in np.split(v_sub, 2, axis=1)]
         vp_mod, vs_mod = [arr.flatten() for arr in np.split(v_mod, 2, axis=1)]
@@ -148,6 +167,7 @@ def run_t_matrix_with_opt_params_petec(
         vp_res = vp_mod - vp
         vs_res = vs_mod - vs
 
+    rho_mod = min_rho * (1.0 - phi) + fl_rho_orig * phi
     rho_res = rho_mod - rhob
     ai_sub = vp_sub * rho_sub
     vpvs_sub = vp_sub / vs_sub

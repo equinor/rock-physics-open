@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
 from rock_physics_open.equinor_utilities.optimisation_utilities import gen_opt_routine
@@ -48,7 +49,14 @@ polynomial function is used for testing the optimisation.
 """
 
 
-def poly_function(x, a, b, c, d, e):
+def poly_function(
+    x_data: npt.NDArray[np.float64],
+    a: float,
+    b: float,
+    c: float,
+    d: float,
+    e: float,
+) -> npt.NDArray[np.float64]:
     """
     Simple function to test the scipy optimisation function curve_fit
 
@@ -72,7 +80,7 @@ def poly_function(x, a, b, c, d, e):
     y : np.ndarray
         polynomial value
     """
-    return a + b * x + c * x**2 + d * x**3 + e * x**4
+    return a + b * x_data + c * x_data**2 + d * x_data**3 + e * x_data**4
 
 
 def test_optimisation_part():
@@ -88,11 +96,16 @@ def test_optimisation_part():
     upper_bound = np.ones(5)
     y = poly_function(x, a, b, c, d, e)
     _, _, args = gen_opt_routine(
-        poly_function, x, y, par_init, lower_bound, upper_bound
+        opt_function=poly_function,
+        x_data_orig=x,
+        y_data=y,
+        x_init=par_init,
+        low_bound=lower_bound,
+        high_bound=upper_bound,
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -120,7 +133,7 @@ def test_t_matrix_opt_params_petec():
     args = curve_fit_2_inclusion_sets(x_data, *par)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -146,6 +159,6 @@ def test_t_matrix_opt_params_exp():
     args = curvefit_t_matrix_exp(x_data, *par)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), args)
+        _ = store_snapshot(get_snapshot_name(), args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
