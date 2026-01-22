@@ -16,7 +16,8 @@ from rock_physics_open.sandstone_models import (
     friable_model_optimisation,
     patchy_cement_model_optimisation,
 )
-from tests.conftest import TESTDATA_DIR
+
+from ..conftest import TESTDATA_DIR
 
 data_df = pd.read_csv(TESTDATA_DIR / "sandstone_optimisation.csv")
 

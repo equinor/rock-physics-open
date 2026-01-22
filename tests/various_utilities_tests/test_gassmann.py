@@ -28,18 +28,45 @@ k_fl_sub = np.ones(11) * 2.7e9
 rho_fl_sub = np.ones(11) * 1005.0
 
 rho_dry = rho_min * (1.0 - por)
-k_dry, mu_dry = friable_model_dry(k_min, mu_min, por, p_eff, 0.4, "porosity", 8, 0.5)
+k_dry, mu_dry = friable_model_dry(
+    k_min=k_min,
+    mu_min=mu_min,
+    phi=por,
+    p_eff=p_eff,
+    phi_c=0.4,
+    coord_num_func="PorBased",
+    n=8,
+    shear_red=0.5,
+)
 vp_sat, vs_sat, rho_sat, _, _ = friable_model(
-    k_min, mu_min, rho_min, k_fl_orig, rho_fl_orig, por, p_eff, 0.4, "porosity", 8, 0.5
+    k_min=k_min,
+    mu_min=mu_min,
+    rho_min=rho_min,
+    k_fl=k_fl_orig,
+    rho_fl=rho_fl_orig,
+    phi=por,
+    p_eff=p_eff,
+    phi_c=0.4,
+    coord_num_func="PorBased",
+    n=8,
+    shear_red=0.5,
 )
 k_sat, mu_sat = moduli(vp_sat, vs_sat, rho_sat)
 
 
 def test_gassmann():
-    args = gassmann_model(k_min, k_fl_orig, rho_fl_orig, k_dry, mu_dry, rho_dry, por)
+    args = gassmann_model(
+        k_min=k_min,
+        k_fl=k_fl_orig,
+        rho_fl=rho_fl_orig,
+        k_dry=k_dry,
+        mu=mu_dry,
+        rho_dry=rho_dry,
+        por=por,
+    )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -50,7 +77,7 @@ def test_gassmann_dry():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
@@ -61,6 +88,6 @@ def test_gassmann_sub():
     )
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        store_snapshot(get_snapshot_name(), *args)
+        _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
