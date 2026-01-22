@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/equinor/rock-physics-open/compare/v0.3.5...v0.4.0) (2026-01-22)
+
+
+### Features
+
+* Add typing span_wanger and ternary_plots ([2896d7b](https://github.com/equinor/rock-physics-open/commit/2896d7b7988faf34a581e7e08e906bf8548cc0b3))
+
+
+### Bug Fixes
+
+* Add type annotations for tmatrix ([f2c97fa](https://github.com/equinor/rock-physics-open/commit/f2c97fa8286da8335781145b46012a79947c9d1c))
+* Fully type-annotate `rock-physics-open` ([9a90289](https://github.com/equinor/rock-physics-open/commit/9a9028967fc3bb404a8e8a2c8acfb88d9b88233e))
+
 ## [0.3.5](https://github.com/equinor/rock-physics-open/compare/v0.3.4...v0.3.5) (2025-12-09)
 
 
