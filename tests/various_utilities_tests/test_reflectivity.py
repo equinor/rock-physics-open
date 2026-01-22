@@ -64,10 +64,10 @@ class TestReflectivity:
     def test_reflectivity_nan(self):
         self.vp[5] = np.nan
         with pytest.raises(ValueError, match="Missing or illegal values in input"):
-            reflectivity(
-                self.vp,
-                self.vs,
-                self.rho,
+            _ = reflectivity(
+                vp_inp=self.vp,
+                vs_inp=self.vs,
+                rho_inp=self.rho,
                 theta=self.theta,
                 k=self.k,
                 model="AkiRichards",

@@ -16,7 +16,8 @@ from rock_physics_open.sandstone_models import (
     patchy_cement_pressure_fluid_substitution,
 )
 from rock_physics_open.sandstone_models.friable_models import CoordinateNumberFunction
-from tests.conftest import TESTDATA_DIR
+
+from ..conftest import TESTDATA_DIR
 
 dataset = pd.read_csv(TESTDATA_DIR / "test_well.csv")
 
