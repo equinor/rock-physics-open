@@ -74,12 +74,9 @@ def filter_input_log(
 
     # If any of the input logs are of type boolean, False means that they should not be included,
     # regardless of filter flags
-    # https://github.com/pandas-dev/pandas/issues/32432
-    # idx = ~logs.any(bool_only=True, axis=1)
-    # Need to do it the cumbersome way for the time being
     bool_col = logs.dtypes == "bool"
     if any(bool_col):
-        idx = ~logs.loc[:, logs.columns[bool_col]].any(axis=1)
+        idx = ~logs.any(bool_only=True, axis=1)
         logs.drop(columns=logs.columns[bool_col], inplace=True)
     else:
         idx = pd.Series(index=logs.index, data=np.zeros_like(logs.index).astype(bool))
