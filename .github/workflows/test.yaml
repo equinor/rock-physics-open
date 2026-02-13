@@ -32,9 +32,4 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Test
-        if: ${{ matrix.os == 'windows-latest' }}
         run: uv run pytest
-
-      - name: Test ( -m "not use_graphics" )
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: uv run pytest -m "not use_graphics"

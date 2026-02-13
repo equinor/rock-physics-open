@@ -38,10 +38,18 @@ def set_ternary_figure(
         pix_y = ctypes.windll.gdi32.GetDeviceCaps(dc, VERTRES)
     elif platform.system() == "Linux":
         f = os.popen("xrandr | grep '*'")
-        pix_x, pix_y = np.array(re.findall(r"\d+", f.read()), dtype=int)[0:2]
+        matches = re.findall(r"\d+", f.read())
+        if len(matches) >= 2:
+            pix_x, pix_y = np.array(matches, dtype=int)[0:2]
+        else:
+            pix_x, pix_y = 1920, 1080
     elif platform.system() == "Darwin":
         f = os.popen("system_profiler SPDisplaysDataType | grep Resolution")
-        pix_x, pix_y = np.array(re.findall(r"\d+", f.read()), dtype=int)[0:2]
+        matches = re.findall(r"\d+", f.read())
+        if len(matches) >= 2:
+            pix_x, pix_y = np.array(matches, dtype=int)[0:2]
+        else:
+            pix_x, pix_y = 1920, 1080
     else:
         raise ValueError("Unrecognised operating system")
 
@@ -49,22 +57,23 @@ def set_ternary_figure(
     fig = plt.figure(title, facecolor=(0.9, 0.9, 0.9))
     # Set figure size and position
     mngr = plt.get_current_fig_manager()
-    if platform.system() == "Windows":
-        wid = int(pix_x * 0.4)
-        hei = int(pix_y * 0.6)
-        start_x = int(pix_x * (0.1 + delta_x / 5))
-        start_y = int(pix_y * (0.1 + delta_y / 10))
-        mngr.window.wm_geometry(  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType] | Incomplete type hints in matplotlib
-            "{}x{}+{}+{}".format(wid, hei, start_x, start_y),
-        )
-    else:
-        wid = int(pix_x * 0.2)
-        hei = int(pix_y * 0.6)
-        start_x = int(pix_x * (0.1 + delta_x / 5))
-        start_y = int(pix_y * (0.1 + delta_y / 10))
-        mngr.window.wm_geometry(  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType] | Incomplete type hints in matplotlib
-            "{}x{}+{}+{}".format(wid, hei, start_x, start_y),
-        )
+    if hasattr(mngr, "window"):
+        if platform.system() == "Windows":
+            wid = int(pix_x * 0.4)
+            hei = int(pix_y * 0.6)
+            start_x = int(pix_x * (0.1 + delta_x / 5))
+            start_y = int(pix_y * (0.1 + delta_y / 10))
+            mngr.window.wm_geometry(  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType] | Incomplete type hints in matplotlib
+                "{}x{}+{}+{}".format(wid, hei, start_x, start_y),
+            )
+        else:
+            wid = int(pix_x * 0.2)
+            hei = int(pix_y * 0.6)
+            start_x = int(pix_x * (0.1 + delta_x / 5))
+            start_y = int(pix_y * (0.1 + delta_y / 10))
+            mngr.window.wm_geometry(  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType] | Incomplete type hints in matplotlib
+                "{}x{}+{}+{}".format(wid, hei, start_x, start_y),
+            )
 
     # Set default colour map
     plt.jet()

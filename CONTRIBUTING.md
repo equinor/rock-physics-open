@@ -53,16 +53,6 @@ pytest --cov=rock_physics_open
 
 </details>
 
-<details>
-<summary>Im getting <code>No module named '_tkinter'</code> error when running the tests?</summary>
-
-You can skip these graphics tests by doing:
-```sh
-pytest -m "not use_graphics"
-```
-
-</details>
-
 ### Pull-Requests
 
 - should only solve a single problem/issue
