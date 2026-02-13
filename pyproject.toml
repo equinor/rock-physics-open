@@ -112,9 +112,6 @@ combine-as-imports = true
 "*.ipynb" = ["E402", "E501"]
 
 [tool.pytest.ini_options]
-markers = [
-    "use_graphics", # marks test as dependent on display (deselect with '-m "not use_graphics")]
-]
 addopts = ["--color=yes", "--strict-markers"]
 
 [tool.basedpyright]

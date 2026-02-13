@@ -1,6 +1,5 @@
 import os
 
-import pytest
 from numpy.random import default_rng
 
 from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
@@ -23,7 +22,6 @@ misc_log_type = "Vp"
 well_name = "35_11_15"
 
 
-@pytest.mark.use_graphics
 def test_ternary():
     args = run_ternary(
         quartz,

@@ -48,7 +48,10 @@ def run_ternary(
         lith_class, hard : (np.ndarray, np.ndarray).
         lith_class: lithology class [int], hardness [float].
     """
-    matplotlib.use("TkAgg")
+    if draw_figures:
+        matplotlib.use("TkAgg")
+    else:
+        matplotlib.use("Agg")
 
     lith_class = ternary_patches(
         quartz, carb, clay, kero, well_name, draw_figures=draw_figures
