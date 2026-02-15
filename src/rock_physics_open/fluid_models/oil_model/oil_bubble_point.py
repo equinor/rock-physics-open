@@ -1,6 +1,8 @@
 import numpy as np
 import numpy.typing as npt
 
+from .oil_utilities import oil_density_to_gcc
+
 
 def bp_standing(
     density: npt.NDArray[np.float64],
@@ -68,3 +70,36 @@ def bp_standing(
     denominator = np.exp(4072 / density - 0.00377 * temperature)
 
     return 24469793.9134 * ratio**0.83 / denominator
+
+
+def max_gor_standing(
+    density: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
+    gas_gravity: npt.NDArray[np.float64],
+    temperature: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
+    """
+    Calculate the maximum amount of gas that can be dissolved in
+    an oil for a given gas gravity, oil density, pressure and temperature.
+    The result is given as gas/oil ratio.
+    Standing 1962, The Rock Physics Handbook, 3rd ed. 2020,
+    Equation 6.22.28
+
+
+    Args:
+        density (npt.NDArray[np.float64]): oil density at standard conditions [kg/m^3]
+        pressure (npt.NDArray[np.float64]): formation pressure [Pa]
+        gas_gravity (npt.NDArray[np.float64]): gas gravity relative to air [unitless]
+        temperature (npt.NDArray[np.float64]): temperature [°C]
+
+    Returns:
+        npt.NDArray[np.float64]: gas/oil ratio [l/l]
+    """
+    pressure_mpa = 1.0e-6 * pressure
+    density_gcc = oil_density_to_gcc(density)
+    return (
+        0.02123
+        * gas_gravity
+        * ((pressure_mpa + 0.176) * np.exp(4.072 / density_gcc - 0.00377 * temperature))
+        ** 1.205
+    )
