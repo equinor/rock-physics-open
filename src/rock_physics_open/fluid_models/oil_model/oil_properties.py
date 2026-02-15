@@ -1,10 +1,15 @@
 import warnings
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
 
 from .dead_oil_density import dead_oil_density
 from .dead_oil_velocity import dead_oil_velocity
+from .han_batzle_oil_model import (
+    han_batzle_live_oil_density,
+    han_batzle_live_oil_velocity,
+)
 from .live_oil_density import live_oil_density
 from .live_oil_velocity import live_oil_velocity
 from .oil_bubble_point import bp_standing
@@ -94,16 +99,27 @@ def live_oil(
     reference_density: npt.NDArray[np.float64],
     gas_oil_ratio: npt.NDArray[np.float64],
     gas_gravity: npt.NDArray[np.float64],
+    model_version: Literal["BW", "HB"] = "HB",
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
+    We introduce the correction to live oil properties above bubble point
+    that is included in the Han and Batzle 2000 paper as a default.
+
     :param reference_density: Density of the oil without dissolved gas
         at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
+    :param model_version: Batzle-Wang 1992 "BW" or Han-Batzle 2000 "HB"
     :return: live_oil_density , live_oil_velocity
     """
+    if model_version == "BW":
+        vel_func = live_oil_velocity
+        den_func = live_oil_density
+    else:
+        vel_func = han_batzle_live_oil_velocity
+        den_func = han_batzle_live_oil_density
     if np.any(
         pressure
         < bp_standing(reference_density, gas_oil_ratio, gas_gravity, temperature)
@@ -112,14 +128,14 @@ def live_oil(
             "Formation pressure is below bubble point of oil, estimated elastic properties can be inaccurate",
             stacklevel=1,
         )
-    live_oil_den = live_oil_density(
+    live_oil_den = den_func(
         temperature=temperature,
         pressure=pressure,
         reference_density=reference_density,
         gas_oil_ratio=gas_oil_ratio,
         gas_gravity=gas_gravity,
     )
-    live_oil_vel = live_oil_velocity(
+    live_oil_vel = vel_func(
         temperature=temperature,
         pressure=pressure,
         reference_density=reference_density,
