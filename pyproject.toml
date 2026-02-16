@@ -60,7 +60,6 @@ dependencies = [
     "matplotlib >= 3.7.1",
     "scipy >= 1.16.3, < 2",
     "scikit-learn >= 1.2.2",
-    "sympy >= 1.13.3",           # TODO: remove? (only used 1 place in span_wagner co2 equations)
     "tmatrix ~= 1.2.0",
     "typing-extensions>=4.15.0",
 ]
@@ -122,13 +121,11 @@ allowedUntypedLibraries = [
     "pandas",
     "sklearn",
     "tkinter",
-    "sympy",
     "matplotlib.pyplot",
     "matplotlib",
     "pyplot",
     "plt",
     "scipy",
-    "sympy",
 ]
 executionEnvironments = [
     { root = "tests", reportUninitializedInstanceVariable = false, reportPrivateUsage = false, reportUnannotatedClassAttribute = false },
