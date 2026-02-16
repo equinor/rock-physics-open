@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/equinor/rock-physics-open/compare/v0.4.0...v0.5.0) (2026-02-16)
+
+
+### Features
+
+* Support python 3.14 ([8d53696](https://github.com/equinor/rock-physics-open/commit/8d53696ad80d413ff124544ec400c2ecba74ba6d))
+
+
+### Bug Fixes
+
+* Remove workaround for fixed pandas bug ([#57](https://github.com/equinor/rock-physics-open/issues/57)) ([2ec1707](https://github.com/equinor/rock-physics-open/commit/2ec17071710845ff06a08f28ca6c2ef05c479cb2))
+
 ## [0.4.0](https://github.com/equinor/rock-physics-open/compare/v0.3.5...v0.4.0) (2026-01-22)
 
 
