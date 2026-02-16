@@ -1,6 +1,6 @@
 version = 1
 revision = 3
-requires-python = ">=3.11"
+requires-python = ">=3.11, <3.15"
 resolution-markers = [
     "python_full_version >= '3.12'",
     "python_full_version < '3.12'",
@@ -981,7 +981,7 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.2.2" },
     { name = "scipy", specifier = ">=1.16.3,<2" },
     { name = "sympy", specifier = ">=1.13.3" },
-    { name = "tmatrix", specifier = "~=1.1.0" },
+    { name = "tmatrix", specifier = "~=1.2.0" },
     { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 
@@ -1188,27 +1188,32 @@ wheels = [
 
 [[package]]
 name = "tmatrix"
-version = "1.1.5"
+version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/12/db/fea58d599e1fd7b9b3c7ed8149cb3adf193d3812b99556f892800b253eba/tmatrix-1.1.5-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:950e775d93aa8179fd302a3f4b2a1feee7fb3cae37f87a37c80a8c5f5a1e4cae", size = 102379, upload-time = "2025-12-30T18:19:02.846Z" },
-    { url = "https://files.pythonhosted.org/packages/b9/97/f2ffea43f6dd563b10265c13b0010efe668d7c999f56573c69acff11556b/tmatrix-1.1.5-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:cb374fb3559c86034c650fc52ca9389bb48c2266d323c563f1e33372dd3181c2", size = 131218, upload-time = "2025-12-30T18:19:04.025Z" },
-    { url = "https://files.pythonhosted.org/packages/0b/8c/a57a62f9efe9f432b21c12699ad7b09f79209580e9abbd5540c5bb733975/tmatrix-1.1.5-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:dbb22b1c0b7f225d7968fe9f69e043f30fc5e3f39901568be002732d0ac70a35", size = 1166562, upload-time = "2025-12-30T18:19:05.144Z" },
-    { url = "https://files.pythonhosted.org/packages/ec/b0/d8b7c1ff39640724023daaaaf05a5268f3c9740a6a5525a9a72635aa757e/tmatrix-1.1.5-cp311-cp311-win32.whl", hash = "sha256:3c6c0a501b8377de5c41da731283f5a2a816a55888f79b3c8c4693f622f04ee3", size = 118385, upload-time = "2025-12-30T18:19:06.735Z" },
-    { url = "https://files.pythonhosted.org/packages/07/4e/827b4e859cd8cac32cb7a136b98c2529c6077c6570a92f5088ada61f0373/tmatrix-1.1.5-cp311-cp311-win_amd64.whl", hash = "sha256:1491b27fd739a4ca692e25588701396c2a32a12c33ba9b56ec349a6c722c7918", size = 128414, upload-time = "2025-12-30T18:19:07.887Z" },
-    { url = "https://files.pythonhosted.org/packages/bc/45/fec3c49dfeea6c54ad5d0e1c88782d303dced93815a7f8e07c76c7b03311/tmatrix-1.1.5-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:8824caa476320f92417e7e7c02ae4c455e8bdb6d2fd8cc1b013137f79397c28e", size = 101411, upload-time = "2025-12-30T18:19:09.924Z" },
-    { url = "https://files.pythonhosted.org/packages/4a/c7/e4f4a418a08841079092cd5f9b12a8a4dd750794d05fe9ee5c86fb859157/tmatrix-1.1.5-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:422341c4b580b08e3db2b155200551d8382c105bf37f3325575f0dfe8bf0ca43", size = 131184, upload-time = "2025-12-30T18:19:11.276Z" },
-    { url = "https://files.pythonhosted.org/packages/d4/a1/93952bbc60a5e7e0a9a89062e9125643db09d32c86e8069b62ca34aab241/tmatrix-1.1.5-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:485bd792627533be1416987cfe5aa080b952bc5aaa56d6427038546f5037962b", size = 1166433, upload-time = "2025-12-30T18:19:12.737Z" },
-    { url = "https://files.pythonhosted.org/packages/25/d2/c647767856a7251c554397556b2c9fe922ba1642a29bb390f8e2d32715f0/tmatrix-1.1.5-cp312-cp312-win32.whl", hash = "sha256:43eff28b626b1fd013a883534d1403568318070d1b73796cf8204ca809a76d98", size = 118786, upload-time = "2025-12-30T18:19:14.002Z" },
-    { url = "https://files.pythonhosted.org/packages/e3/ff/236efe3942063c3d3cafa04d12b3d1b82c42b34d4d8934db7dd375132f8c/tmatrix-1.1.5-cp312-cp312-win_amd64.whl", hash = "sha256:7176bfed7e488da7a176a73cbd9a700d15f925952974db1706025f654837f463", size = 128897, upload-time = "2025-12-30T18:19:15.078Z" },
-    { url = "https://files.pythonhosted.org/packages/fa/e6/2488f67c6c35243580ccf8c760a863aa5a1fa57e609a502043d0bf899585/tmatrix-1.1.5-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:ece1b05f6661eebe062e7a3fc44e5b9ab32aafe002731804f96f787e18b10b25", size = 101449, upload-time = "2025-12-30T18:19:16.18Z" },
-    { url = "https://files.pythonhosted.org/packages/cd/99/2ea6444ca1c51008e191ec63b4e7dce24462555fae5b599cccfeeb2fa18b/tmatrix-1.1.5-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1972cb95314dad1f1b9cffe2faa7be645f331e6a457d24282756cadb0dd9a760", size = 131114, upload-time = "2025-12-30T18:19:17.855Z" },
-    { url = "https://files.pythonhosted.org/packages/59/aa/420c83cbe17da0fbe9444bd43332a036b966eff8b7a5f76a49f37538c18b/tmatrix-1.1.5-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:493b4aff1c3b46b0716462ba5dfcfb2b5b483cb44f054d342cf47461d3d9b201", size = 1166428, upload-time = "2025-12-30T18:19:19.025Z" },
-    { url = "https://files.pythonhosted.org/packages/f9/10/b88f8f1297d389c28169a7c3dafb1ead00b048e60763a24ecfbdddbba3f9/tmatrix-1.1.5-cp313-cp313-win32.whl", hash = "sha256:c900ceb5bd7a48ce92c14cfaaf5f482b653d05ca31a470f4f039ad3d979a5da1", size = 118800, upload-time = "2025-12-30T18:19:20.355Z" },
-    { url = "https://files.pythonhosted.org/packages/45/09/245a2c8f5b0b5ee93f543f61e931921f789b15f7609556b49116537bfb5e/tmatrix-1.1.5-cp313-cp313-win_amd64.whl", hash = "sha256:4470e93010cfd37726e2a0c901f1da61ef423971b338acc1d7f3ce7d1c6653fb", size = 128899, upload-time = "2025-12-30T18:19:21.753Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/ee/9773cc1b4b8a425b327612fc0fbc57053c22fad3f27a407a3070298d7466/tmatrix-1.2.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:153dbf2ec617aac837910640fc8d280075dbf81a041e4af00577e2de30bae0ab", size = 102378, upload-time = "2026-02-16T09:10:39.512Z" },
+    { url = "https://files.pythonhosted.org/packages/44/44/ac1195298f670bb4c6e39c44378d8e5fa91d3de5ff580b4d01db7ab33b9d/tmatrix-1.2.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:932d8993381d71ad0f933113e293955b805d83ba32a4a200a5e6036265a29fca", size = 131223, upload-time = "2026-02-16T09:10:40.877Z" },
+    { url = "https://files.pythonhosted.org/packages/56/52/4873d000783e9d566a6bb30e86d5307299611bb9498dc613aca27644d461/tmatrix-1.2.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:fb1221567967b4e7fea346bb22e8c74456a6323445115f1344d804bfc71f62f6", size = 1166557, upload-time = "2026-02-16T09:10:42.627Z" },
+    { url = "https://files.pythonhosted.org/packages/63/d0/42eeede59a74ab30d0e7bec8442c0feba2b3a64027daca6816905356c3e4/tmatrix-1.2.0-cp311-cp311-win32.whl", hash = "sha256:a7750d445b0d5bc472e10b4eb011e5a8611aaeb3ed2db752ccdadacaecf4dec9", size = 118385, upload-time = "2026-02-16T09:10:44.081Z" },
+    { url = "https://files.pythonhosted.org/packages/fc/2c/5790a4fe0c7a469768799c48fda3d1ba0c29c54683be2d87b24b1b940746/tmatrix-1.2.0-cp311-cp311-win_amd64.whl", hash = "sha256:8b4fc44e8c80592afd6a4b4084b376d92316cf5144bbc5e705650899db3dca62", size = 128417, upload-time = "2026-02-16T09:10:45.675Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/1d/3971501418e2cda5c33168319e6ea14cb7f703c4907ff3c48080f8f4900a/tmatrix-1.2.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ebdedc451f939bf862ad1e55d7d9f3502214cb1ceaaca4ac173c8bbc987cc4c0", size = 101411, upload-time = "2026-02-16T09:10:46.836Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/ef/74e4df9e183f5b3c6fa573d401b32c0c4995110ec5638aba90909919c486/tmatrix-1.2.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:5fc196327fefe757129fb35a444db2c431af1062d2ba8f5103a5cbdd87ab4d43", size = 131115, upload-time = "2026-02-16T09:10:48.006Z" },
+    { url = "https://files.pythonhosted.org/packages/eb/f1/4b603c8ce340df6cda8c608ce75e4805cbf94133411e4b306aa7d2b6930b/tmatrix-1.2.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:e14cbf652cf6e71b477a866b7fb418ab9189acb539fb0ecd94143374b1b2cf2b", size = 1166429, upload-time = "2026-02-16T09:10:49.748Z" },
+    { url = "https://files.pythonhosted.org/packages/ea/ff/31708b2b57e6ae73ef5b3cd96bb87582ccbc2719f15e48cdee07817095cd/tmatrix-1.2.0-cp312-cp312-win32.whl", hash = "sha256:e392397238107da054fb211a85753ee6b9397e7ec9ff5aa31cc505a200571f60", size = 118786, upload-time = "2026-02-16T09:10:51.133Z" },
+    { url = "https://files.pythonhosted.org/packages/e2/b7/12dbf417c3ef01a230856d9d338ef2a5db62f593c4b2c4335fe5f5fcadbd/tmatrix-1.2.0-cp312-cp312-win_amd64.whl", hash = "sha256:c1bca8f291c5d3c04957f4cedc63043692ffe4524ee5bdcf0c8f7ef77fdced40", size = 128898, upload-time = "2026-02-16T09:10:52.309Z" },
+    { url = "https://files.pythonhosted.org/packages/e2/5c/95dcdbc92707faddaf7dcb3c361e5f51727b1ef5fa2f341f02acbdc44739/tmatrix-1.2.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:1b5ca503097dd10a2539f136f560a48fa76cd3a7d074e765e754206afe475f4e", size = 101449, upload-time = "2026-02-16T09:10:53.474Z" },
+    { url = "https://files.pythonhosted.org/packages/6c/51/8832ac551284a90d33efa96dcd9ce4a1d6d2b31196328e75d34cf124ca91/tmatrix-1.2.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d9846038b6cf8122a6f12787e879dc034eac862c659f0c72f14f725806e92a21", size = 131022, upload-time = "2026-02-16T09:10:54.613Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/62/31e53fea63b147f2c715e64ce224c66ce1cfa4287c53123cbdaf9c87f710/tmatrix-1.2.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:ea1aa332fc6933c9a5ec15a72887c6af60be489f260226df9495977807bee48f", size = 1166424, upload-time = "2026-02-16T09:10:55.962Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/e0/7170ba83e35d5878028dc5139991f6cd9fd95b3f1853abc3e3143a36a4fc/tmatrix-1.2.0-cp313-cp313-win32.whl", hash = "sha256:a648e075f56e3df4bfdfbb36d061a88a5ffa8577e39ad6788268e27a043f0f9d", size = 118801, upload-time = "2026-02-16T09:10:57.214Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/89/e2124e860707bcc3a816609b300f4e7ac257be2d99de44f24ef2de2dc86b/tmatrix-1.2.0-cp313-cp313-win_amd64.whl", hash = "sha256:6b58ba0f4c1bf29f02ff892f92ed6fc56da5afa7f1f0c39279d6caa98abe8fe9", size = 128899, upload-time = "2026-02-16T09:10:58.297Z" },
+    { url = "https://files.pythonhosted.org/packages/00/d5/35a670fe42ff0ea272cb879c2a9157f29aba9e62faf62de651a03a41e197/tmatrix-1.2.0-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:3a36ee242ff0b169e9683da3241c70334b6468bf2c4b03bf55b981da7822775a", size = 101616, upload-time = "2026-02-16T09:10:59.869Z" },
+    { url = "https://files.pythonhosted.org/packages/52/b1/f417306d7afebd3e6c4b6dafd60a3791aaf8bfefc0722dbc3fa43e9b409b/tmatrix-1.2.0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:661c4d74a3e36d5c7b2b0a3e6821436c2dd0de054787b92ffa99d8b529e919fa", size = 131086, upload-time = "2026-02-16T09:11:01.387Z" },
+    { url = "https://files.pythonhosted.org/packages/79/d2/ce5b177542b54d6854eaf59f3f009ae1b7cbe60e465624f6ba8ad3ca6e13/tmatrix-1.2.0-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:9b9592941b690caffe7c0ee0200b9d96b63bfea2dad1bd0ae8b66518255ec62c", size = 1166552, upload-time = "2026-02-16T09:11:03.195Z" },
+    { url = "https://files.pythonhosted.org/packages/af/4b/935d30202f170c25eb55a65c292a9d4f8ece4610fa29bb3ecc5c47f52146/tmatrix-1.2.0-cp314-cp314-win32.whl", hash = "sha256:359a3696528182b57c7924fc85893bb97c68428ed135c3353bbbe9fe90ffbd9e", size = 121661, upload-time = "2026-02-16T09:11:04.427Z" },
+    { url = "https://files.pythonhosted.org/packages/42/86/5de860187db0847ec892bc851507f504d958f352c9d29c96716481eec7ce/tmatrix-1.2.0-cp314-cp314-win_amd64.whl", hash = "sha256:a7dcc2d3702ba7c119a1ab8e81696f5e2c8698b555f5d755f7245963ab54f153", size = 131769, upload-time = "2026-02-16T09:11:05.652Z" },
 ]
 
 [[package]]
