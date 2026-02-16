@@ -1,6 +1,5 @@
-from collections.abc import Callable
 from importlib.resources import as_file, files
-from typing import Any, Literal, ParamSpec, overload
+from typing import Any, Literal, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -488,20 +487,9 @@ def array_carbon_dioxide_density(
     return sol  # pyright: ignore[reportUnknownVariableType]
 
 
-_P = ParamSpec("_P")
-
-
-def float_vectorize(f: Callable[_P, float]) -> Callable[_P, npt.NDArray[np.float64]]:
-    # TODO:
-    # Should test if execution time is longer when using the float_vectorize instead of using numpy arrays directly.
-    # It may not be possible to use numpy arrays directly in span-wagner, but that should be tested
-    return np.vectorize(f, otypes=[float])
-
-
-@float_vectorize
-def _calculate_carbon_dioxide_density(
-    absolute_temperature: npt.NDArray[np.float64],
-    pressure: npt.NDArray[np.float64],
+def _calculate_carbon_dioxide_density_scalar(
+    absolute_temperature: float,
+    pressure: float,
     force_vapor: bool | Literal["auto"] = "auto",
     raise_error: bool = True,
 ) -> float:
@@ -542,6 +530,11 @@ def _calculate_carbon_dioxide_density(
             raise
         return np.nan
     return opt.root  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+
+
+_calculate_carbon_dioxide_density = np.vectorize(
+    _calculate_carbon_dioxide_density_scalar, otypes=[float]
+)
 
 
 def carbon_dioxide_density(
