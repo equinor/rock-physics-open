@@ -13,7 +13,12 @@ from .han_batzle_oil_model import (
 from .live_oil_density import live_oil_density
 from .live_oil_velocity import live_oil_velocity
 from .oil_bubble_point import bp_standing
-from .oil_utilities import ArrayLikeFloat, as_float_array, inputs_are_scalar
+from .oil_utilities import (
+    ArrayLikeFloat,
+    as_float_array,
+    inputs_are_scalar,
+    oil_density_to_gcc,
+)
 
 
 def oil_properties(
@@ -214,8 +219,7 @@ def oil_viscosity(
     reference_density_arr = as_float_array(reference_density)
 
     pressure_mpa = pressure_arr / 1.0e6
-    # Change unit in density to g/cc
-    density_gcc = reference_density_arr / 1000.0
+    density_gcc = oil_density_to_gcc(reference_density_arr)
 
     y_factor = 10 ** (5.693 - 2.863 / density_gcc)
     eta_t = -1.0 + 10 ** (0.505 * y_factor * (17.8 + temperature_arr) ** -1.163)

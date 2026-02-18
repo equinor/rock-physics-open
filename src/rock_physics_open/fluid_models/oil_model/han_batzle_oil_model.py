@@ -100,7 +100,8 @@ def density_correction_vasquez_beggs_ahmed(
     The Rock Physics Handbook, 3rd ed, 2020: Equation 6.22.38-40
 
     Args:
-        gor (ArrayLikeFloat): gas / oil ratio [l/l]
+        gor (ArrayLikeFloat): gas / oil ratio [l/l]. The empirical constants assume
+            this is in l/l (SI convention) not scf/STB as in the original paper.
         temp (ArrayLikeFloat): temperature [°C]
         gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
         rho0 (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
