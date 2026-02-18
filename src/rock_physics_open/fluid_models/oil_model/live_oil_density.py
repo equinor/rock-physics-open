@@ -1,19 +1,21 @@
 import numpy as np
-import numpy.typing as npt
 
 from rock_physics_open.fluid_models.oil_model.oil_utilities import (
+    ArrayLikeFloat,
+    as_float_array,
+    inputs_are_scalar,
     oil_density_to_gcc,
     oil_density_to_kg_m_3,
 )
 
 
 def live_oil_density(
-    temperature: npt.NDArray[np.float64],
-    pressure: npt.NDArray[np.float64] | None,  # pyright: ignore[reportUnusedParameter]
-    reference_density: npt.NDArray[np.float64],
-    gas_oil_ratio: npt.NDArray[np.float64],
-    gas_gravity: npt.NDArray[np.float64],
-) -> npt.NDArray[np.float64]:
+    temperature: ArrayLikeFloat,
+    pressure: ArrayLikeFloat | None,  # pyright: ignore[reportUnusedParameter]
+    reference_density: ArrayLikeFloat,
+    gas_oil_ratio: ArrayLikeFloat,
+    gas_gravity: ArrayLikeFloat,
+) -> ArrayLikeFloat:
     """
     Density of live oil at saturation.
 
@@ -27,24 +29,39 @@ def live_oil_density(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :return: Density of live oil [kg/m^3].
     """
-    density_gcc = oil_density_to_gcc(reference_density)
+    scalar_input = inputs_are_scalar(
+        temperature,
+        reference_density,
+        gas_oil_ratio,
+        gas_gravity,
+    )
+    temperature_arr = as_float_array(temperature)
+    reference_density_arr = as_float_array(reference_density)
+    gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
+    gas_gravity_arr = as_float_array(gas_gravity)
+
+    density_gcc = oil_density_to_gcc(reference_density_arr)
     b0 = live_oil_volume_factor(
-        temperature=temperature,
-        reference_density=reference_density,
-        gas_oil_ratio=gas_oil_ratio,
-        gas_gravity=gas_gravity,
+        temperature=temperature_arr,
+        reference_density=reference_density_arr,
+        gas_oil_ratio=gas_oil_ratio_arr,
+        gas_gravity=gas_gravity_arr,
     )
-    return (
-        oil_density_to_kg_m_3(density_gcc + 0.0012 * gas_gravity * gas_oil_ratio) / b0
+    density = (
+        oil_density_to_kg_m_3(
+            density_gcc + 0.0012 * gas_gravity_arr * gas_oil_ratio_arr
+        )
+        / b0
     )
+    return density[0] if scalar_input else density
 
 
 def live_oil_pseudo_density(
-    temperature: npt.NDArray[np.float64],
-    reference_density: npt.NDArray[np.float64],
-    gas_oil_ratio: npt.NDArray[np.float64],
-    gas_gravity: npt.NDArray[np.float64],
-) -> npt.NDArray[np.float64]:
+    temperature: ArrayLikeFloat,
+    reference_density: ArrayLikeFloat,
+    gas_oil_ratio: ArrayLikeFloat,
+    gas_gravity: ArrayLikeFloat,
+) -> ArrayLikeFloat:
     """
     Pseudo density used to substitute reference density in dead_oil_wave_velocity
     for live oils.
@@ -58,22 +75,36 @@ def live_oil_pseudo_density(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :return: Pseudo-density of live oil [kg/m^3].
     """
-    density_gcc = oil_density_to_gcc(reference_density)
-    b0 = live_oil_volume_factor(
-        temperature=temperature,
-        reference_density=reference_density,
-        gas_oil_ratio=gas_oil_ratio,
-        gas_gravity=gas_gravity,
+    scalar_input = inputs_are_scalar(
+        temperature,
+        reference_density,
+        gas_oil_ratio,
+        gas_gravity,
     )
-    return oil_density_to_kg_m_3(density_gcc / b0) / (1 + 0.001 * gas_oil_ratio)
+    temperature_arr = as_float_array(temperature)
+    reference_density_arr = as_float_array(reference_density)
+    gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
+    gas_gravity_arr = as_float_array(gas_gravity)
+
+    density_gcc = oil_density_to_gcc(reference_density_arr)
+    b0 = live_oil_volume_factor(
+        temperature=temperature_arr,
+        reference_density=reference_density_arr,
+        gas_oil_ratio=gas_oil_ratio_arr,
+        gas_gravity=gas_gravity_arr,
+    )
+    density = oil_density_to_kg_m_3(density_gcc / b0) / (
+        1 + 0.001 * gas_oil_ratio_arr
+    )
+    return density[0] if scalar_input else density
 
 
 def live_oil_volume_factor(
-    temperature: npt.NDArray[np.float64],
-    reference_density: npt.NDArray[np.float64],
-    gas_oil_ratio: npt.NDArray[np.float64],
-    gas_gravity: npt.NDArray[np.float64],
-) -> npt.NDArray[np.float64]:
+    temperature: ArrayLikeFloat,
+    reference_density: ArrayLikeFloat,
+    gas_oil_ratio: ArrayLikeFloat,
+    gas_gravity: ArrayLikeFloat,
+) -> ArrayLikeFloat:
     """
     Volume factor derived by Standing (1962), equation 23 in Batzle & Wang [1].
     :param reference_density: Density of the oil without dissolved gas
@@ -83,14 +114,26 @@ def live_oil_volume_factor(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :return: A volume factor in calculating pseudo-density of live oil [unitless].
     """
-    density_gcc = oil_density_to_gcc(reference_density)
-    return (
+    scalar_input = inputs_are_scalar(
+        temperature,
+        reference_density,
+        gas_oil_ratio,
+        gas_gravity,
+    )
+    temperature_arr = as_float_array(temperature)
+    reference_density_arr = as_float_array(reference_density)
+    gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
+    gas_gravity_arr = as_float_array(gas_gravity)
+
+    density_gcc = oil_density_to_gcc(reference_density_arr)
+    volume_factor = (
         0.972
         + 0.00038
         * (
-            2.495 * gas_oil_ratio * np.sqrt(gas_gravity / density_gcc)
-            + temperature
+            2.4 * gas_oil_ratio_arr * np.sqrt(gas_gravity_arr / density_gcc)
+            + temperature_arr
             + 17.8
         )
         ** 1.175
     )
+    return volume_factor[0] if scalar_input else volume_factor
