@@ -98,13 +98,13 @@ def max_gor_standing(
 
 
     Args:
-        density (npt.NDArray[np.float64]): oil density at standard conditions [kg/m^3]
-        pressure (npt.NDArray[np.float64]): formation pressure [Pa]
-        gas_gravity (npt.NDArray[np.float64]): gas gravity relative to air [unitless]
-        temperature (npt.NDArray[np.float64]): temperature [°C]
+        density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
+        pressure (ArrayLikeFloat): formation pressure [Pa]
+        gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
+        temperature (ArrayLikeFloat): temperature [°C]
 
     Returns:
-        npt.NDArray[np.float64]: gas/oil ratio [l/l]
+        ArrayLikeFloat: gas/oil ratio [l/l]
     """
     scalar_input = inputs_are_scalar(density, pressure, gas_gravity, temperature)
     density_arr = as_float_array(density)
