@@ -18,6 +18,5 @@ version.py
 /tests/data/*.txt
 /tests/data/pat_cem.pkl
 
-/Notebooks/
 scripts_and_notebooks/flag_oil.csv
 scripts_and_notebooks/live_oil_script.ipynb

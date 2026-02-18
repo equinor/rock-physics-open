@@ -16,6 +16,10 @@ from rock_physics_open.fluid_models.oil_model.han_batzle_oil_model import (
 )
 from rock_physics_open.fluid_models.oil_model.live_oil_density import live_oil_density
 from rock_physics_open.fluid_models.oil_model.live_oil_velocity import live_oil_velocity
+from rock_physics_open.fluid_models.oil_model.oil_bubble_point import (
+    bp_standing,
+    max_gor_standing,
+)
 from rock_physics_open.fluid_models.oil_model.oil_properties import live_oil
 
 temp = 100.0 * np.linspace(0.8, 1.2, 101)
@@ -73,7 +77,7 @@ def test_han_batzle_live_oil_density():
 
 
 def test_han_batzle_live_oil_velocity():
-    args = han_batzle_live_oil_velocity(rho_0, gor, gr, temp, pres)
+    args = han_batzle_live_oil_velocity(temp, pres, rho_0, gor, gr)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         _ = store_snapshot(get_snapshot_name(), args)
@@ -97,6 +101,32 @@ def test_live_oil_han_batzle():
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
+def test_max_gor_standing():
+    """
+    Snapshot test for max_gor_standing (Standing 1962 inverse bubble-point).
+    """
+    args = max_gor_standing(rho_0, pres, gr, temp)
+
+    if not os.path.isfile(get_snapshot_name()) or INITIATE:
+        _ = store_snapshot(get_snapshot_name(), args)
+    else:
+        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+
+
+def test_max_gor_standing_float():
+    """
+    Verify that max_gor_standing returns a float when all inputs are scalar,
+    and that it is consistent with bp_standing (round-trip).
+    """
+    result = max_gor_standing(rho_0[0], pres[0], gr[0], temp[0])
+    assert isinstance(result, float)
+
+    # Round-trip: bp_standing(max_gor_standing(p)) ≈ p  (within ~2% empirical tolerance)
+    bp = bp_standing(rho_0[0], result, gr[0], temp[0])
+    assert isinstance(bp, float)
+    assert abs(bp - pres[0]) / pres[0] < 0.02
+
+
 def test_oil_properties_float():
     """
     Make sure that input object type is reflected in output type
@@ -107,7 +137,7 @@ def test_oil_properties_float():
         live_oil_density(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         live_oil_velocity(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         han_batzle_live_oil_density(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
-        han_batzle_live_oil_velocity(rho_0[0], gor[0], gr[0], temp[0], pres[0]),
+        han_batzle_live_oil_velocity(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         live_oil(
             temperature=temp[0],
             pressure=pres[0],

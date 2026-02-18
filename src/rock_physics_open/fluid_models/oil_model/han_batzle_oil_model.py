@@ -1,6 +1,7 @@
 from warnings import warn
 
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.fluid_models.oil_model.oil_utilities import (
     ArrayLikeFloat,
@@ -15,14 +16,14 @@ from .live_oil_density import live_oil_density
 from .oil_bubble_point import bp_standing
 
 
-def gas_appearant_density(
+def gas_apparent_density(
     oil_density: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     From Han and Batzle 2000: Equation 5
     The Rock Physics Handbook Ed. 3, Equation 6.22.42
-    Appearant liquid density of natural gas at standard conditions
+    Apparent liquid density of natural gas at standard conditions
 
     Args:
         oil_density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
@@ -48,7 +49,7 @@ def pseudo_liquid_density(
     gor: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
     gas_coefficient: float = 0.113,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     From Han and Batzle 2000: equation 7
     The Rock Physics Handbook Ed. 3, Equation 6.22.43-44
@@ -66,14 +67,14 @@ def pseudo_liquid_density(
     Returns:
         ArrayLikeFloat: pseudo liquid density
     """
-    # Calculate the apprearant volume fraction of the pseudo-liquid gas
+    # Calculate the apparent volume fraction of the pseudo-liquid gas
     # at standard conditions
     scalar_input = inputs_are_scalar(oil_density, gor, gas_gravity)
     oil_density_arr = as_float_array(oil_density)
     gor_arr = as_float_array(gor)
     gas_gravity_arr = as_float_array(gas_gravity)
 
-    gas_app_dens = gas_appearant_density(
+    gas_app_dens = gas_apparent_density(
         oil_density=oil_density_arr, gas_gravity=gas_gravity_arr
     )
     vol_gas = (
@@ -93,7 +94,7 @@ def density_correction_vasquez_beggs_ahmed(
     temp: ArrayLikeFloat,
     gravity: ArrayLikeFloat,
     rho0: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Correction to Batzle and Wang 1992 oil density model for pressures above
     bubble point. This method is referred to as 'a more widely used correction'.
@@ -127,22 +128,23 @@ def density_correction_vasquez_beggs_ahmed(
 
 
 def han_batzle_live_oil_velocity(
+    temperature: ArrayLikeFloat,
+    pressure: ArrayLikeFloat,
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-    temperature: ArrayLikeFloat,
-    pressure: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Han and Batzle 2000: oil velocity model, equation 10-16
     The Rock Physics Handbook Ed. 3, Equation 6.22.52
 
     Args:
+        temperature (ArrayLikeFloat): temperature [°C]
+        pressure (ArrayLikeFloat): formation pressure [Pa]
         reference_density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
         gas_oil_ratio (ArrayLikeFloat): gas / Oil volume ratio [l/l]
         gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
-        temperature (ArrayLikeFloat): temperature [°C]
-        pressure (ArrayLikeFloat): formation pressure [Pa]
+
 
     Returns:
         ArrayLikeFloat: oil velocity [m/s]
@@ -178,14 +180,31 @@ def han_batzle_live_oil_velocity(
         )
     )
     api_liq_den = oil_density_to_api(pseudo_liq_den_gcc)
-    pres_mpa = 1.0e-6 * pressure_arr
-    vel_live = (
-        (1900.273 * pseudo_liq_den_gcc**0.64773 - 256.216)
-        - ((3.044 + 0.012 * api_liq_den) * temperature_arr)
-        + ((3 + 0.031 * api_liq_den) * pres_mpa)
-        + ((0.3356 * np.exp(-4.036 * pseudo_liq_den_gcc)) * pres_mpa * temperature_arr)
-    )
-    vel_live[~idx_above_bp] = np.nan
+
+    # Initialize velocity array with NaNs and compute only for pressures above bubble point
+    vel_live = np.full(pressure_arr.shape, np.nan, dtype=np.float64)
+    if np.any(idx_above_bp):
+        pres_mpa_above = 1.0e-6 * pressure_arr[idx_above_bp]
+        pseudo_liq_den_gcc_above = pseudo_liq_den_gcc[idx_above_bp]
+        api_liq_den_above = api_liq_den[idx_above_bp]
+        temperature_above = temperature_arr[idx_above_bp]
+
+        vel_live[idx_above_bp] = (
+            (1900.273 * pseudo_liq_den_gcc_above**0.64773 - 256.216)
+            - ((3.044 + 0.012 * api_liq_den_above) * temperature_above)
+            + ((3 + 0.031 * api_liq_den_above) * pres_mpa_above)
+            + (
+                0.3356
+                * np.exp(-4.036 * pseudo_liq_den_gcc_above)
+                * pres_mpa_above
+                * temperature_above
+            )
+        )
+    if np.any(~idx_above_bp):
+        warn(
+            f"live oil velocity: {np.sum(~idx_above_bp)} samples under bubble point, set to NaN"
+        )
+
     return vel_live[0] if scalar_input else vel_live
 
 
@@ -195,7 +214,7 @@ def han_batzle_live_oil_density(
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Correction to the Batzle and Wang 1992 live oil density model
     for pressures above bubble point

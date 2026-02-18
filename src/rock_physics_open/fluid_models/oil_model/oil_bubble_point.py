@@ -1,10 +1,10 @@
 import numpy as np
+import numpy.typing as npt
 
 from .oil_utilities import (
     ArrayLikeFloat,
     as_float_array,
     inputs_are_scalar,
-    oil_density_to_gcc,
 )
 
 
@@ -13,7 +13,7 @@ def bp_standing(
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
     temperature: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Reservoir oils include some natural gas in solution. The pressure at which
     this natural gas begins to come out of solution and form bubbles is known
@@ -77,7 +77,7 @@ def bp_standing(
     temperature_arr = as_float_array(temperature)
 
     ratio = gas_oil_ratio_arr / gas_gravity_arr
-    denominator = np.exp(4072 / density_arr - 0.00377 * temperature_arr)
+    denominator = np.exp(4072.0 / density_arr - 0.00377 * temperature_arr)
 
     bubble_point = 24469793.9134 * ratio**0.83 / denominator
     return bubble_point[0] if scalar_input else bubble_point
@@ -88,7 +88,7 @@ def max_gor_standing(
     pressure: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
     temperature: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Calculate the maximum amount of gas that can be dissolved in
     an oil for a given gas gravity, oil density, pressure and temperature.
@@ -113,13 +113,12 @@ def max_gor_standing(
     temperature_arr = as_float_array(temperature)
 
     pressure_mpa = 1.0e-6 * pressure_arr
-    density_gcc = oil_density_to_gcc(density_arr)
     max_gor = (
         0.02123
         * gas_gravity_arr
         * (
             (pressure_mpa + 0.176)
-            * np.exp(4.072 / density_gcc - 0.00377 * temperature_arr)
+            * np.exp(4072.0 / density_arr - 0.00377 * temperature_arr)
         )
         ** 1.205
     )

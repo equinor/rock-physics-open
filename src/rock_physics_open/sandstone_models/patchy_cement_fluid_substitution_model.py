@@ -507,6 +507,7 @@ def _handle_exceptions_part_2(
         mu[idx6mu] = mu_up[idx6mu]
         idx6 = np.zeros(k_dry.shape).astype(bool)
     elif above_upper_bound == "disregard":
+        idx6 = np.zeros_like(k_dry).astype(bool)
         idx6 = np.logical_or(
             np.greater(k_dry, k_up, where=~idx_nan, out=None),
             np.greater(mu, mu_up, where=~idx_nan, out=None),

@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.fluid_models.oil_model.oil_utilities import (
     ArrayLikeFloat,
@@ -15,7 +16,7 @@ def live_oil_density(
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Density of live oil at saturation.
 
@@ -61,7 +62,7 @@ def live_oil_pseudo_density(
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Pseudo density used to substitute reference density in dead_oil_wave_velocity
     for live oils.
@@ -102,7 +103,7 @@ def live_oil_volume_factor(
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Volume factor derived by Standing (1962), equation 23 in Batzle & Wang [1].
     :param reference_density: Density of the oil without dissolved gas
