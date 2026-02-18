@@ -1,5 +1,4 @@
-import warnings
-from typing import Literal
+from typing import Literal, assert_never
 
 import numpy as np
 import numpy.typing as npt
@@ -12,13 +11,14 @@ from .han_batzle_oil_model import (
 )
 from .live_oil_density import live_oil_density
 from .live_oil_velocity import live_oil_velocity
-from .oil_bubble_point import bp_standing
 from .oil_utilities import (
     ArrayLikeFloat,
     as_float_array,
     inputs_are_scalar,
     oil_density_to_gcc,
 )
+
+ModelVersionType = Literal["BW", "HB"]
 
 
 def oil_properties(
@@ -27,16 +27,27 @@ def oil_properties(
     rho0: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-    model_version: Literal["BW", "HB"] = "HB",
-) -> tuple[ArrayLikeFloat, ArrayLikeFloat, ArrayLikeFloat]:
+    model_version: ModelVersionType = "HB",
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
+    Default parameter setting is now to use the more correct Han & Batzle 2000 model
+    for live oil properties above bubble point.
+
+    Pressure values below bubble point will
+    give NaN, as this is a non-physical state for the oil.
+
     :param temperature: Temperature [°C] of oil.
     :param pressure: Formation pressure [Pa] of oil
     :param rho0: Density of the oil without dissolved gas at 15.6 degrees Celsius and
                  atmospheric pressure. [kg/m^3]
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param gas_gravity: Gas Gravity, molar mass of gas relative to air molar mas.
-    :param model_version: Batzle-Wang 1992 "BW" or Han-Batzle 2000 "HB"
+    :param model_version: model_version: Model to use for live-oil properties. "BW" selects the
+        Batzle-Wang (1992) model, which returns approximate values across all
+        pressures and issues a warning when used below the bubble-point pressure.
+        "HB" selects the Han-Batzle (2000) model, which includes corrections for
+        pressures above the bubble point and returns NaN for pressures below the
+        bubble-point pressure.
     :return: vel_oil [m/s], den_oil [kg/m^3], k_oil [Pa]
     """
     # Since live_oil with gas_oil_ratio=0.0 is not equal to dead oil
@@ -94,7 +105,7 @@ def dead_oil(
     temperature: ArrayLikeFloat,
     pressure: ArrayLikeFloat,
     reference_density: ArrayLikeFloat,
-) -> tuple[ArrayLikeFloat, ArrayLikeFloat]:
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     :param reference_density: Density of the oil without dissolved gas
         at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
@@ -102,7 +113,7 @@ def dead_oil(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
-    :return: dead_oil_density [kg/m^3], dead_oil_velocity [m/s]
+    :return: dead_oil_velocity [m/s], dead_oil_density [kg/m^3],
     """
     scalar_input = inputs_are_scalar(temperature, pressure, reference_density)
     temperature_arr = as_float_array(temperature)
@@ -130,8 +141,8 @@ def live_oil(
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-    model_version: Literal["BW", "HB"] = "HB",
-) -> tuple[ArrayLikeFloat, ArrayLikeFloat]:
+    model_version: ModelVersionType = "HB",
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     We introduce the correction to live oil properties above bubble point
     that is included in the Han and Batzle 2000 paper as a default.
@@ -143,14 +154,16 @@ def live_oil(
     :param pressure: Formation pressure [Pa] of oil
     :param temperature: Temperature [°C] of oil.
     :param model_version: Batzle-Wang 1992 "BW" or Han-Batzle 2000 "HB"
-    :return: live_oil_density , live_oil_velocity
+    :return: live_oil_velocity [m/s], live_oil_density [kg/m^3]
     """
     if model_version == "BW":
         vel_func = live_oil_velocity
         den_func = live_oil_density
-    else:
+    elif model_version == "HB":
         vel_func = han_batzle_live_oil_velocity
         den_func = han_batzle_live_oil_density
+    else:
+        assert_never(model_version)
     scalar_input = inputs_are_scalar(
         temperature,
         pressure,
@@ -163,19 +176,7 @@ def live_oil(
     reference_density_arr = as_float_array(reference_density)
     gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
     gas_gravity_arr = as_float_array(gas_gravity)
-    if np.any(
-        pressure_arr
-        < bp_standing(
-            reference_density_arr,
-            gas_oil_ratio_arr,
-            gas_gravity_arr,
-            temperature_arr,
-        )
-    ):
-        warnings.warn(
-            "Formation pressure is below bubble point of oil, estimated elastic properties can be inaccurate",
-            stacklevel=1,
-        )
+
     live_oil_den = den_func(
         temperature=temperature_arr,
         pressure=pressure_arr,
@@ -199,7 +200,7 @@ def oil_viscosity(
     temperature: ArrayLikeFloat,
     pressure: ArrayLikeFloat,
     reference_density: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Calculate dead oil viscosity. If dissolved gas is present in the oil, the reference density
     should be substituted by live oil density.

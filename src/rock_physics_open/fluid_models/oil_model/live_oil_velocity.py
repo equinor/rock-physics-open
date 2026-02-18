@@ -1,3 +1,6 @@
+import numpy as np
+import numpy.typing as npt
+
 from .dead_oil_velocity import dead_oil_velocity
 from .live_oil_density import live_oil_pseudo_density
 from .oil_utilities import ArrayLikeFloat, as_float_array, inputs_are_scalar
@@ -9,7 +12,7 @@ def live_oil_velocity(
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
-) -> ArrayLikeFloat:
+) -> npt.NDArray[np.float64]:
     """
     Primary wave velocity of live oil at saturation.
 
