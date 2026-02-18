@@ -93,9 +93,7 @@ def live_oil_pseudo_density(
         gas_oil_ratio=gas_oil_ratio_arr,
         gas_gravity=gas_gravity_arr,
     )
-    density = oil_density_to_kg_m_3(density_gcc / b0) / (
-        1 + 0.001 * gas_oil_ratio_arr
-    )
+    density = oil_density_to_kg_m_3(density_gcc / b0) / (1 + 0.001 * gas_oil_ratio_arr)
     return density[0] if scalar_input else density
 
 

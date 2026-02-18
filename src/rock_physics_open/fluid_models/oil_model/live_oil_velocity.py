@@ -1,5 +1,3 @@
-import numpy as np
-
 from .dead_oil_velocity import dead_oil_velocity
 from .live_oil_density import live_oil_pseudo_density
 from .oil_utilities import ArrayLikeFloat, as_float_array, inputs_are_scalar
