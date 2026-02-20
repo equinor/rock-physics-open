@@ -2,6 +2,7 @@
 
 # rock-physics-open
 
+[![PyPI version][pypi-badge]][pypi]
 [![License: LGPL v3][license-badge]][license]
 [![SCM Compliance][scm-compliance-badge]][scm-compliance]
 [![on push main action status][on-push-main-action-badge]][on-push-main-action]
@@ -56,3 +57,5 @@ dependencies = [
 [license-badge]: https://img.shields.io/badge/License-LGPL_v3-blue.svg
 [on-push-main-action]: https://github.com/equinor/rock-physics-open/actions/workflows/on-push-main.yaml
 [on-push-main-action-badge]:  https://github.com/equinor/rock-physics-open/actions/workflows/on-push-main.yaml/badge.svg
+[pypi]: https://pypi.org/project/rock-physics-open/
+[pypi-badge]: https://img.shields.io/pypi/v/rock-physics-open.svg
