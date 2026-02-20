@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.6.0](https://github.com/equinor/rock-physics-open/compare/v0.5.0...v0.6.0) (2026-02-20)
+
+
+### Features
+
+* add Han and Batzle 2000 model for live oil ([ad80e6f](https://github.com/equinor/rock-physics-open/commit/ad80e6f7bd46d1d91409abe4d04c4d09b9dbbe7d))
+* add inverse of bubble point pressure for maximum gas/oil ratio ([5d0f079](https://github.com/equinor/rock-physics-open/commit/5d0f079663b709f364d2ae08f8a15c417964154f))
+* set Han and Batzle live oil model as default ([1f7709f](https://github.com/equinor/rock-physics-open/commit/1f7709fcb0b4af813af116d37e19c45d4b172d29))
+
+
+### Bug Fixes
+
+* explicit 'out' setting in numpy greater ([e9fa323](https://github.com/equinor/rock-physics-open/commit/e9fa323ef0e2d093c6147c94e76659a02747d5b6))
+* implement consistent typing ([6dd12b3](https://github.com/equinor/rock-physics-open/commit/6dd12b3f988bb1605fcac37dd6d0766e0e7727ac))
+* return numpy array ([5e41099](https://github.com/equinor/rock-physics-open/commit/5e410998944c6461e0d629fdb1b178fef2572ce6))
+
+
+### Documentation
+
+* add copilot coding agent instructions ([077e650](https://github.com/equinor/rock-physics-open/commit/077e65047f3f5bba09bce1c285173c847ec70dfb))
+* Add sympy removal transition docs ([9e19b4a](https://github.com/equinor/rock-physics-open/commit/9e19b4a5d22dde3f10a3e53b46135ba213d54f51))
+* **readme:** add PyPI version badge ([6332c4e](https://github.com/equinor/rock-physics-open/commit/6332c4e2da2100812d732ae7852e9ad3a8adc675))
+
 ## [0.5.0](https://github.com/equinor/rock-physics-open/compare/v0.4.0...v0.5.0) (2026-02-16)
 
 
