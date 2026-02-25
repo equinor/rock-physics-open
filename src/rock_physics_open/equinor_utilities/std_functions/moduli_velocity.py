@@ -62,6 +62,8 @@ def velocity(
     vs = cast(_T, (mu / rhob) ** 0.5)
     vp = cast(_T, ((k + 4 / 3 * mu) / rhob) ** 0.5)
     ai = cast(_T, vp * rhob)
-    vp_vs = cast(_T, vp / vs)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        # vs=0 is valid for fluids (mu=0); vp/vs → inf is the correct result
+        vp_vs = cast(_T, vp / vs)
 
     return vp, vs, ai, vp_vs
