@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 
 from rock_physics_open.equinor_utilities.std_functions import moduli, velocity
@@ -89,3 +91,14 @@ class TestModuliVelocity:
         np.testing.assert_almost_equal(vs, vs_ref)
         np.testing.assert_almost_equal(ai, ai_ref)
         np.testing.assert_almost_equal(vp_vs, vp_vs_ref)
+
+    def test_velocity_zero_shear_modulus_no_warning(self):
+        """Fluids have mu=0, giving vs=0. vp/vs should not raise a RuntimeWarning."""
+        k = np.array([2.2e9])
+        mu = np.array([0.0])
+        rho = np.array([1000.0])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", RuntimeWarning)
+            _vp, vs, _ai, vp_vs = velocity(k, mu, rho)
+        np.testing.assert_almost_equal(vs, [0.0])
+        assert np.isinf(vp_vs[0])
