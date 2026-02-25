@@ -1,4 +1,5 @@
 import os
+import warnings
 
 import numpy as np
 
@@ -36,3 +37,15 @@ def test_co2_properties():
         _ = store_snapshot(get_snapshot_name(), *args)
     else:
         assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+
+
+def test_co2_properties_above_critical_temperature_no_warning():
+    """Temperatures above CO2 critical temperature should not produce RuntimeWarning."""
+    temp_above_critical = np.linspace(32, 100, 50)  # All above critical (~31 °C)
+    pres_high = 20.0e6 * np.ones(50)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        vel, den, k = co2_properties(temp_above_critical, pres_high)
+    assert np.all(np.isfinite(vel))
+    assert np.all(np.isfinite(den))
+    assert np.all(np.isfinite(k))

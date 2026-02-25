@@ -398,7 +398,10 @@ def _determine_density_bounds(
             absolute_temperature[below_critical]
         )
     else:  # force_vapor == 'auto'
-        below_vapor_pressure = pressure < vapor_pressure(absolute_temperature)
+        below_vapor_pressure = np.zeros(absolute_temperature.shape, dtype=bool)
+        below_vapor_pressure[below_critical] = pressure[
+            below_critical
+        ] < vapor_pressure(absolute_temperature[below_critical])
         is_vapor = below_critical & below_vapor_pressure
         bounds[is_vapor, 1] = saturated_vapor_density(absolute_temperature[is_vapor])
         is_liquid = below_critical & ~below_vapor_pressure
