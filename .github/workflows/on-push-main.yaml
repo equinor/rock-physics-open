@@ -22,6 +22,7 @@ jobs:
       issues: write
       pull-requests: write
     uses: ./.github/workflows/release-please.yaml
+    secrets: inherit
 
   build:
     name: Build for publishing
