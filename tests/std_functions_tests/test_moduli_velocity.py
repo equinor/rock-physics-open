@@ -93,7 +93,7 @@ class TestModuliVelocity:
         np.testing.assert_almost_equal(vp_vs, vp_vs_ref)
 
     def test_velocity_zero_shear_modulus_no_warning(self):
-        """Fluids have mu=0, giving vs=0. vp/vs should not raise a RuntimeWarning."""
+        """Newtonian fluids have mu=0, giving vs=0. vp/vs should not raise a RuntimeWarning."""
         k = np.array([2.2e9])
         mu = np.array([0.0])
         rho = np.array([1000.0])
