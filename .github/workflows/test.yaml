@@ -13,8 +13,20 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
         python-version: ["3.11", "3.12", "3.13", "3.14"]
+        module-resolution: ["uv.lock"]
+        include: # to ensure the "most outdated" versions still work
+          - os: windows-latest
+            python-version: "3.11"
+            module-resolution: lowest
+          - os: ubuntu-latest
+            python-version: "3.11"
+            module-resolution: lowest
+          - os: macos-latest
+            python-version: "3.11"
+            module-resolution: lowest
+
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} / ${{ matrix.python-version }}
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}${{ matrix.module-resolution == 'lowest' && ' (lowest deps)' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -22,14 +34,15 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          enable-cache: true
           python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-suffix: ${{ matrix.module-resolution }}
 
       - name: Show Machine Information
         run: uvx --from py-cpuinfo cpuinfo
 
       - name: Install dependencies
-        run: uv sync --locked --all-extras --dev
+        run: uv sync --all-extras --dev ${{ matrix.module-resolution == 'uv.lock' && '--locked' || '--resolution=lowest-direct' }}
 
       - name: Test
         run: uv run pytest
