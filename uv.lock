@@ -965,13 +965,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "matplotlib", specifier = ">=3.7.1" },
-    { name = "numpy", specifier = ">=1.26.4" },
-    { name = "pandas", specifier = ">=2.0.2" },
-    { name = "scikit-learn", specifier = ">=1.2.2" },
-    { name = "scipy", specifier = ">=1.16.3,<2" },
+    { name = "matplotlib", specifier = ">=3.6.0" },
+    { name = "numpy", specifier = ">=1.23.3" },
+    { name = "pandas", specifier = ">=2.0.0" },
+    { name = "scikit-learn", specifier = ">=1.2.0" },
+    { name = "scipy", specifier = ">=1.10.0" },
     { name = "tmatrix", specifier = "~=1.2.0" },
-    { name = "typing-extensions", specifier = ">=4.15.0" },
+    { name = "typing-extensions", specifier = ">=4.7.0" },
 ]
 
 [package.metadata.requires-dev]

@@ -54,14 +54,17 @@ classifiers = [
     "Natural Language :: English",
 ]
 dynamic = ["version"]
+# Minimum dependency versions are set to either:
+# - the first version that supports Python 3.11
+# - the first version that supports a feature we require
 dependencies = [
-    "numpy >= 1.26.4",
-    "pandas >= 2.0.2",
-    "matplotlib >= 3.7.1",
-    "scipy >= 1.16.3, < 2",
-    "scikit-learn >= 1.2.2",
+    "numpy >= 1.23.3",
+    "pandas >= 2.0.0",
+    "matplotlib >= 3.6.0",
+    "scipy >= 1.10.0",
+    "scikit-learn >= 1.2.0",
     "tmatrix ~= 1.2.0",
-    "typing-extensions>=4.15.0",
+    "typing-extensions >= 4.7.0",
 ]
 
 
