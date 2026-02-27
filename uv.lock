@@ -976,14 +976,14 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "basedpyright", specifier = ">=1.31.4" },
-    { name = "matplotlib-stubs", specifier = ">=0.3.3" },
-    { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
-    { name = "pre-commit", specifier = ">=4.3.0" },
-    { name = "pytest", specifier = ">=8.4.1" },
-    { name = "pytest-cov", specifier = ">=6.2.1" },
-    { name = "ruff", specifier = ">=0.12.11" },
-    { name = "scipy-stubs", specifier = ">=1.16.3.3" },
+    { name = "basedpyright", specifier = "==1.36.1" },
+    { name = "matplotlib-stubs", specifier = "==0.3.11" },
+    { name = "pandas-stubs", specifier = "==2.3.3.251201" },
+    { name = "pre-commit", specifier = "==4.5.0" },
+    { name = "pytest", specifier = "==9.0.2" },
+    { name = "pytest-cov", specifier = "==7.0.0" },
+    { name = "ruff", specifier = "==0.14.9" },
+    { name = "scipy-stubs", specifier = "==1.16.3.3" },
 ]
 
 [[package]]
