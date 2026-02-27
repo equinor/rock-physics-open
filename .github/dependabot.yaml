@@ -5,7 +5,20 @@ updates:
     schedule:
       interval: "monthly"
 
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-type: "production"
+
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "monthly"
+    allow:
+      - dependency-type: "development"
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*"
