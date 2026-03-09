@@ -120,7 +120,7 @@ def vp_vs_rho_stats(
             res.append(r2)
 
         res_dict = dict(zip(est_frame_columns[1:], res))
-        est_frame.iloc[i, 1:] = res_dict  # pyright: ignore[reportArgumentType]
+        est_frame.iloc[i, 1:] = res_dict
         if disp_results:
             disp_result_stats(
                 estimated_set_names[i], res, est_frame_columns[1:], values_only=True
