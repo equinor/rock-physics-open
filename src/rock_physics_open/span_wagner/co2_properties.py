@@ -490,15 +490,16 @@ def array_carbon_dioxide_density(
     return sol  # pyright: ignore[reportUnknownVariableType]
 
 
-def _calculate_carbon_dioxide_density_scalar(
-    absolute_temperature: float,
-    pressure: float,
+def _calculate_carbon_dioxide_density(
+    absolute_temperature: npt.NDArray[np.float64],
+    pressure: npt.NDArray[np.float64],
     force_vapor: bool | Literal["auto"] = "auto",
     raise_error: bool = True,
-) -> float:
+) -> npt.NDArray[np.float64]:
     """
     Density of carbon dioxide. Found solving the Pressure equation of Table 3 in Span & Wagner [2] numerically for
-    density. To ensure a single solution, the phase of the liquid must first be determined.
+    density using a vectorized bisection method. To ensure a single solution, the phase of the liquid must first be
+    determined.
 
     :param absolute_temperature: Absolute temperature (K).
     :param pressure: Pressure (MPa).
@@ -512,32 +513,46 @@ def _calculate_carbon_dioxide_density_scalar(
 
     :return: Density (kg / m^3)
     """
-    bounds = _determine_density_bounds(
-        absolute_temperature=np.array([absolute_temperature]),
-        pressure=np.array([pressure]),
-        force_vapor=force_vapor,
-    )[0, :]
+    absolute_temperature = np.atleast_1d(np.asarray(absolute_temperature, dtype=float))
+    pressure = np.atleast_1d(np.asarray(pressure, dtype=float))
 
-    # Extend bounds slightly to ensure toms748 can converge
-    bounds = (bounds[0] * 0.95, bounds[1] * 1.05)
+    bounds = _determine_density_bounds(absolute_temperature, pressure, force_vapor)
+    lo = bounds[:, 0] * 0.95
+    hi = bounds[:, 1] * 1.05
 
-    try:
-        opt = scipy.optimize.root_scalar(  # pyright: ignore[reportCallIssue, reportUnknownVariableType]
-            lambda x: carbon_dioxide_pressure(absolute_temperature, x) - pressure,  # pyright: ignore[reportArgumentType]
-            method="toms748",
-            bracket=bounds,
-            x0=np.sum(bounds) / 2,
-        )
-    except ValueError:
+    # Vectorized bisection: 200 iterations is far more than needed (bisection
+    # halves the interval each step, so 200 iterations gives ~10^-60 relative
+    # precision), but the loop breaks early once all elements converge to
+    # within 1e-12 relative tolerance. Typically ~50 iterations suffice.
+    valid = np.ones(lo.shape, dtype=bool)
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        f_mid = carbon_dioxide_pressure(absolute_temperature, mid) - pressure
+        mask = f_mid[valid] > 0
+        lo_valid = lo[valid].copy()
+        hi_valid = hi[valid].copy()
+        mid_valid = mid[valid]
+        hi_valid[mask] = mid_valid[mask]
+        lo_valid[~mask] = mid_valid[~mask]
+        lo[valid] = lo_valid
+        hi[valid] = hi_valid
+        converged = (hi - lo) < 1e-12 * np.abs(mid)
+        valid &= ~converged
+        if not np.any(valid):
+            break
+
+    result = 0.5 * (lo + hi)
+
+    f_result = carbon_dioxide_pressure(absolute_temperature, result) - pressure
+    failed = np.abs(f_result) > 1e-5
+    if np.any(failed):
+        n_failed = int(np.sum(failed))
         if raise_error:
-            raise
-        return np.nan
-    return opt.root  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+            msg = f"Density calculation did not converge for {n_failed} element(s)."
+            raise ValueError(msg)
+        result[failed] = np.nan
 
-
-_calculate_carbon_dioxide_density = np.vectorize(
-    _calculate_carbon_dioxide_density_scalar, otypes=[float]
-)
+    return result
 
 
 def carbon_dioxide_density(
