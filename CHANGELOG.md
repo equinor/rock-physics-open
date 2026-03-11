@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1](https://github.com/equinor/rock-physics-open/compare/v0.6.0...v0.6.1) (2026-03-11)
+
+
+### Bug Fixes
+
+* **span_wagner:** avoid RuntimeWarning in vapor_pressure for above-critical temperatures ([7ebedac](https://github.com/equinor/rock-physics-open/commit/7ebedace60f87bdaf57e4560f3544b1c70449511))
+* **std_functions:** suppress divide-by-zero warning in velocity when vs=0 ([f282218](https://github.com/equinor/rock-physics-open/commit/f282218a03dfb41934f032c0edf4dc0ea52c01dc))
+* Use github app to get PAT token for release-please ([2c72d32](https://github.com/equinor/rock-physics-open/commit/2c72d322505d8cee426ab5183bc3d5b3462225bf))
+
 ## [0.6.0](https://github.com/equinor/rock-physics-open/compare/v0.5.0...v0.6.0) (2026-02-20)
 
 
