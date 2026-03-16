@@ -12,6 +12,7 @@ from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
     read_snapshot,
     store_snapshot,
 )
+from rock_physics_open.equinor_utilities.units import g_cc_to_kg_m3
 from rock_physics_open.t_matrix_models.curvefit_t_matrix_exp import (
     curvefit_t_matrix_exp,
 )
@@ -25,12 +26,12 @@ inp_df = pd.read_csv(TESTDATA_DIR / "tmatrix_test_data.csv")
 
 k_min = inp_df["K_MIN"].to_numpy() * 1.0e9
 mu_min = inp_df["MU_MIN"].to_numpy() * 1.0e9
-rho_min = inp_df["RHO_MIN"].to_numpy() * 1000.0
+rho_min = g_cc_to_kg_m3(inp_df["RHO_MIN"].to_numpy())
 k_fl_orig = inp_df["K_FL"].to_numpy() * 1.0e9
-rho_fl_orig = inp_df["RHO_FL"].to_numpy() * 1000.0
+rho_fl_orig = g_cc_to_kg_m3(inp_df["RHO_FL"].to_numpy())
 vp = inp_df["VP"].to_numpy()
 vs = inp_df["VS"].to_numpy()
-rho = inp_df["RHOB"].to_numpy() * 1000.0
+rho = g_cc_to_kg_m3(inp_df["RHOB"].to_numpy())
 phi = inp_df["PHIT"].to_numpy()
 vsh = inp_df["VSH"].to_numpy()
 tau = 1e-7 * np.ones_like(phi)

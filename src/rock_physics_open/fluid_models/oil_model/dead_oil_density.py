@@ -1,6 +1,12 @@
 import numpy as np
 import numpy.typing as npt
 
+from rock_physics_open.equinor_utilities.units import (
+    g_cc_to_kg_m3,
+    kg_m3_to_g_cc,
+    pa_to_mpa,
+)
+
 
 def pressure_adjusted_dead_oil_density(
     pressure: npt.NDArray[np.float64],
@@ -17,9 +23,9 @@ def pressure_adjusted_dead_oil_density(
     :return: Density of oil at given pressure and 21 degrees Celsius (~70 degrees
     Fahrenheit). [kg/m^3]
     """
-    pressure_mpa = pressure / 1e6
-    density_gcc = reference_density / 1000.0
-    return 1000.0 * (
+    pressure_mpa = pa_to_mpa(pressure)
+    density_gcc = kg_m3_to_g_cc(reference_density)
+    return g_cc_to_kg_m3(
         density_gcc
         + (0.00277 * pressure_mpa - 1.71e-7 * pressure_mpa**3)
         * (density_gcc - 1.15) ** 2
@@ -40,9 +46,9 @@ def temperature_adjusted_dead_oil_density(
     :param temperature: Temperature [°C] of oil.
     :return: Density of oil at given temperature. [kg/m^3]
     """
-    density_at_21c_gcc = density_at_21c / 1000.0
-    return (
-        1000.0 * density_at_21c_gcc / (0.972 + 3.81e-4 * (temperature + 17.78) ** 1.175)
+    density_at_21c_gcc = kg_m3_to_g_cc(density_at_21c)
+    return g_cc_to_kg_m3(
+        density_at_21c_gcc / (0.972 + 3.81e-4 * (temperature + 17.78) ** 1.175)
     )
 
 

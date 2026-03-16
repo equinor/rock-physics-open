@@ -3,7 +3,7 @@ from typing import Literal, assert_never
 import numpy as np
 import numpy.typing as npt
 
-from rock_physics_open.equinor_utilities.units import kg_m3_to_g_cc
+from rock_physics_open.equinor_utilities.units import kg_m3_to_g_cc, pa_to_mpa
 
 from .dead_oil_density import dead_oil_density
 from .dead_oil_velocity import dead_oil_velocity
@@ -214,13 +214,12 @@ def oil_viscosity(
     :param pressure: Formation pressure [Pa] of oil
     :param reference_density: Density of the oil without dissolved gas
     """
-    # Change unit in pressure to MPa
     scalar_input = inputs_are_scalar(temperature, pressure, reference_density)
     temperature_arr = as_float_array(temperature)
     pressure_arr = as_float_array(pressure)
     reference_density_arr = as_float_array(reference_density)
 
-    pressure_mpa = pressure_arr / 1.0e6
+    pressure_mpa = pa_to_mpa(pressure_arr)
     density_gcc = kg_m3_to_g_cc(reference_density_arr)
 
     y_factor = 10 ** (5.693 - 2.863 / density_gcc)
