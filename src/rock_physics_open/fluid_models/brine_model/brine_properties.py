@@ -5,6 +5,8 @@ import numpy as np
 import numpy.typing as npt
 from numpy.polynomial.polynomial import polyval2d, polyval3d
 
+from rock_physics_open.equinor_utilities.units import g_cc_to_kg_m3, pa_to_mpa
+
 
 def brine_properties(
     temperature: npt.NDArray[np.float64],
@@ -49,8 +51,7 @@ def brine_density(
     :param temperature: Temperature [°C]
     :return: density of solution in [kg/m^3].
     """
-    # Change unit of pressure to MPa
-    pressure_mpa = pressure / 1.0e6
+    pressure_mpa = pa_to_mpa(pressure)
     # Change unit of salinity to fraction
     salinity_frac = salinity / 1.0e6
 
@@ -59,10 +60,9 @@ def brine_density(
         [[0.44, -24e-4], [-33e-4, 47e-6], [0.0, 0.0]],
     ]
     water_den = water_density(temperature, pressure)
-    brine_correction = (
+    brine_correction = g_cc_to_kg_m3(
         salinity_frac
         * polyval3d(salinity_frac, temperature, pressure_mpa, coefficients)
-        * 1000.0
     )
     return water_den + brine_correction
 
@@ -82,8 +82,7 @@ def brine_primary_velocity(
     """
     # Change unit for salinity from ppm to fraction
     salinity_frac = salinity / 1.0e6
-    # Change the unit for pressure from Pa to MPa
-    pressure_mpa = pressure / 1.0e6
+    pressure_mpa = pa_to_mpa(pressure)
 
     coefficients = np.zeros((3, 4, 3))
     coefficients[0, 0, 0] = 1170
@@ -116,8 +115,7 @@ def water_density(
     :param temperature: Temperature [°C]
     :return: Density of water in [kg/m^3].
     """
-    # Change unit of pressure from Pa to MPa
-    pressure_mpa = pressure / 1.0e6
+    pressure_mpa = pa_to_mpa(pressure)
 
     coefficients = [
         [1.0, 489e-6, -333e-9],
@@ -125,7 +123,7 @@ def water_density(
         [-33e-7, 16e-9, 0.0],
         [1.75e-9, -13e-12, 0.0],
     ]
-    return polyval2d(temperature, pressure_mpa, coefficients) * 1000.0
+    return g_cc_to_kg_m3(polyval2d(temperature, pressure_mpa, coefficients))
 
 
 def water_primary_velocity(
@@ -138,8 +136,7 @@ def water_primary_velocity(
     :param temperature: Temperature [°C]
     :return: primary wave velocity of water in m/s.
     """
-    # Change unit of pressure from Pa to MPa
-    pressure_mpa = pressure / 1.0e6
+    pressure_mpa = pa_to_mpa(pressure)
 
     if np.any(pressure_mpa > 100):
         warnings.warn(

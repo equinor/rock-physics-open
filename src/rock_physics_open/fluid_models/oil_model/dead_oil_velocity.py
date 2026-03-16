@@ -1,6 +1,8 @@
 import numpy as np
 import numpy.typing as npt
 
+from rock_physics_open.equinor_utilities.units import kg_m3_to_g_cc, pa_to_mpa
+
 
 def dead_oil_velocity(
     temperature: npt.NDArray[np.float64],
@@ -18,8 +20,8 @@ def dead_oil_velocity(
     :param temperature: Temperature [°C] of oil.
     :return: primary velocity of dead oil in m/s.
     """
-    pressure_mpa = pressure * 1e-6
-    density_gcc = reference_density / 1000.0
+    pressure_mpa = pa_to_mpa(pressure)
+    density_gcc = kg_m3_to_g_cc(reference_density)
     return (
         2096 * np.sqrt(density_gcc / (2.6 - density_gcc))
         - 3.7 * temperature

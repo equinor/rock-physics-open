@@ -6,7 +6,11 @@ import numpy.typing as npt
 import scipy.optimize
 from scipy.interpolate import RegularGridInterpolator
 
-from rock_physics_open.equinor_utilities.units import celsius_to_kelvin
+from rock_physics_open.equinor_utilities.units import (
+    celsius_to_kelvin,
+    mpa_to_pa,
+    pa_to_mpa,
+)
 from rock_physics_open.equinor_utilities.various_utilities.types import Array2D
 
 from .coefficients import (
@@ -209,7 +213,7 @@ def carbon_dioxide_pressure(
     if d_temperature != 0:
         raise ValueError(f"d_temperature must be 0, but was {d_temperature}")
     if d_density == 0:
-        return (
+        return pa_to_mpa(
             density
             * CO2_GAS_CONSTANT
             * absolute_temperature
@@ -223,7 +227,6 @@ def carbon_dioxide_pressure(
                     dt=0,
                 )
             )
-            / 1e6
         )
     if d_density == 1:
         first = (
@@ -273,8 +276,8 @@ def carbon_dioxide_pressure(
                 )
             )
             third = -nom / den
-        return (
-            absolute_temperature * CO2_GAS_CONSTANT * (1 + first + second + third) / 1e6
+        return pa_to_mpa(
+            absolute_temperature * CO2_GAS_CONSTANT * (1 + first + second + third)
         )
     return None
 
@@ -603,4 +606,4 @@ def carbon_dioxide_bulk_modulus(
         d_density=1,
         isentropic=True,
     )
-    return density * d_pressure * 1e6
+    return mpa_to_pa(density * d_pressure)

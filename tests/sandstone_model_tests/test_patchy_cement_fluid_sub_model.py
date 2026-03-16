@@ -10,6 +10,7 @@ from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
     read_snapshot,
     store_snapshot,
 )
+from rock_physics_open.equinor_utilities.units import g_cc_to_kg_m3
 from rock_physics_open.sandstone_models import (
     patchy_cement_model_cem_frac,
     patchy_cement_model_weight,
@@ -23,7 +24,7 @@ dataset = pd.read_csv(TESTDATA_DIR / "test_well.csv")
 
 vp_old = dataset["VP"].to_numpy()
 vs_old = dataset["VS"].to_numpy()
-rho_b_old = dataset["RHOB"].to_numpy() * 1000.0
+rho_b_old = g_cc_to_kg_m3(dataset["RHOB"].to_numpy())
 phi = dataset["PHIT"].to_numpy()
 idx_high_phi = phi > 0.1
 phi = phi[idx_high_phi]
