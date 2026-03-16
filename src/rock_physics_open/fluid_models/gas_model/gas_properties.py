@@ -2,7 +2,12 @@ import numpy as np
 import numpy.typing as npt
 from scipy.constants import gas_constant
 
-from rock_physics_open.equinor_utilities.units import celsius_to_kelvin
+from rock_physics_open.equinor_utilities.units import (
+    celsius_to_fahrenheit,
+    celsius_to_kelvin,
+    kelvin_to_celsius,
+    pa_to_psi,
+)
 
 AIR_WEIGHT = 28.8 * 1.0e-3  # kg/mol
 
@@ -347,8 +352,8 @@ def lee_gas_viscosity(
     Original equation is given in imperial units. Inputs are transformed to temperature
     in Fahrenheit and pressure in psi
     """
-    temp_far = (absolute_temperature - 273.15) * 9.0 / 5.0 + 32.0
-    pres_psi = pressure / 6894.757
+    temp_far = celsius_to_fahrenheit(kelvin_to_celsius(absolute_temperature))
+    pres_psi = pa_to_psi(pressure)
     return (
         0.001
         * (temp_far + 459.67) ** 0.5

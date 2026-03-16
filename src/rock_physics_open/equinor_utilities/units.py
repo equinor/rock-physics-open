@@ -9,11 +9,11 @@ Provides conversions between common units used in rock physics:
 - Viscosity: Pa·s / centipoise
 """
 
-from typing import TypeVar
+from typing import Any, TypeVar
 
-import numpy as np
+import numpy.typing as npt
 
-FloatOrArray = TypeVar("FloatOrArray", float, np.ndarray)
+FloatOrArray = TypeVar("FloatOrArray", float, npt.NDArray[Any])
 
 
 def pa_to_torr(pressure_pa: FloatOrArray) -> FloatOrArray:
@@ -46,9 +46,34 @@ def mpa_to_pa(pressure_mpa: FloatOrArray) -> FloatOrArray:
     return pressure_mpa * 1e6
 
 
+def pa_to_psi(pressure_pa: FloatOrArray) -> FloatOrArray:
+    """Convert pressure from Pascal to pounds per square inch."""
+    return pressure_pa / 6894.757
+
+
+def psi_to_pa(pressure_psi: FloatOrArray) -> FloatOrArray:
+    """Convert pressure from pounds per square inch to Pascal."""
+    return pressure_psi * 6894.757
+
+
 def celsius_to_kelvin(temperature_c: FloatOrArray) -> FloatOrArray:
     """Convert temperature from Celsius to Kelvin."""
     return temperature_c + 273.15
+
+
+def kelvin_to_celsius(temperature_k: FloatOrArray) -> FloatOrArray:
+    """Convert temperature from Kelvin to Celsius."""
+    return temperature_k - 273.15
+
+
+def celsius_to_fahrenheit(temperature_c: FloatOrArray) -> FloatOrArray:
+    """Convert temperature from Celsius to Fahrenheit."""
+    return temperature_c * 9.0 / 5.0 + 32.0
+
+
+def fahrenheit_to_celsius(temperature_f: FloatOrArray) -> FloatOrArray:
+    """Convert temperature from Fahrenheit to Celsius."""
+    return (temperature_f - 32.0) * 5.0 / 9.0
 
 
 def km_per_s_to_m_per_s(velocity_km_per_s: FloatOrArray) -> FloatOrArray:
