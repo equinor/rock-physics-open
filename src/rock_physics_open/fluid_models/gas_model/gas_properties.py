@@ -2,7 +2,7 @@ import numpy as np
 import numpy.typing as npt
 from scipy.constants import gas_constant
 
-from rock_physics_open.equinor_utilities.conversions import celsius_to_kelvin
+from rock_physics_open.equinor_utilities.units import celsius_to_kelvin
 
 AIR_WEIGHT = 28.8 * 1.0e-3  # kg/mol
 

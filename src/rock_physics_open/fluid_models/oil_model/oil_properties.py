@@ -3,6 +3,8 @@ from typing import Literal, assert_never
 import numpy as np
 import numpy.typing as npt
 
+from rock_physics_open.equinor_utilities.units import kg_m3_to_g_cc
+
 from .dead_oil_density import dead_oil_density
 from .dead_oil_velocity import dead_oil_velocity
 from .han_batzle_oil_model import (
@@ -15,7 +17,6 @@ from .oil_utilities import (
     ArrayLikeFloat,
     as_float_array,
     inputs_are_scalar,
-    oil_density_to_gcc,
 )
 
 ModelVersionType = Literal["BW", "HB"]
@@ -220,7 +221,7 @@ def oil_viscosity(
     reference_density_arr = as_float_array(reference_density)
 
     pressure_mpa = pressure_arr / 1.0e6
-    density_gcc = oil_density_to_gcc(reference_density_arr)
+    density_gcc = kg_m3_to_g_cc(reference_density_arr)
 
     y_factor = 10 ** (5.693 - 2.863 / density_gcc)
     eta_t = -1.0 + 10 ** (0.505 * y_factor * (17.8 + temperature_arr) ** -1.163)

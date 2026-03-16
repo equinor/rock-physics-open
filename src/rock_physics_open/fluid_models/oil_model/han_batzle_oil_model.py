@@ -3,13 +3,16 @@ from warnings import warn
 import numpy as np
 import numpy.typing as npt
 
+from rock_physics_open.equinor_utilities.units import (
+    g_cc_to_api,
+    g_cc_to_kg_m3,
+    kg_m3_to_api,
+    kg_m3_to_g_cc,
+)
 from rock_physics_open.fluid_models.oil_model.oil_utilities import (
     ArrayLikeFloat,
     as_float_array,
     inputs_are_scalar,
-    oil_density_to_api,
-    oil_density_to_gcc,
-    oil_density_to_kg_m_3,
 )
 
 from .live_oil_density import live_oil_density
@@ -36,11 +39,11 @@ def gas_apparent_density(
     oil_density_arr = as_float_array(oil_density)
     gas_gravity_arr = as_float_array(gas_gravity)
 
-    oil_api = oil_density_to_api(oil_density_to_gcc(oil_density_arr))
+    oil_api = kg_m3_to_api(oil_density_arr)
     tmp = 0.61731 * (10.0 ** (-0.00326 * oil_api)) + (
         1.5177 - 0.54349 * np.log10(oil_api)
     ) * np.log10(gas_gravity_arr)
-    density = oil_density_to_kg_m_3(tmp)
+    density = g_cc_to_kg_m3(tmp)
     return density[0] if scalar_input else density
 
 
@@ -81,7 +84,7 @@ def pseudo_liquid_density(
         0.00123
         * gor_arr
         * gas_gravity_arr
-        / (oil_density_to_gcc(gas_app_dens) + 0.00123 * gor_arr * gas_gravity_arr)
+        / (kg_m3_to_g_cc(gas_app_dens) + 0.00123 * gor_arr * gas_gravity_arr)
     )
     density = (
         oil_density_arr * (1.0 - vol_gas) + gas_coefficient * gas_app_dens * vol_gas
@@ -116,7 +119,7 @@ def density_correction_vasquez_beggs_ahmed(
     gravity_arr = as_float_array(gravity)
     rho0_arr = as_float_array(rho0)
 
-    rho0_api = oil_density_to_api(oil_density_to_gcc(rho0_arr))
+    rho0_api = kg_m3_to_api(rho0_arr)
     correction = 1.0e-5 * (
         28.08 * gor_arr
         + 30.96 * temp_arr
@@ -172,14 +175,14 @@ def han_batzle_live_oil_velocity(
     )
     idx_above_bp = pressure_arr > bubble_point_pres
 
-    pseudo_liq_den_gcc = oil_density_to_gcc(
+    pseudo_liq_den_gcc = kg_m3_to_g_cc(
         pseudo_liquid_density(
             oil_density=reference_density_arr,
             gor=gas_oil_ratio_arr,
             gas_gravity=gas_gravity_arr,
         )
     )
-    api_liq_den = oil_density_to_api(pseudo_liq_den_gcc)
+    api_liq_den = g_cc_to_api(pseudo_liq_den_gcc)
 
     # Initialize velocity array with NaNs and compute only for pressures above bubble point
     vel_live = np.full(pressure_arr.shape, np.nan, dtype=np.float64)

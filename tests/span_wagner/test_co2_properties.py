@@ -3,7 +3,6 @@ import warnings
 
 import numpy as np
 
-from rock_physics_open.equinor_utilities.conversions import celsius_to_kelvin
 from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
     INITIATE,
     compare_snapshots,
@@ -11,6 +10,7 @@ from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
     read_snapshot,
     store_snapshot,
 )
+from rock_physics_open.equinor_utilities.units import celsius_to_kelvin
 from rock_physics_open.span_wagner import co2_properties
 from rock_physics_open.span_wagner.co2_properties import (
     CO2_CRITICAL_DENSITY,
