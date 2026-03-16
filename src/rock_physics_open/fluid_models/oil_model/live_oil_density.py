@@ -1,12 +1,11 @@
 import numpy as np
 import numpy.typing as npt
 
+from rock_physics_open.equinor_utilities.units import g_cc_to_kg_m3, kg_m3_to_g_cc
 from rock_physics_open.fluid_models.oil_model.oil_utilities import (
     ArrayLikeFloat,
     as_float_array,
     inputs_are_scalar,
-    oil_density_to_gcc,
-    oil_density_to_kg_m_3,
 )
 
 
@@ -41,7 +40,7 @@ def live_oil_density(
     gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
     gas_gravity_arr = as_float_array(gas_gravity)
 
-    density_gcc = oil_density_to_gcc(reference_density_arr)
+    density_gcc = kg_m3_to_g_cc(reference_density_arr)
     b0 = live_oil_volume_factor(
         temperature=temperature_arr,
         reference_density=reference_density_arr,
@@ -49,10 +48,7 @@ def live_oil_density(
         gas_gravity=gas_gravity_arr,
     )
     density = (
-        oil_density_to_kg_m_3(
-            density_gcc + 0.0012 * gas_gravity_arr * gas_oil_ratio_arr
-        )
-        / b0
+        g_cc_to_kg_m3(density_gcc + 0.0012 * gas_gravity_arr * gas_oil_ratio_arr) / b0
     )
     return density[0] if scalar_input else density
 
@@ -87,14 +83,14 @@ def live_oil_pseudo_density(
     gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
     gas_gravity_arr = as_float_array(gas_gravity)
 
-    density_gcc = oil_density_to_gcc(reference_density_arr)
+    density_gcc = kg_m3_to_g_cc(reference_density_arr)
     b0 = live_oil_volume_factor(
         temperature=temperature_arr,
         reference_density=reference_density_arr,
         gas_oil_ratio=gas_oil_ratio_arr,
         gas_gravity=gas_gravity_arr,
     )
-    density = oil_density_to_kg_m_3(density_gcc / b0) / (1 + 0.001 * gas_oil_ratio_arr)
+    density = g_cc_to_kg_m3(density_gcc / b0) / (1 + 0.001 * gas_oil_ratio_arr)
     return density[0] if scalar_input else density
 
 
@@ -124,7 +120,7 @@ def live_oil_volume_factor(
     gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
     gas_gravity_arr = as_float_array(gas_gravity)
 
-    density_gcc = oil_density_to_gcc(reference_density_arr)
+    density_gcc = kg_m3_to_g_cc(reference_density_arr)
     volume_factor = (
         0.972
         + 0.00038

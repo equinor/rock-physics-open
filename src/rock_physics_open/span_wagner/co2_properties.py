@@ -6,7 +6,7 @@ import numpy.typing as npt
 import scipy.optimize
 from scipy.interpolate import RegularGridInterpolator
 
-from rock_physics_open.equinor_utilities.conversions import celsius_to_kelvin
+from rock_physics_open.equinor_utilities.units import celsius_to_kelvin
 from rock_physics_open.equinor_utilities.various_utilities.types import Array2D
 
 from .coefficients import (
