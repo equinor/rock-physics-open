@@ -93,51 +93,58 @@ def run_t_matrix(
     ]
 ):
     """Function to run T-Matrix in different flavours, with or without pressure steps included.
+
     A frontend to running T-Matrix model, including testing of all input parameters in the parse_t_matrix_inputs.
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         N length numpy array, mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         N length numpy array, mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         N length numpy array, mineral density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         N length numpy array, fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
-        N length numpy array, mineral density [kg/m^3].
-    phi : np.ndarray or float
+    rho_fl
+        N length numpy array, fluid density [kg/m^3].
+    phi
         N length numpy array, total porosity [ratio].
-    perm : np.ndarray or float
+    perm
         Float or N length numpy array, permeability [mD].
-    visco : np.ndarray or float
+    visco
         Float or N length numpy array, fluid viscosity [cP].
-    alpha : np.ndarray
+    alpha
         M or NxM length numpy array, inclusion aspect ratio [ratio].
-    v : np.ndarray
+    v
         M or NxM length numpy array, inclusion concentration [ratio].
-    tau : np.ndarray
+    tau
         M length numpy array, relaxation time [s].
-    frequency : float
+    frequency
         Single float, signal frequency [Hz].
-    angle : float
+    angle
         Single float, angle of symmetry plane [degree].
-    frac_inc_con : np.ndarray or float
+    frac_inc_con
         Single float or N length numpy array, fraction of connected inclusions [ratio].
-    frac_inc_ani : np.ndarray or float
+    frac_inc_ani
         Single float or N length numpy array, fraction of anisotropic inclusions [ratio].
-    pressure : [type], optional
+    pressure
         > 1 value list or numpy array in ascending order, effective pressure [Pa], by default None.
-    scenario : int, optional
+    scenario
         Pre-set scenarios for alpha, v and tau, by default None.
-    fcn : callable | str, optional
+    fcn
         Function with which to run the T-Matrix model or string with function name within t_matrix_models, by default None.
 
     Returns
     -------
-    tuple
-        vp, vsv, vsh, rho: (np.ndarray, np.ndarray, np.ndarray, np.ndarray).
+    vp
+        Vertical P-wave velocity [m/s].
+    vsv
+        Vertical polarity S-wave velocity [m/s].
+    vsh
+        Horizontal polarity S-wave velocity [m/s].
+    rho
+        Bulk density [kg/m^3].
     """
     # Check all input parameters and make sure that they are on expected format and shape
     (

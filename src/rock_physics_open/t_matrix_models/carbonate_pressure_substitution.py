@@ -35,6 +35,7 @@ def carbonate_pressure_model(
 ]:
     """
     Function for estimating relative changes in Vp and Vs as a function of formation pressure depletion for carbonates.
+
     The models that are used are based on laboratory plug measurements at close to in situ conditions,
     and with simulated formation pressure depletion. The training and validation data set is based on pre-salt
     carbonates from producing fields from the Brazilian continental shelf.
@@ -48,47 +49,50 @@ def carbonate_pressure_model(
 
     Parameters
     ----------
-    rho_fluid : np.ndarray
+    rho_fluid
         Fluid density [kg/m^3]
-    vp_in_situ : np.ndarray
+    vp_in_situ
         In situ Vp [m/s]
-    vs_in_situ : np.ndarray
+    vs_in_situ
         In situ Vs [m/s]
-    rho_in_situ : np.ndarray
+    rho_in_situ
         In situ bulk density [kg/m^3]
-    vp_fluid_sub : np.ndarray
+    vp_fluid_sub
         Fluid substituted Vp [m/s]
-    vs_fluid_sub : np.ndarray
+    vs_fluid_sub
         Fluid substituted Vs [m/s]
-    rho_fluid_sub : np.ndarray
+    rho_fluid_sub
         Fluid substituted bulk density [kg/m^3]
-    phi : np.ndarray
+    phi
         Porosity [fraction]
-    pres_overburden : np.ndarray
+    pres_overburden
         Overburden pressure [Pa]
-    pres_formation : np.ndarray
+    pres_formation
         In situ formation pressure [Pa]
-    pres_form_depleted : np.ndarray
+    pres_form_depleted
         Depleted formation pressure [Pa]
-    vp_model : Path
+    vp_model
         Full name to neural network model for Vp
-    vs_model : Path
+    vs_model
         Full name to neural network model for Vs
-    model_path : Path
+    model_path
         Path to model directory
-    b_add_fluid_sub : bool
+    b_add_fluid_sub
         Control whether effect of fluid substitution should be added to the final result
 
     Returns
     -------
-    Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
-        vp_pres_sub : pressure substituted p-velocity [m/s]
-        vs_pres_sub : pressure substituted s-velocity [m/s]
-        rho_pres_sub : fluid substituted density is returned as the pressure substitution does not change this [kg/m^3]
-        ai_pres_sub : derived acoustic impedance [m/s x kg/m^3]
-        vpvs_pres_sub : derived vp/vs-ratio [fraction]
+    vp_pres_sub
+        Pressure substituted p-velocity [m/s].
+    vs_pres_sub
+        Pressure substituted s-velocity [m/s].
+    rho_pres_sub
+        Fluid substituted density (unchanged by pressure substitution) [kg/m^3].
+    ai_pres_sub
+        Derived acoustic impedance [m/s x kg/m^3].
+    vpvs_pres_sub
+        Derived Vp/Vs ratio [fraction].
     """
-
     # Plug measurements are reported or dry rock density, bulk density needs to be corrected for fluid effect
     rho_dry = rho_in_situ - rho_fluid * phi
 

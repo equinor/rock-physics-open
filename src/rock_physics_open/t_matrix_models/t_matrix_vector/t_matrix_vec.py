@@ -56,8 +56,10 @@ def t_matrix_porosity_vectorised(
     Array2D[np.float64],
     Array2D[np.float64],
 ]:
-    """Vectorised version of T-Matrix, pure Python version - mainly intended for cases where it is wished to follow
-    the entire process through and study intermediate results. The C++ implementation is significantly faster.
+    """Vectorised version of T-Matrix, pure Python version.
+
+    Mainly intended for cases where it is wished to follow the entire process through and study intermediate results.
+    The C++ implementation is significantly faster.
 
     Description of inputs:
     Mineral properties (effective properties, assumed mixed).
@@ -65,44 +67,49 @@ def t_matrix_porosity_vectorised(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         N length array, bulk modulus of matrix/mineral [Pa].
-    mu_min : np.ndarray
+    mu_min
         N length array, shear modulus of matrix/mineral [Pa].
-    rho_min : np.ndarray
+    rho_min
         N length array, density of matrix/mineral [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         N length array, bulk modulus of fluid [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         N length array, density of fluid [kg/m^3].
-    phi : np.ndarray
+    phi
         N length array, porosity [fraction].
-    perm : np.ndarray
+    perm
         Single float or N length array, permeability [mD].
-    visco : np.ndarray
+    visco
         Single float or N length array, fluid viscosity [cP].
-    alpha : np.ndarray
+    alpha
         M length vector, aspect ratio for inclusion sets [ratio].
-    v : np.ndarray
+    v
         M length vector, fraction of porosity belonging to each inclusion set [fraction].
-    tau : np.ndarray
+    tau
         M length vector, relaxation time constant [s].
-    frequency : float
+    frequency
         Single float, measurement frequency (seismic, sonic, ultrasonic range) [Hz].
-    angle : float
+    angle
         Single float, angle of symmetry plane (0 = HTI, 90 = VTI medium).
-    frac_inc_con : float or np.ndarray
+    frac_inc_con
         Single float or N length array, fraction of inclusions that are connected.
-    frac_inc_ani : float or np.ndarray
+    frac_inc_ani
         Single float or N length array, fraction of inclusions that are anisotropic.
-    pressure : np.ndarray, optional
+    pressure
         L length array (normally 2), by default None.
 
     Returns
     -------
-    tuple
-        Of type (np.ndarray, np.ndarray, np.ndarray, np.ndarray). Vertical P-wave velocity [m/s], Vsv: Vertical polarity S-wave velocity [m/s],
-        Vsh: Horizontal polarity S-wave velocity [m/s], rho_b: bulk density [kg/m^3].
+    vp
+        Vertical P-wave velocity [m/s].
+    vsv
+        Vertical polarity S-wave velocity [m/s].
+    vsh
+        Horizontal polarity S-wave velocity [m/s].
+    rho_b
+        Bulk density [kg/m^3].
     """
     log_length = len(phi)
     # Check that the inputs that should have the same length actually do

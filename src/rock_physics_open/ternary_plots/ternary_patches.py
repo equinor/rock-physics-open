@@ -27,23 +27,22 @@ def ternary_patches(
 
     Parameters
     ----------
-    quartz : np.ndarray
+    quartz
         Quartz volume fraction [fraction].
-    carb : np.ndarray
+    carb
         Carbonate volume fraction [fraction].
-    clay : np.ndarray
+    clay
         Clay volume fraction [fraction].
-    kero : np.ndarray
+    kero
         Kerogen volume fraction [fraction].
-    well_name : str
+    well_name
         Plot heading with well name.
-    draw_figures : bool
+    draw_figures
         Decide if figures are drawn or not, default is True.
 
     Returns
     -------
-    np.ndarray
-        Lithology class [int].
+    Lithology class [int].
     """
     _, ax = set_ternary_figure(
         delta_x=0,

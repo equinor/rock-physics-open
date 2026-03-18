@@ -26,30 +26,38 @@ def hs_average(
 
     Parameters
     ----------
-    k1 : np.ndarray
-        k1 array.
-    mu1 : np.ndarray
-        mu1 array.
-    rhob1 : np.ndarray
-        rhob1 array.
-    k2 : np.ndarray
-        k2 array.
-    mu2 : np.ndarray
-        mu2 array.
-    rhob2 : np.ndarray
-        rhob2 array.
-    f : float or np.ndarray
-        f value or array.
+    k1
+        Bulk modulus of phase 1 [Pa].
+    mu1
+        Shear modulus of phase 1 [Pa].
+    rhob1
+        Density of phase 1 [kg/m^3].
+    k2
+        Bulk modulus of phase 2 [Pa].
+    mu2
+        Shear modulus of phase 2 [Pa].
+    rhob2
+        Density of phase 2 [kg/m^3].
+    f
+        Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        vp, vs, rhob, ai, vp_vs, k, mu : np.ndarray
-        vp: compressional wave velocity [m/s], vs: shear wave velocity [m/s], ai: acoustic impedance [m/s x kg/m^3],
-        vp_vs: velocity ratio [ratio], k: bulk modulus [Pa], mu: shear modulus [Pa]
-
+    vp
+        Compressional wave velocity [m/s].
+    vs
+        Shear wave velocity [m/s].
+    rhob
+        Bulk density [kg/m^3].
+    ai
+        Acoustic impedance [m/s x kg/m^3].
+    vp_vs
+        Velocity ratio [ratio].
+    k
+        Bulk modulus [Pa].
+    mu
+        Shear modulus [Pa].
     """
-
     k, mu = std_functions.hashin_shtrikman_average(k1, mu1, k2, mu2, f)
 
     rhob = rhob1 * f + rhob2 * (1 - f)

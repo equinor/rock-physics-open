@@ -6,20 +6,18 @@ def posterior_probability(
     min_dist: npt.NDArray[np.float64], dist: npt.NDArray[np.float64]
 ) -> npt.NDArray[np.float64]:
     """
-    Posterior probability, which is defined as the exponential of minimum distance divided by the sum of the
-    exponentials of distance to all classes.
+    Posterior probability, which is defined as the exponential of minimum distance divided by the sum of the exponentials of distance to all classes.
 
     Parameters
     ----------
-    min_dist : np.ndarray
+    min_dist
         Minimum class distance according to some metric.
-    dist : np.ndarray
+    dist
         All class distances, each class in a column in a two-dimensional array.
 
     Returns
     -------
-    np.ndarray
-        Posterior probability array.
+    Posterior probability array.
     """
     dist *= -1.0
     n_exp = np.exp(dist)

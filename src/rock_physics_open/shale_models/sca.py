@@ -17,44 +17,45 @@ def self_consistent_approximation_model(
     tol: float,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    SCA - Effective elastic moduli using Berryman's Self-Consistent
-    (Coherent Potential) Approximation method.
+    SCA - Effective elastic moduli using Berryman's Self-Consistent (Coherent Potential) Approximation method.
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of background matrix [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of background matrix [Pa].
-    rho1 : np.ndarray
+    rho1
         Bulk density of background matrix [kg/m^3].
-    k2 : np.ndarray
+    k2
         Bulk modulus of inclusions [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of inclusions [Pa].
-    rho2 : np.ndarray
+    rho2
         Bulk density of inclusions [kg/m^3].
-    frac1 : np.ndarray
+    frac1
         Fraction of inclusions [fraction].
-    asp1 : np.ndarray
+    asp1
         Aspect ratio of background matrix [ratio].
-    asp2 : np.ndarray
+    asp2
         Aspect ratio of inclusions [ratio].
-    tol: float
+    tol
         Desired accuracy in the SCA iterations.
 
     Returns
     -------
-    tuple
-        k, mu, rho : np.ndarray
-        k: effective medium bulk modulus [Pa], mu: effective medium shear modulus [Pa], rho: bulk density [kg/m^3].
+    k
+        Effective medium bulk modulus [Pa].
+    mu
+        Effective medium shear modulus [Pa].
+    rho
+        Bulk density [kg/m^3].
 
-    Comments
-    --------
+    Notes
+    -----
     Based on function by T. Mukerji, SRB, Stanford University, 1994.
     Ported to Python by Harald Flesche, Equinor 2015.
     """
-
     # Calculate fn and theta - independent of iteration
     f1 = frac1
     f2 = 1 - frac1

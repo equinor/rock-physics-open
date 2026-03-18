@@ -26,17 +26,27 @@ def c_ij_2_c_factors(
     ]
     | None
 ):
-    """Transform a single stiffness tensor into components. VTI medium is assumed
+    """Transform a single stiffness tensor into components. VTI medium is assumed.
 
     Parameters
     ----------
-    cij : np.ndarray
+    cij
             A 6x6 matrix.
 
     Returns
     -------
-    tuple
-            (c11, c12, c13, c33, c44, c66).
+    c11
+            All 1-dimensional of same length.
+    c12
+            All 1-dimensional of same length.
+    c13
+            All 1-dimensional of same length.
+    c33
+            All 1-dimensional of same length.
+    c44
+            All 1-dimensional of same length.
+    c66
+            All 1-dimensional of same length.
     """
     if not isinstance(cij, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance]
         try:  # pyright: ignore[reportUnreachable]
@@ -70,13 +80,22 @@ def cfactors2cij(
 
     Parameters
     ----------
-    c11, c12, c13, c33, c44, c66 : np.ndarray
+    c11
+            All 1-dimensional of same length.
+    c12
+            All 1-dimensional of same length.
+    c13
+            All 1-dimensional of same length.
+    c33
+            All 1-dimensional of same length.
+    c44
+            All 1-dimensional of same length.
+    c66
             All 1-dimensional of same length.
 
     Returns
     -------
-    np.ndarray
-            A 6x6x(number of samples) stiffness tensor.
+    A 6x6x(number of samples) stiffness tensor.
     """
     c11, c12, c13, c33, c44, c66 = cast(
         list[npt.NDArray[np.float64]],
@@ -118,15 +137,23 @@ def c_ij_2_thomsen(
 
     Parameters
     ----------
-    c : np.ndarray
+    c
             A (log of or single instance of) 6x6 elastic tensor.
-    rho : np.ndarray
+    rho
             Density - log of same length as c.
 
     Returns
     -------
-    tuple
-            alpha, beta, gamma, delta, epsilon.
+    alpha
+            Thomsen's parameters.
+    beta
+            Thomsen's parameters.
+    gamma
+            Thomsen's parameters.
+    delta
+            Thomsen's parameters.
+    epsilon
+            Thomsen's parameters.
     """
     # C matrix should be 6x6
     if not isinstance(c, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -167,7 +194,9 @@ def thomsen_2_c_ij(
     npt.NDArray[np.float64],
     npt.NDArray[np.float64],
 ]:
-    """Elastic stiffness. Assumptions:
+    """Elastic stiffness.
+
+    Assumptions:
             Thomsen's parameters apply for weak anisotropy in a transversely isotropic medium:
 
             c11 c12 c13  0   0   0
@@ -186,15 +215,33 @@ def thomsen_2_c_ij(
 
     Parameters
     ----------
-    alpha, beta, gamma, delta, epsilon :
-            Thomsen's parameters.
-    rho :
-            Bulk density.
+    alpha
+        Thomsen's parameters.
+    beta
+        Thomsen's parameters.
+    gamma
+        Thomsen's parameters.
+    delta
+        Thomsen's parameters.
+    epsilon
+        Thomsen's parameters.
+    rho
+        Bulk density
 
     Returns
     -------
-    tuple
-            Elastic stiffness c11, c12, c13, c33, c44, c66.
+    c11
+        Elastic stiffness component c11.
+    c12
+        Elastic stiffness component c12.
+    c13
+        Elastic stiffness component c13.
+    c33
+        Elastic stiffness component c33.
+    c44
+        Elastic stiffness component c44.
+    c66
+        Elastic stiffness component c66.
     """
     alpha, beta, gamma, delta, epsilon = cast(
         list[npt.NDArray[np.float64]],

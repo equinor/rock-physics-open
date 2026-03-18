@@ -10,22 +10,23 @@ def calc_x_vec(
     s_0: Array3D[np.float64],
     td: Array4D[np.float64],
 ) -> Array4D[np.float64]:
-    """Returns the x-tensor (6x6x(numbers of empty cavities) matrix) for more explanation see e.g.
-    Agersborg et al. 2009 or "The effects of drained and undrained loading in
+    """Returns the x-tensor (6x6x(numbers of empty cavities) matrix).
+
+    For more explanation see e.g. Agersborg et al. 2009
+    or "The effects of drained and undrained loading in
     visco-elastic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
-    (2005). Int. J. Solids and Structures (42). p. 1597-1611
+    (2005). Int. J. Solids and Structures (42). p. 1597-1611.
 
     Parameters
     ----------
-    s_0: np.ndarray
+    s_0
         Inverse of stiffness tensor of the host material (nx6x6 matrix).
-    td :  np.ndarray
+    td
         Dry t-matrix tensors (nx6x6x(numbers of empty cavities) matrix).
 
     Returns
     -------
-    np.ndarray
-        x-tensor.
+    x-tensor.
     """
     i2_i2, log_length, alpha_length = check_and_tile(s_0, td)
 

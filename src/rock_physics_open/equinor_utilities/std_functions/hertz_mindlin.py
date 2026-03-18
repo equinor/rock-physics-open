@@ -15,15 +15,15 @@ def hertz_mindlin(
 
     Parameters
     ----------
-    k : np.ndarray
+    k
         Bulk modulus of grain mineral [Pa].
-    mu : np.ndarray
+    mu
         Shear modulus of grain mineral [Pa].
-    phi_c : np.ndarray
+    phi_c
         Critical porosity [fraction].
-    p : np.ndarray
+    p
         Effective pressure = lithostatic pressure - hydrostatic pressure [Pa].
-    shear_red : float or np.ndarray
+    shear_red
         Reduced shear factor, if set to 1.0, calculation reduces to standard Hertz-Mindlin equation.
     coord
         coordination number, i.e. the number of grain contacts per grain. If not provided a porosity based
@@ -31,10 +31,10 @@ def hertz_mindlin(
 
     Returns
     -------
-    tuple
-        k_dry, mu_dry : np.ndarray.
-        k_dry:	Bulk modulus [Pa] at effective pressure p,
-        mu_dry:	Shear modulus [Pa] at effective pressure p.
+    k_dry
+        Bulk modulus [Pa] at effective pressure p.
+    mu_dry
+        Shear modulus [Pa] at effective pressure p.
     """
     n = 25.98805 * phi_c**2 - 43.7622 * phi_c + 21.6719 if coord is None else coord
 

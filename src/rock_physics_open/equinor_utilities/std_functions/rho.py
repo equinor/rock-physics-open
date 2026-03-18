@@ -14,17 +14,16 @@ def rho_b(
 
     Parameters
     ----------
-    phi: np.ndarray
+    phi
         Porosity [fraction].
-    rho_f: np.ndarray
+    rho_f
         Fluid bulk density [kg/m^3].
-    rho_mat: np.ndarray
+    rho_mat
         Matrix bulk density [kg/m^3].
 
     Returns
     -------
-    np.ndarray
-        rhob: bulk density [kg/m^3].
+    Bulk density [kg/m^3].
     """
     return phi * rho_f + (1 - phi) * rho_mat
 
@@ -36,24 +35,24 @@ def rho_m(
     rho_min: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Calculates matrix density as a combination of cement fraction and minerals
+    Calculates matrix density as a combination of cement fraction and minerals.
+
     fracCem is defined as cement fraction relative to total volume.
 
     Parameters
     ----------
-    frac_cem : np.ndarray
+    frac_cem
         Cement fraction [fraction].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    rho_cem : np.ndarray
+    rho_cem
          Cement density [kg/m^3].
-    rho_min : np.ndarray
+    rho_min
          Mineral density [kg/m^3].
 
     Returns
     -------
-    np.ndarray
-        rho_mat: matrix density [kg/m^3]
+    Matrix density [kg/m^3].
     """
     idx = np.logical_and(phi >= 0.0, phi < 1.0)
     if np.sum(idx) != len(phi):

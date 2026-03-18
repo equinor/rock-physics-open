@@ -57,60 +57,66 @@ def friable_shaly_sand_sandy_shale_model(
 
     Parameters
     ----------
-    k_sst : np.ndarray
+    k_sst
         Sandstone bulk modulus [Pa].
-    mu_sst : np.ndarray
+    mu_sst
         Sandstone shear modulus [Pa].
-    rho_sst : np.ndarray
+    rho_sst
         Sandstone bulk density [kg/m^3].
-    k_mud : np.ndarray
+    k_mud
         Shale bulk modulus [Pa].
-    mu_mud : np.ndarray
+    mu_mud
         Shale shear modulus [Pa].
-    rho_mud : np.ndarray
+    rho_mud
         Shale bulk density [kg/m^3].
-    k_fl_sst : np.ndarray
+    k_fl_sst
         Fluid bulk modulus for sandstone fluid [Pa].
-    rho_fl_sst : np.ndarray
+    rho_fl_sst
         Fluid bulk density for sandstone fluid [kg/m^3].
-    k_fl_mud : np.ndarray
+    k_fl_mud
         Fluid bulk modulus for shale fluid [Pa].
-    rho_fl_mud : np.ndarray
+    rho_fl_mud
         Fluid bulk density for shale fluid[kg/m^3].
-    phi : np.ndarray
+    phi
         Total porosity [fraction].
-    p_eff_sst : np.ndarray
+    p_eff_sst
         Effective pressure in sandstone [Pa].
-    p_eff_mud : np.ndarray
+    p_eff_mud
         Effective pressure in mud [Pa].
-    shale_frac : np.ndarray
+    shale_frac
         Shale fraction [fraction].
-    phi_c_sst : float
+    phi_c_sst
         Critical porosity for sandstone [fraction].
-    phi_c_mud : float
+    phi_c_mud
         Critical porosity for mud [fraction].
-    phi_intr_mud : float
+    phi_intr_mud
         Intrinsic shale porosity [fraction].
-    coord_num_func_sst : str
+    coord_num_func_sst
         Indication if coordination number should be calculated from porosity or kept constant for sandstone.
-    coord_num_func_mud : str
-        Indication if coordination number should be calculated from porosity or kept constant for shale.
-    n_sst : float
+    n_sst
         Coordination number for sandstone [unitless].
-    n_mud : float
+    coord_num_func_mud
+        Indication if coordination number should be calculated from porosity or kept constant for shale.
+    n_mud
         Coordination number for shale [unitless].
-    shear_red_sst : float
+    shear_red_sst
         Shear reduction factor for sandstone [fraction].
-    shear_red_mud : float
+    shear_red_mud
         Shear reduction factor for mud [fraction].
 
     Returns
     -------
-    tuple
-        vp, vs, rho, ai, vpvs  : np.ndarray
-        vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
+    vp
+        Compressional wave velocity of saturated rock [m/s].
+    vs
+        Shear wave velocity of saturated rock [m/s].
+    rho
+        Bulk density [kg/m^3].
+    ai
+        Acoustic impedance [m/s x kg/m^3].
+    vpvs
+        Vp/Vs ratio [ratio].
     """
-
     # Filter out values of phi that are above phi_c, assumed only to apply for the sandstone
     (
         idx_phi,

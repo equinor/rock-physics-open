@@ -21,22 +21,21 @@ def calc_td_vec(
 
     Parameters
     ----------
-    c0 : np.ndarray
+    c0
         Stiffness tensor of the host material (nx6x6 matrix).
-    i4 : np.ndarray
+    i4
         An n x Identity matrix.
-    s_0 : np.ndarray
+    s_0
         Inverse of stiffness tensor.
-    kd : np.ndarray
+    kd
         Dry K tensor of all the empty cavities (nx6x6x(numbers of empty cavities) matrix) see Agersborg et al.
         2009 for explanation.
-    alpha : np.ndarray
+    alpha
         Aspect ratios of all the empty cavities (1x(numbers of empty cavities) vector).
 
     Returns
     -------
-    np.ndarray
-        Dry t-matrix tensors.
+    Dry t-matrix tensors.
     """
     log_len = c0.shape[0]
     if alpha.ndim == 1 and alpha.shape[0] != c0.shape[0]:

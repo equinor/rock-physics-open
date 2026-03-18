@@ -47,57 +47,73 @@ def run_t_matrix_with_opt_params_petec(
     Array1D[np.float64],
 ]:
     """
-        Based on the input file with parameters for the optimally fitted model, the correct modelling version is run.
-        Fluid substitution follows, in case it is selected. If not, the vp_sub and vs_sub will contain the same values as
-        the input logs.
-    def run_t_matrix_with_opt_params_exp(fl_k_orig, fl_rho_orig, fl_k_sub, fl_rho_sub,
-                                     vp, vs, rhob,
-                                     phi, vsh,
-                                     angle, perm, visco, tau, freq,
-                                     f_name, fluid_sub=True):
-        Parameters
-        ----------
-        min_k : np.ndarray
-            Effective mineral bulk modulus [Pa].
-        min_mu : np.ndarray
-            Effective mineral shear modulus [Pa].
-        min_rho : np.ndarray
-            Effective mineral density [kg/m^3].
-        fl_k_orig : np.ndarray
-            Effective in situ fluid bulk modulus [Pa].
-        fl_rho_orig : np.ndarray
-            Effective in situ fluid density [kg/m^3].
-        fl_k_sub : np.ndarray
-            Effective substituted fluid bulk modulus [Pa].
-        fl_rho_sub : Effective substituted density [kg/m^3].
-        vp : np.ndarray
-            Compressional velocity [m/s].
-        vs : np.ndarray
-            Shear velocity [m/s].
-        rhob : np.ndarray
-            Bulk density [kg/m^3].
-        phi : np.ndarray
-            Porosity [fraction].
-        angle : float
-            Angle of symmetry plane [degrees]
-        perm : float
-            Permeability [mD].
-        visco : float
-            Viscosity [cP].
-        tau : float
-            Relaxation time constant [s].
-        freq : float
-            Signal frequency [Hz].
-        f_name : str
-            File name for parameter file for optimal parameters.
-        fluid_sub : bool
-            Boolean parameter to perform fluid substitution.
+    Based on the input file with parameters for the optimally fitted model, the correct modelling version is run.
 
-        Returns
-        -------
-        tuple
-            Tuple of np.ndarrays: vp and vs for pressure substituted case, vp, vs and density for fluid substituted case, vp and vs for
-            optimal fitted model, vp and vs residuals (observed logs minus modelled values).
+    Fluid substitution follows, in case it is selected. If not, the vp_sub and vs_sub will contain the same values as the input logs.
+
+    Parameters
+    ----------
+    min_k
+        Effective mineral bulk modulus [Pa].
+    min_mu
+        Effective mineral shear modulus [Pa].
+    min_rho
+        Effective mineral density [kg/m^3].
+    fl_k_orig
+        Effective in situ fluid bulk modulus [Pa].
+    fl_rho_orig
+        Effective in situ fluid density [kg/m^3].
+    fl_k_sub
+        Effective substituted fluid bulk modulus [Pa].
+    fl_rho_sub
+        Effective substituted density [kg/m^3].
+    vp
+        Compressional velocity [m/s].
+    vs
+        Shear velocity [m/s].
+    rhob
+        Bulk density [kg/m^3].
+    phi
+        Porosity [fraction].
+    angle
+        Angle of symmetry plane [degrees]
+    perm
+        Permeability [mD].
+    visco
+        Viscosity [cP].
+    tau
+        Relaxation time constant [s].
+    freq
+        Signal frequency [Hz].
+    f_name
+        File name for parameter file for optimal parameters.
+    fluid_sub
+        Boolean parameter to perform fluid substitution.
+
+    Returns
+    -------
+    vp_sub
+        Fluid substituted p-wave velocity [m/s].
+    vs_sub
+        Fluid substituted s-wave velocity [m/s].
+    rho_sub
+        Fluid substituted density [kg/m^3].
+    ai_sub
+        Fluid substituted acoustic impedance [kg/m^3 x m/s].
+    vpvs_sub
+        Fluid substituted Vp/Vs ratio [ratio].
+    vp_mod
+        P-wave velocity from the optimal fitted model [m/s].
+    vs_mod
+        S-wave velocity from the optimal fitted model [m/s].
+    rho_mod
+        Density from the optimal fitted model [kg/m^3].
+    vp_res
+        P-wave residual (observed minus modelled) [m/s].
+    vs_res
+        S-wave residual (observed minus modelled) [m/s].
+    rho_res
+        Density residual (observed minus modelled) [kg/m^3].
     """
     _, opt_params, _ = load_opt_params(f_name)
     y_data = np.stack([vp, vs], axis=1)

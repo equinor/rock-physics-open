@@ -23,12 +23,28 @@ def gas_properties(
     npt.NDArray[np.float64],
 ]:
     """
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Formation pressure (Pa)
-    :param temperature: Temperature (Celsius).
-    :return: vel_gas [m/s], den_gas [kg/m^3], k_gas [Pa], eta_gas [cP]
-    """
+    Compute velocity, density, bulk modulus, and viscosity of a natural gas.
 
+    Parameters
+    ----------
+    temperature
+        Temperature [°C].
+    pressure
+        Formation pressure (Pa)
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    vel_gas
+        Gas velocity [m/s].
+    den_gas
+        Gas density [kg/m^3].
+    k_gas
+        Gas bulk modulus [Pa].
+    eta_gas
+        Gas viscosity [cP].
+    """
     den_gas = gas_density(
         absolute_temperature=celsius_to_kelvin(temperature),
         pressure=pressure,
@@ -54,9 +70,16 @@ def gas_properties(
 
 def molecular_weight(gas_gravity: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
-    calculates molecular weight of a gas from gas gravity.
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :return: The volume of the gas in kg/mol.
+    Calculates molecular weight of a gas from gas gravity.
+
+    Parameters
+    ----------
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    The volume of the gas in kg/mol.
     """
     return gas_gravity * AIR_WEIGHT
 
@@ -66,12 +89,19 @@ def molar_volume(
     pressure: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    calculates molar volume using the ideal gas law.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :return: The volume of the gas in m^3/mol.
-    """
+    Calculates molar volume using the ideal gas law.
 
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+
+    Returns
+    -------
+    The volume of the gas in m^3/mol.
+    """
     return gas_constant * absolute_temperature / pressure
 
 
@@ -81,11 +111,20 @@ def ideal_gas_density(
     gas_gravity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    calculates molar volume using the ideal gas law.
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :return: The density of the gas in kg/m^3
+    Calculates molar volume using the ideal gas law.
+
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    The density of the gas in kg/m^3.
     """
     return molecular_weight(gas_gravity) / molar_volume(absolute_temperature, pressure)
 
@@ -95,9 +134,18 @@ def ideal_gas_primary_velocity(
     gas_gravity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :return: The compressional wave velocity of the gas in m/s.
+    Get ideal gas primary velocity.
+
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    The compressional wave velocity of the gas in m/s.
     """
     return np.sqrt(gas_constant * absolute_temperature / molecular_weight(gas_gravity))
 
@@ -108,10 +156,23 @@ def ideal_gas(
     gas_gravity: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :return: ideal_gas_velocity [m/s], ideal_gas_density [kg/m^3],
+    Get ideal gas properties.
+
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    ideal_gas_velocity
+        Ideal gas velocity [m/s].
+    ideal_gas_density
+        Ideal gas density [kg/m^3].
     """
     ideal_gas_den = ideal_gas_density(
         absolute_temperature=absolute_temperature,
@@ -130,7 +191,7 @@ def pseudoreduced_temperature(
     gas_gravity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    calculates pseudoreduced temperature, equation 9a from Batzle & Wang [1].
+    Calculates pseudoreduced temperature, equation 9a from Batzle & Wang [1].
 
     Uses relationship from
 
@@ -138,9 +199,16 @@ def pseudoreduced_temperature(
     Determination of acoustic velocities for natural gas: J. Petr.
     Tech., 22, 889-892.
 
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :return: Pseudoreduced temperature in kelvin.
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    Pseudoreduced temperature in kelvin.
     """
     return absolute_temperature / (94.72 + 170.75 * gas_gravity)
 
@@ -150,7 +218,7 @@ def pseudoreduced_pressure(
     gas_gravity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    calculates pseudoreduced pressure, equation 9a from Batzle & Wang [1].
+    Calculates pseudoreduced pressure, equation 9a from Batzle & Wang [1].
 
     Uses relationship from
 
@@ -158,9 +226,16 @@ def pseudoreduced_pressure(
     Determination of acoustic velocities for natural gas: J. Petr.
     Tech., 22, 889-892.
 
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param pressure: Confining pressure in Pa.
-    :return: Pseudoreduced pressure in Pa.
+    Parameters
+    ----------
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    Pseudoreduced pressure in Pa.
     """
     return pressure / (4.892 - 0.4048 * gas_gravity)
 
@@ -171,13 +246,20 @@ def compressibility_factor(
     gas_gravity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    calculates compressibility hydro-carbon gas, equation 10b and 10c from
-    Batzle & Wang [1].
+    Calculates compressibility hydro-carbon gas, equation 10b and 10c from Batzle & Wang [1].
 
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :return: Gas compressibility - unitless
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    Gas compressibility - unitless
     """
     tpr = pseudoreduced_temperature(
         absolute_temperature=absolute_temperature,
@@ -206,12 +288,19 @@ def gas_density(
     """
     The density of hydro-carbon gas, using equation 10 from Batzle & Wang [1].
 
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :return: The density of the gas in kg/m^3
-    """
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
 
+    Returns
+    -------
+    The density of the gas in kg/m^3
+    """
     _, ideal_gas_den = ideal_gas(
         absolute_temperature=absolute_temperature,
         pressure=pressure,
@@ -232,10 +321,18 @@ def compressibility_rate_per_pseudoreduced_pressure(
     """
     Derivate of compressibility_factor with respect to pressure.
 
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in MPa.
-    :return: Derivative of the compressibility factor (unitless) with respect to pseudoreduced pressure
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in MPa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    Derivative of the compressibility factor (unitless) with respect to pseudoreduced pressure
     """
     tpr = pseudoreduced_temperature(absolute_temperature, gas_gravity)
 
@@ -263,10 +360,18 @@ def gas_bulk_modulus(
     """
     The bulk modulus of hydro-carbon gas, using equation 11 from Batzle & Wang [1].
 
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :return: The bulk modulus of the gas in Pa.
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air molar mass.
+
+    Returns
+    -------
+    The bulk modulus of the gas in Pa.
     """
     z = compressibility_factor(
         absolute_temperature=absolute_temperature,
@@ -301,10 +406,18 @@ def gas_viscosity(
     """
     The gas viscosity of hydrocarbon gas, using equations 12 and 13 of Batzle & Wang [1].
 
-    :param absolute_temperature: The absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :param gas_gravity: molar mass of gas relative to air mas.
-    :return: The gas viscosity of the gas in cP.
+    Parameters
+    ----------
+    absolute_temperature
+        The absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        molar mass of gas relative to air mas.
+
+    Returns
+    -------
+    The gas viscosity of the gas in cP.
     """
     temp_pr = pseudoreduced_temperature(absolute_temperature, gas_gravity)
 
@@ -337,18 +450,24 @@ def lee_gas_viscosity(
     gas_gravity: npt.NDArray[np.float64],
 ) -> np.ndarray:
     """
-    :param absolute_temperature: Absolute temperature of the gas in kelvin.
-    :param pressure: Confining pressure in Pa.
-    :param gas_gravity: specific gravity of gas relative to air.
-    :return: gas viscosity in cP
+    Get gas viscosity.
 
-    Reference
-    ---------
-    Lee, J. D., et al. (1966). "Viscosity of Natural Gas." In The American Institute of
-    Chemical Engineers Journal, Volume 12, Issue 6, pp. 1058-1062.
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature of the gas in kelvin.
+    pressure
+        Confining pressure in Pa.
+    gas_gravity
+        specific gravity of gas relative to air.
 
-    Original equation is given in imperial units. Inputs are transformed to temperature
-    in Fahrenheit and pressure in psi
+    Returns
+    -------
+    gas viscosity in cP
+
+    References
+    ----------
+    Lee, J. D., et al. (1966). "Viscosity of Natural Gas." In The American Institute of Chemical Engineers Journal, Volume 12, Issue 6, pp. 1058-1062. Original equation is given in imperial units. Inputs are transformed to temperature in Fahrenheit and pressure in psi
     """
     temp_far = celsius_to_fahrenheit(kelvin_to_celsius(absolute_temperature))
     pres_psi = pa_to_psi(pressure)

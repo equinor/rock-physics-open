@@ -9,6 +9,14 @@ Array1D = np.ndarray[tuple[int], np.dtype[_T]]
 Array2D = np.ndarray[tuple[int, int], np.dtype[_T]]
 Array3D = np.ndarray[tuple[int, int, int], np.dtype[_T]]
 Array4D = np.ndarray[tuple[int, int, int, int], np.dtype[_T]]
+ArrayAnyDOrFloat = TypeVar("ArrayAnyDOrFloat", npt.NDArray[np.float64], float)
+Array1DOrFloat = TypeVar("Array1DOrFloat", Array1D[np.float64], float)
+Array3Or4D = TypeVar(
+    "Array3Or4D",
+    Array3D[np.float64],
+    Array4D[np.float64],
+)
+ComplexOrFloat = TypeVar("ComplexOrFloat", np.complex128, np.float64)
 
 
 class OptCallable(Protocol):

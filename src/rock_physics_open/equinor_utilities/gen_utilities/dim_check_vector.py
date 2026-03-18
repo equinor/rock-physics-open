@@ -9,24 +9,21 @@ import pandas as pd
 def dim_check_vector(
     args: list[Any] | tuple[Any, ...],
     force_type: np.dtype | None = ...,
-) -> list[npt.NDArray[Any] | pd.DataFrame]:
-    """Overload for when the input is a list or tuple."""
+) -> list[npt.NDArray[Any] | pd.DataFrame]: ...
 
 
 @overload
 def dim_check_vector(
     args: pd.DataFrame,
     force_type: np.dtype | None = ...,
-) -> pd.DataFrame:
-    """Overload for when the input is a pandas DataFrame."""
+) -> pd.DataFrame: ...
 
 
 @overload
 def dim_check_vector(
     args: npt.NDArray[Any],
     force_type: np.dtype | None = ...,
-) -> npt.NDArray[Any]:
-    """Overload for when the input is a numpy array."""
+) -> npt.NDArray[Any]: ...
 
 
 def dim_check_vector(
@@ -34,21 +31,26 @@ def dim_check_vector(
     force_type: np.dtype | None = None,
 ) -> npt.NDArray[Any] | pd.DataFrame | list[npt.NDArray[Any] | pd.DataFrame]:
     """
-    Check that all inputs are of the same (one-dimensional) size. Raise ValueError in case there are several lengths
-    present in the inputs. All inputs will be checked and possibly expanded to common length. Only the first dimension
+    Check that all inputs are of the same (one-dimensional) size.
+
+    All inputs will be checked and possibly expanded to common length. Only the first dimension
     is harmonised.
 
     Parameters
     ----------
-    args : list or tuple
+    args
         Input list or tuple of scalars, numpy arrays or pandas data frames of numerical or boolean type.
-    force_type : np.dtype
+    force_type
         Force all outputs to be of a specific dtype.
 
     Returns
     -------
-    output_args : list
-        List of inputs where all are of the same length.
+    List of inputs where all are of the same length.
+
+    Raises
+    ------
+    ValueError
+        If input type is not supported.
     """
     single_types = (np.ndarray, pd.DataFrame)
     iterable_types = (list, tuple)

@@ -18,34 +18,40 @@ def backus_average(
     npt.NDArray[np.float64],
 ]:
     """
-    Backus average for a combination of two phases. The individual phases are isotropic
-    but the resulting effective medium is not.
+    Backus average for a combination of two phases.
+
+    The individual phases are isotropic but the resulting effective medium is not.
 
     Parameters
     ----------
-    vp1 : np.ndarray
+    vp1
         Pressure wave velocity for phase 1 [m/s].
-    vs1 : np.ndarray
+    vs1
         Shear wave velocity for phase 1 [m/s].
-    rho1 : np.ndarray
+    rho1
         Density for phase 1 [kg/m^3].
-    vp2 : np.ndarray
+    vp2
         Pressure wave velocity for phase 2 [m/s].
-    vs2 : np.ndarray
+    vs2
         Shear wave velocity for phase 2 [m/s].
-    rho2 : np.ndarray
+    rho2
         Density for phase 2 [kg/m^3].
-    f1 : np.ndarray
-        Fraction of phase 1.
+    f1
+        Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        vpv, vsv, vph, vsh, rho : np.ndarray
-        vpv: vertical pressure velocity, vsv: vertical shear velocity, vph: horizontal pressure velocity,
-        vsh: horizontal shear velocity, rho: density.
+    vpv
+        Vertical pressure velocity.
+    vsv
+        Vertical shear velocity.
+    vph
+        Horizontal pressure velocity.
+    vsh
+        Horizontal shear velocity.
+    rho
+        Effective density.
     """
-
     a = (
         4 * f1 * rho1 * vs1**2 * (1 - vs1**2 / vp1**2)
         + 4 * (1 - f1) * rho2 * vs2**2 * (1 - (vs2 / vp2) ** 2)

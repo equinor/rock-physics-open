@@ -15,21 +15,31 @@ def bp_standing(
     temperature: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    Reservoir oils include some natural gas in solution. The pressure at which
-    this natural gas begins to come out of solution and form bubbles is known
+    Reservoir oils include some natural gas in solution.
+
+    The pressure at which this natural gas begins to come out of solution and form bubbles is known
     as the bubble point pressure. See https://petrowiki.org/Oil_bubblepoint_pressure
     Based on the correlation from:
     Standing, M. B. "A pressure-volume-temperature correlation for mixtures of
     California oils and gases." Drilling and Production Practice. American
     Petroleum Institute, 1947.
-    Uses refinement described here: https://petrowiki.org/Oil_bubblepoint_pressure
-    :param density: density of oil at room conditions [kg/m^3]
-    :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :param temperature: temperature of oil [°C]
-    :return: bubble point pressure [Pa]
-    """
+    Uses refinement described here: https://petrowiki.org/Oil_bubblepoint_pressure.
 
+    Parameters
+    ----------
+    density
+        density of oil at room conditions [kg/m^3]
+    gas_oil_ratio
+        The volume ratio of gas to oil [l/l]
+    gas_gravity
+        molar mass of gas relative to air molar mas.
+    temperature
+        temperature of oil [°C]
+
+    Returns
+    -------
+    bubble point pressure [Pa].
+    """
     # Standing, M.B. (1947) uses:
     # * pressure in psi
     # * temperature in F
@@ -90,21 +100,27 @@ def max_gor_standing(
     temperature: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    Calculate the maximum amount of gas that can be dissolved in
-    an oil for a given gas gravity, oil density, pressure and temperature.
+    Calculate the maximum amount of gas that can be dissolved in an oil for a given gas gravity, oil density, pressure and temperature.
+
     The result is given as gas/oil ratio.
     Standing 1962, The Rock Physics Handbook, 3rd ed. 2020,
-    Equation 6.22.28
+    Equation 6.22.28.
 
 
-    Args:
-        density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
-        pressure (ArrayLikeFloat): formation pressure [Pa]
-        gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
-        temperature (ArrayLikeFloat): temperature [°C]
+    Parameters
+    ----------
+    density
+        Oil density at standard conditions [kg/m^3].
+    pressure
+        Formation pressure [Pa].
+    gas_gravity
+        Gas gravity relative to air [unitless].
+    temperature
+        Temperature [°C].
 
-    Returns:
-        ArrayLikeFloat: gas/oil ratio [l/l]
+    Returns
+    -------
+    gas/oil ratio [l/l]
     """
     scalar_input = inputs_are_scalar(density, pressure, gas_gravity, temperature)
     density_arr = as_float_array(density)

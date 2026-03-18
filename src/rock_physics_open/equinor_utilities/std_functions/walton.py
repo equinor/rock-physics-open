@@ -14,26 +14,25 @@ def walton_smooth(
 
     Parameters
     ----------
-    k : np.ndarray
+    k
         Bulk modulus of grain mineral [Pa].
-    mu : np.ndarray
+    mu
         Shear modulus of grain mineral [Pa].
-    phi : np.ndarray
+    phi
         Critical porosity [fraction].
-    p_eff : np.ndarray
+    p_eff
         Effective Pressure = (Lithostatic - Hydrostatic) pressure [Pa].
-    coord : float or np.ndarray
+    coord
         Coordination number, i.e. number of grain contract per grain. If not provided a porosity based estimate is
         used [unitless].
 
     Returns
     -------
-    tuple
-        k_dry , mu_dry : np.ndarray.
-        k_dry	Bulk modulus at effective pressure p,
-        mu_dry	Shear modulus at effective pressure p.
+    k_dry
+        Bulk modulus at effective pressure p.
+    mu_dry
+        Shear modulus at effective pressure p.
     """
-
     n = 25.98805 * phi**2 - 43.7622 * phi + 21.6719 if coord is None else coord
 
     pr_min = (3 * k - 2 * mu) / (2 * (3 * k + mu))

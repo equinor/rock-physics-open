@@ -14,17 +14,16 @@ def g_tensor_vec(
 
     Parameters
     ----------
-    c0 : np.ndarray
+    c0
         n stiffness tensors of the host material (nx6x6 array).
-    s_0 : np.ndarray
+    s_0
         Inverse of stiffness tensor.
-    alpha : float | np.ndarray
+    alpha
         Aspect ratio for single inclusion.
 
     Returns
     -------
-    np.ndarray
-        g-tensor.
+    g-tensor.
 
     Raises
     ------

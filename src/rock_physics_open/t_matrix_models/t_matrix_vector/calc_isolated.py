@@ -23,33 +23,37 @@ def calc_isolated_part_vec(
     frac_ani: float,
 ) -> Array3D[np.float64]:
     """
-    Returns the first order correction tensor: sum of the concentrations and
-    t-matrices of the isolated porosity (6x6 matrix).
+    Returns the first order correction tensor: sum of the concentrations and t-matrices of the isolated porosity (6x6 matrix).
+
     case_iso = 0 : 100% isotropic,
     case_iso = 1 : mixed isotropic and anisotropic porosity,
     case_iso = 2 : 100% anisotropic porosity.
 
     Parameters
     ----------
-    c0 : np.ndarray
+    c0
         Stiffness tensor of the host material (6x6xn).
-    s_0 :  np.ndarray
+    s_0
         Inverse of stiffness tensor.
-    kappa_f : np.ndarray
+    kappa_f
         Bulk modulus of the fluid (n length vector).
-    alpha : np.ndarray
+    alpha
         Aspect ratios of all the inclusions (1xnumber of inclusions) vector).
-    v : np.ndarray
+    v
         Concentration of all the inclusions (1xnumber of inclusions) vector).
-    case_iso : int
+    case_iso
         Control parameter.
-    frac_ani : float
+    frac_ani
         Fraction of anisotropic inclusions.
 
     Returns
     -------
-    np.ndarray
-        c1: correction tensor.
+    c1: correction tensor.
+
+    Raises
+    ------
+    ValueError
+        If input dimensions or shapes are inconsistent.
 
     Notes
     -----
@@ -57,7 +61,6 @@ def calc_isolated_part_vec(
     Remy's code, but this function had assumption that half of the inclusions could have different aspect ratio
     13.11.2020 HFLE: In case of zero porosity, this routine returns a zero tensor, whereas the correct should have
     been to return the host material tensor - corrected.
-
     """
     if not (c0.ndim == 3 and s_0.ndim == 3):
         raise ValueError(f"{__name__}: mismatch in inputs variables dimension/shape")

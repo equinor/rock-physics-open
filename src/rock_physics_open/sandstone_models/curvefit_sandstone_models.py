@@ -13,11 +13,28 @@ def curvefit_patchy_cement(
     shear_red: float,
     frac_cem: float,
 ) -> npt.NDArray[np.float64]:
-    """Run patchy_cement_model_weight with parameter optimisation for closest possible fit to observations
+    """Run patchy_cement_model_weight with parameter optimisation for closest possible fit to observations.
 
     Inputs: vp, vs, rho, por, k_fl, rho_fl, p_eff, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, phi_c
     Parameters to optimise for: frac_cem, shear_red, weight_k, weight_mu
     Optimise for vp, vs
+
+    Parameters
+    ----------
+    x_data
+        Input data array.
+    weight_k
+        Weight for bulk modulus.
+    weight_mu
+        Weight for shear modulus.
+    shear_red
+        Shear reduction factor.
+    frac_cem
+        Cement fraction.
+
+    Returns
+    -------
+    Result.
     """
     # Unpack x inputs
     # In calling function:
@@ -69,11 +86,24 @@ def curvefit_friable(
     phi_c: float,
     shear_red: float,
 ) -> npt.NDArray[np.float64]:
-    """Run friable sand model with parameter optimisation for closest possible fit to observations
+    """Run friable sand model with parameter optimisation for closest possible fit to observations.
 
     Inputs: vp, vs, por, k_fl, rho_fl, p_eff, k_min, mu_min, rho_min
     Parameters to optimise for: phi_c, shear_red
     Optimise for vp, vs
+
+    Parameters
+    ----------
+    x_data
+        Input data array.
+    phi_c
+        Critical porosity.
+    shear_red
+        Shear reduction factor.
+
+    Returns
+    -------
+    Result.
     """
     # Unpack x inputs
     k_min = x_data[:, 0]
@@ -115,11 +145,26 @@ def curvefit_constant_cement(
     shear_red: float,
     frac_cem: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
-    """Run constant_cement_model with parameter optimisation for closest possible fit to observations
+    """Run constant_cement_model with parameter optimisation for closest possible fit to observations.
 
     Inputs: vp, vs, por, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, k_fl, rho_fl
     Parameters to optimise for: phi_c, shear_red, frac_cem
     Optimise for vp, vs
+
+    Parameters
+    ----------
+    x_data
+        Input data array.
+    phi_c
+        Critical porosity.
+    shear_red
+        Shear reduction factor.
+    frac_cem
+        Cement fraction.
+
+    Returns
+    -------
+    Result.
     """
     # Unpack x inputs
     k_min = x_data[:, 0]

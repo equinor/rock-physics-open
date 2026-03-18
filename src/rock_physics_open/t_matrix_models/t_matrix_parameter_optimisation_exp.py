@@ -45,47 +45,59 @@ def t_matrix_optimisation_exp(
     Array1D[np.float64],
 ]:
     """T-Matrix optimisation adapted to an exploration setting, where detailed well information is generally not known.
+
     Inclusion parameters are optimised for the whole well.
 
     Parameters
     ----------
-    por : np.ndarray
-        Inclusion porosity [ratio].
-    vsh : np.ndarray
-        Shale volume [ratio].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid density [kg/m^3].
-    vp : np.ndarray
+    por
+        Inclusion porosity [ratio].
+    vsh
+        Shale volume [ratio].
+    vp
         Compressional velocity log [m/s].
-    vs : np.ndarray
+    vs
         Shear velocity log [m/s].
-    rhob : np.ndarray
+    rhob
         Bulk density log [kg/m^3].
-    angle : float
+    angle
         Angle of symmetry plane [degrees]
-    k_r : float
+    k_r
         Permeability [mD].
-    eta_f : float
+    eta_f
         Fluid viscosity [cP].
-    tau : float
+    tau
         Relaxation time constant [s].
-    freq : float
+    freq
         Signal frequency [Hz].
-    file_out_str : str
+    file_out_str
         Output file name (string) to store optimal parameters (pickle format).
-    display_results : bool
+    display_results
         Display optimal parameters in a window after run.
-    well_name : str
+    well_name
         Name of well to be displayed in info box title.
-    opt_kwargs : Any
+    **opt_kwargs
         Additional keywords to be passed to optimisation function
 
     Returns
     -------
-    tuple
-        vp_mod, vs_mod - modelled logs, vp_res, vs_res - residual logs.
+    vp_mod
+        Modelled p-wave velocity log.
+    vs_mod
+        Modelled s-wave velocity log.
+    vp_res
+        P-wave velocity residual log.
+    vs_res
+        S-wave velocity residual log.
+
+    Raises
+    ------
+    ValueError
+        If optimisation fails.
     """
     # 1. Preparation that is independent of search for minimum possible aspect ratio for second inclusion set
 

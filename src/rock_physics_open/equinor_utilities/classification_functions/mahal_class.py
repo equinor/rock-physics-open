@@ -12,33 +12,33 @@ def mahal_class(
     class_cov: npt.NDArray[np.float64],
     class_id: npt.NDArray[np.int64],
     thresh: float = np.inf,
-):
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Mahalanobis classification routine. All data points are assigned a class, unless a threshold is set
+    Mahalanobis classification routine. All data points are assigned a class, unless a threshold is set.
 
     Parameters
     ----------
-    obs : np.ndarray
+    obs
         An nxm array, where n is the number of samples and m is the number of variables.
-    class_mean : np.ndarray
+    class_mean
         A pxm array, where p is the number of classes and m is the number of variables.
-    class_cov : np.ndarray
+    class_cov
         A pxm array, where p is the number of classes and m is the number of variables.
-    class_id : np.ndarray
+    class_id
         A p length vector, where p is the number of classes, containing class_id (integer numbers).
-    thresh : float
+    thresh
         Unclassified threshold.
 
     Returns
     -------
-    tuple
-        mahal_class_arr, mahal_dist, mahal_pp : (np.ndarray, np.ndarray, np.ndarray).
-        mahal_class_arr: nx1 vector. The classes are numbered 1 to m, and unclassified samples (with distance
-        greater than thresh) are set to 0,
-        mahal_dist:	nx1 vector with mahalanobis distance from the closest class centre to sample,
-        mahal_pp: nx1 vector with posterior probability based on the distance to each class
+    mahal_class_arr
+        nx1 vector. The classes are numbered 1 to m, and unclassified samples
+        (with distance greater than thresh) are set to 0.
+    mahal_dist
+        nx1 vector with mahalanobis distance from the closest class centre to sample.
+    mahal_pp
+        nx1 vector with posterior probability based on the distance to each class.
     """
-
     # Find dimensions
     n = obs.shape[0]
     p = class_mean.shape[0]

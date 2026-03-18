@@ -28,8 +28,10 @@ def friable_model(
     npt.NDArray[np.float64],
 ]:
     """
-    Friable (non-cemented) sandstone model. All porosity variation is due to sorting, i.e. porosity filled with
-    smaller grains. This model is pressure sensitive, but without asymptotic behaviour, which could be expected.
+    Friable (non-cemented) sandstone model.
+
+    All porosity variation is due to sorting, i.e. porosity filled with smaller grains.
+    This model is pressure sensitive, but without asymptotic behaviour, which could be expected.
 
     The same model is also used for shale, with different set of parameters.
 
@@ -56,34 +58,41 @@ def friable_model(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral bulk density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid bulk density [kg/m^3].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    p_eff : np.ndarray
+    p_eff
         Effective pressure [Pa].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    coord_num_func : str
+    coord_num_func
         Indication if coordination number should be calculated from porosity or kept constant.
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor [fraction].
 
     Returns
     -------
-    tuple
-        vp, vs, rho, ai, vpvs  : np.ndarray
-        vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
+    vp
+        Compressional wave velocity of saturated rock [m/s].
+    vs
+        Shear wave velocity of saturated rock [m/s].
+    rho
+        Bulk density [kg/m^3].
+    ai
+        Acoustic impedance [m/s x kg/m^3].
+    vpvs
+        Vp/Vs ratio [ratio].
     """
     k_dry, mu = friable_model_dry(
         k_min=k_min,
@@ -154,28 +163,29 @@ def friable_model_dry(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    p_eff : np.ndarray
+    p_eff
         Effective pressure [Pa].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    coord_num_func : str
+    coord_num_func
         Indication if coordination number should be calculated from porosity or kept constant.
-    n : float | None
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor [fraction].
 
     Returns
     -------
-    tuple
-        k, mu : np.ndarray.
-        Bulk modulus k [Pa], shear modulus mu [Pa] of dry rock.
+    k
+        Bulk modulus of dry rock [Pa].
+    mu
+        Shear modulus of dry rock [Pa].
     """
     # Expand floats to arrays, check for equal length
     phi, phi_c_, shear_red_, k_min, mu_min, p_eff, n_ = cast(

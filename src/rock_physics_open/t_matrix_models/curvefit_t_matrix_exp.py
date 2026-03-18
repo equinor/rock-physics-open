@@ -25,42 +25,42 @@ def curvefit_t_matrix_exp(
     mu_sh: float,
     rho_sh: float,
 ) -> Array1D[np.float64]:
-    """Optimisation of input parameters to T-Matrix for carbonate in case where the mineral composition for each
-    sample is not known, so that effective mineral moduli for each sample are part of the parameters to be optimised
+    """Optimisation of input parameters to T-Matrix for carbonate.
+
+    Used in cases where the mineral composition for each sample is not known, so that effective mineral moduli for each sample are part of the parameters to be optimised
     for. The optimisation is also made for the inclusion parameters in addition to fraction of connected and anisotropic
     porosity and the VTI plane angle.
 
     Parameters
     ----------
-    x_data : np.ndarray
+    x_data
         Inputs to unpack.
-    frac_ani : float
+    frac_ani
         Fraction of anisotropic inclusions.
-    frac_con : float
+    frac_con
         Fraction of connected inclusions.
-    alpha1 : float
+    alpha1
         Aspect ratio of first inclusion set.
-    alpha2 : float
+    alpha2
         Aspect ratio of second inclusion set.
-    v1 : float
+    v1
         Concentration ratio of first inclusion set.
-    k_c : float
+    k_c
         p-wave velocity for carbonate matrix.
-    mu_c : float
+    mu_c
         vp/vs ratio for carbonate matrix.
-    rho_c : float
+    rho_c
         vp/vs ratio for carbonate matrix.
-    k_sh : float
+    k_sh
         p-wave velocity for shale.
-    mu_sh : float
+    mu_sh
         vp/vs ratio for shale.
-    rho_sh : float
+    rho_sh
         Density for shale.
 
     Returns
     -------
-    np.ndarray
-        Modelled velocity, vp and vs.
+    Modelled velocity, vp and vs.
     """
     # Restore original value range for parameters - must match the scaling performed in calling function
     _, scale_val, _ = opt_param_info()

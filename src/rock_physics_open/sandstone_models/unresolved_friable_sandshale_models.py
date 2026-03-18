@@ -40,67 +40,73 @@ def unresolved_friable_sand_shale_model(
     npt.NDArray[np.float64],
 ]:
     """
-    Model for siliciclastic rocks with alternating layers of friable sand and shale, and in which the layers are not
-    resolved by the investigating signal. Backus average is used to calculate the anisotropic effect of the alternating
+    Model for siliciclastic rocks with alternating layers of friable sand and shale, and in which the layers are not  resolved by the investigating signal.
+
+    Backus average is used to calculate the anisotropic effect of the alternating
     layers.
 
     Parameters
     ----------
-    k_sst : np.ndarray
+    k_sst
         Sandstone bulk modulus [Pa].
-    mu_sst : np.ndarray
+    mu_sst
         Sandstone shear modulus [Pa].
-    rho_sst : np.ndarray
+    rho_sst
         Sandstone bulk density [kg/m^3].
-    k_mud : np.ndarray
+    k_mud
         Shale bulk modulus [Pa].
-    mu_mud : np.ndarray
+    mu_mud
         Shale shear modulus [Pa].
-    rho_mud : np.ndarray
+    rho_mud
         Shale bulk density [kg/m^3].
-    k_fl_sst : np.ndarray
+    k_fl_sst
         Fluid bulk modulus for sandstone fluid [Pa].
-    rho_fl_sst : np.ndarray
+    rho_fl_sst
         Fluid bulk density for sandstone fluid [kg/m^3].
-    k_fl_mud : np.ndarray
+    k_fl_mud
         Fluid bulk modulus for shale fluid [Pa].
-    rho_fl_mud : np.ndarray
+    rho_fl_mud
         Fluid bulk density for shale fluid [kg/m^3].
-    phi_sst : np.ndarray
+    phi_sst
         Sandstone porosity [fraction].
-    phi_mud : np.ndarray
+    phi_mud
         Shale porosity [fraction].
-    p_eff_sst : np.ndarray
+    p_eff_sst
         Effective pressure in sandstone [Pa].
-    p_eff_mud : np.ndarray
+    p_eff_mud
         Effective pressure in mud [Pa].
-    shale_frac : np.ndarray
+    shale_frac
         Shale fraction [fraction].
-    phi_c_sst : float
+    phi_c_sst
         Critical porosity for sandstone [fraction].
-    phi_c_mud : float
+    phi_c_mud
         Critical porosity for mud [fraction].
-    coord_num_func_sst : str
+    coord_num_func_sst
         Indication if coordination number should be calculated from porosity or kept constant for sandstone.
-    n_sst : float
+    n_sst
         Coordination number for sandstone [unitless].
-    coord_num_func_mud : str
+    coord_num_func_mud
         Indication if coordination number should be calculated from porosity or kept constant for shale.
-    n_mud : float
+    n_mud
         Coordination number for shale [unitless].
-    shear_red_sst : float
+    shear_red_sst
         Shear reduction factor for sandstone [fraction].
-    shear_red_mud : float
+    shear_red_mud
         Shear reduction factor for mud [fraction].
 
     Returns
     -------
-    tuple
-        vpv, vsv, vph, vsh, rho : np.ndarray
-        vertical p-wave velocity, vertical shear-wave velocity, horizontal p-wave velocity, horizontal shear-wave
-        velocity (all [m/s]), bulk density [kg/m^3].
+    vpv
+        Vertical p-wave velocity [m/s].
+    vsv
+        Vertical shear-wave velocity [m/s].
+    vph
+        Horizontal p-wave velocity [m/s].
+    vsh
+        Horizontal shear-wave velocity [m/s].
+    rho
+        Bulk density [kg/m^3].
     """
-
     # Estimate the sand and shale end members through the friable models
     vp_sst, vs_sst, rho_b_sst, _, _ = friable_model(
         k_min=k_sst,

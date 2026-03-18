@@ -1,19 +1,10 @@
-from typing import TypeVar
-
 import numpy as np
 
-from rock_physics_open.equinor_utilities.various_utilities.types import Array3D, Array4D
-
-_T = TypeVar(
-    "_T",
-    Array3D[np.float64],
-    Array4D[np.float64],
-)
+from rock_physics_open.equinor_utilities.various_utilities.types import Array3Or4D
 
 
-def iso_av_vec(t: _T) -> _T:
+def iso_av_vec(t: Array3Or4D) -> Array3Or4D:
     """Returns a (nx6x6) matrix t_bar averaged over all the orientations (isotropy).
-
 
     t_bar = np.array([
 
@@ -34,14 +25,13 @@ def iso_av_vec(t: _T) -> _T:
 
     Parameters
     ----------
-    t : np.ndarray
+    t
         An nx6x6 matrix which has a HTI symmetry.
 
 
     Returns
     -------
-    np.ndarray
-        Averaged value.
+    Averaged value.
     """
     t_bar = np.zeros_like(t)
 

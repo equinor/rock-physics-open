@@ -60,27 +60,26 @@ def poly_function(
     e: float,
 ) -> npt.NDArray[np.float64]:
     """
-    Simple function to test the scipy optimisation function curve_fit
+    Simple function to test the scipy optimisation function curve_fit.
 
     Parameters
     ----------
-    x : np.ndarray
+    x_data
         independent variable in polynomial
-    a : float
+    a
         constant
-    b : float
+    b
         first order coefficient
-    c : float
+    c
         second order coefficient
-    d : float
+    d
         third order coefficient
-    e : float
+    e
         fourth order coefficient
 
     Returns
     -------
-    y : np.ndarray
-        polynomial value
+    polynomial value
     """
     return a + b * x_data + c * x_data**2 + d * x_data**3 + e * x_data**4
 

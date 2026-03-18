@@ -28,32 +28,41 @@ def gassmann_sub_model(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    k_fl_orig : np.ndarray
+    k_fl_orig
         Original fluid  bulk modulus [Pa].
-    rho_fl_orig : np.ndarray
+    rho_fl_orig
         Original fluid density [lg/m^3].
-    k_fl_sub : np.ndarray
+    k_fl_sub
         Substituted fluid  bulk modulus [Pa].
-    rho_fl_sub : np.ndarray
+    rho_fl_sub
         Substituted fluid density [lg/m^3].
-    k_sat_orig : np.ndarray
+    k_sat_orig
         Saturated rock bulk modulus with original fluid  [Pa].
-    mu : np.ndarray
+    mu
         Rock shear modulus [Pa].
-    rho_sat_orig : np.ndarray
+    rho_sat_orig
         Saturated rock density with original fluid [kg/m^3].
-    por : np.ndarray
+    por
         Porosity [fraction].
 
     Returns
     -------
-    tuple
-        vp_sat, vs_sat, rho_sat, ai_sat, vpvs_sat, k_sat, mu : np.ndarray
-        vp_sat, vs_sat:  saturated velocities [m/s], rho_sat: saturated density [kg/m^3], ai_sat: saturated acoustic
-        impedance [kg/m^3 x m/s], vpvs_sat: saturated velocity ratio [unitless], k_sat, mu: saturated bulk modulus and
-        shear modulus (the latter unchanged from dry state) [Pa].
+    vp_sat
+        Saturated compressional velocity [m/s].
+    vs_sat
+        Saturated shear velocity [m/s].
+    rho_sat
+        Saturated density [kg/m^3].
+    ai_sat
+        Saturated acoustic impedance [kg/m^3 x m/s].
+    vpvs_sat
+        Saturated velocity ratio [unitless].
+    k_sat
+        Saturated bulk modulus [Pa].
+    mu
+        Shear modulus [Pa] (unchanged from dry state).
     """
     rho_sat_sub = rho_sat_orig + por * (rho_fl_sub - rho_fl_orig)
     k_sat_sub = std_functions.gassmann2(k_sat_orig, k_fl_orig, k_fl_sub, por, k_min)

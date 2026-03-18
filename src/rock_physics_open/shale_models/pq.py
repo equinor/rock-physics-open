@@ -12,30 +12,30 @@ def p_q_fcn(
     """
     Geometric factors used in inclusion models.
 
-    References
-    ----------
-    The rock physics handbook, Gary Mavko et al.
-
     Parameters
     ----------
-    k : np.ndarray
+    k
         Bulk modulus of phase 1 [Pa].
-    mu : np.ndarray
+    mu
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    asp : np.ndarray
+    asp
         Aspect ratio [ratio].
 
     Returns
     -------
-    tuple
-        p, q : np.ndarray
-        geometric factors p and q.
-    """
+    p
+        Geometric factor p.
+    q
+        Geometric factor q.
 
+    References
+    ----------
+    The rock physics handbook, Gary Mavko et al.
+    """
     # Functions theta and fn defaults to 2/3 and -2/5 for asp == 1.0
     idx_oblate = np.less(asp, 1.0)
     idx_prolate = np.greater(asp, 1.0)

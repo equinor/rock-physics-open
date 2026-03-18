@@ -13,23 +13,21 @@ def filter_output(
     | pd.DataFrame,
 ) -> list[npt.NDArray[Any] | pd.DataFrame]:
     """
-    Function to restore outputs from a plugin to original length and
-    with values at correct positions. The logs are assumed to go through
-    matching input filtering done by gen_utilities.filter_input_log earlier.
+    Function to restore outputs from a plugin to original length and with values at correct positions.
+
+    The logs are assumed to go through matching input filtering done by gen_utilities.filter_input_log earlier.
 
     Parameters
     ----------
-    idx_inp: np.ndarray
-        boolean array which is True at locations to be filled, length idx_inp is returned length of
-        arrays or data frames.
-    inp_log: tuple or list or np.ndarray or pd.DataFrame
-        input numpy array(s) or pandas data frame(s), in list or tuple that are to be expanded to original
-        length.
+    idx_inp
+        boolean array which is True at locations to be filled, length idx_inp is returned length of arrays or data frames.
+    inp_log
+        input numpy array(s) or pandas data frame(s), in list or tuple that are to be expanded to original length.
 
     Returns
     -------
-    return_logs : list
-        Expanded inputs.
+    Expanded inputs.
+
     """
 
     def _expand_array(

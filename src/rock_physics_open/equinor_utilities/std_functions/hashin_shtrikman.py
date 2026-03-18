@@ -14,26 +14,27 @@ def hashin_shtrikman(
     f: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Hashin-Sktrikman upper or lower according to ordering of phases.
+    Hashin-Shtrikman upper or lower according to ordering of phases.
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    f : np.ndarray
+    f
         Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        k, mu : np.ndarray.
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa].
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
     """
     k = k1 + (1 - f) * (k2 - k1) / (1 + (k2 - k1) * f * (k1 + 4 / 3 * mu1) ** -1)
     mu = mu1 + (1 - f) * (mu2 - mu1) / (
@@ -55,22 +56,23 @@ def hashin_shtrikman_average(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    f : np.ndarray
+    f
         Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        k_av, mu_av : np.ndarray.
-        k_av: effective bulk modulus [Pa], mu_av: effective shear modulus [Pa]
+    k_av
+        Effective bulk modulus [Pa].
+    mu_av
+        Effective shear modulus [Pa].
     """
     k_hs1, mu_hs1 = hashin_shtrikman(k1, mu1, k2, mu2, f)
     k_hs2, mu_hs2 = hashin_shtrikman(k2, mu2, k1, mu1, 1 - f)
@@ -90,31 +92,33 @@ def hashin_shtrikman_walpole(
     bound: Literal["upper", "lower"] = "lower",
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Hashin-Shtrikman upper bound is obtained when the stiffest material is
-    termed 1 and vice versa for lower bound. Tricky in cases like Quartz -
-    Calcite where the K and Mu have opposed values. HS - Walpole is
-    generalised to regard highest and lowest values in each case. The default
-    is to generate lower bound.
+    Hashin-Shtrikman upper bound is obtained when the stiffest material is termed 1 and vice versa for lower bound.
+
+    Tricky in cases like Quartz - Calcite where the K and Mu have opposed values.
+    HS - Walpole is generalised to regard highest and lowest values in each case. The default is to generate lower bound.
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    f1 : np.ndarray or float
+    f1
         Fraction of phase 1 [fraction].
-    bound: str
-        'upper' or 'lower' selection of upper of lower bound of effective medium.
+    bound
+        Upper or lower bound of effective medium. Default is 'lower'.
+
     Returns
     -------
-    tuple
-        k, mu : np.ndarray.
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa].
+    k
+        effective bulk modulus [Pa]
+    mu
+        effective shear modulus [Pa].
+
     """
     k1, mu1, k2, mu2, f1 = cast(
         list[npt.NDArray[np.float64]],
@@ -172,16 +176,18 @@ def multi_hashin_shtrikman(
 
     Parameters
     ----------
-    coeffs : np.ndarray
+    *coeffs
         Triplets of vectors with k (bulk modulus [Pa]), mu (shear modulus [Pa]) and fraction for each mineral.
-    mode : str
+    mode
         'average', 'upper' or 'lower'.
 
     Returns
     -------
-    tuple
-        k_hs, mu_hs : np.ndarray.
-        k_hs, mu_hs - bulk modulus and shear modulus for effective medium [Pa].
+    k_hs
+        Bulk modulus for effective medium [Pa].
+    mu_hs
+        Shear modulus for effective medium [Pa].
+
     """
     if not len(coeffs) % 3 == 0:
         raise ValueError(

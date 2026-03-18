@@ -15,18 +15,21 @@ def pressure_input_utility(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Effective mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Effective mineral shear modulus [Pa].
-    log_length : int
+    log_length
         Number of samples in logs.
 
     Returns
     -------
-    tuple
-        c0 (background stiffness), s0 (inverse of background stiffness), gd (G tensor for inclusions with aspect
-        ratio 1.0).
+    c0
+        Background stiffness.
+    s0
+        Inverse of background stiffness.
+    gd
+        G tensor for inclusions with aspect ratio 1.0.
     """
     # Calculate elastic parameters
     c11 = k_min + 4 / 3 * mu_min

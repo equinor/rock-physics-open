@@ -12,18 +12,26 @@ def velocity_vti_angles_vec(
 
     Parameters
     ----------
-    c_eff : np.ndarray
+    c_eff
         Effective stiffness tensor (nx6x6 matrix).
-    rho_eff : np.ndarray
+    rho_eff
         Effective density.
-    angle : float
+    angle
         The angle between the wave vector and the axis of symmetry.
 
     Returns
     -------
-    tuple[np.ndarray, np.ndarray, np.ndarray]
-        vp_out, vsv_out, vsh_out
-        vp_out, vsv_out, vsh_out : p-velocity, vertical polarisation s-velocity, horizontal polarisation s-velocity.
+    vp_out
+        P-wave velocity.
+    vsv_out
+        Vertical polarisation S-wave velocity.
+    vsh_out
+        Horizontal polarisation S-wave velocity.
+
+    Raises
+    ------
+    ValueError
+        If velocity_vti_angles are inconsistent.
     """
     if not (
         c_eff.ndim == 3

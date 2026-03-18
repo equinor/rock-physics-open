@@ -23,35 +23,36 @@ def vp_vs_rho_stats(
     disp_results: bool = True,
 ) -> None:
     """
-    Utility to estimate statistics between vp-vs-rho sets - observed and estimated values. The results are displayed
-    on screen (optional) and saved to a .csv file. If the file exists, the results will be appended.
+    Utility to estimate statistics between vp-vs-rho sets - observed and estimated values.
+
+    The results are displayed on screen (optional) and saved to a .csv file. If the file exists, the results will be appended.
     The statistics consists of RAE (relative absolute error) [fraction], RRMSE (relative root mean squared error)
     [fraction] and R^2 (coefficient of determination) [fraction].
 
 
     Parameters
     ----------
-    vp_observed : np.ndarray or list
+    vp_observed
         Observed vp [m/s].
-    vs_observed : np.ndarray or list
+    vs_observed
         Observed vs [m/s].
-    rho_observed : np.ndarray or list
+    rho_observed
         Observed density [kg/m^3].
-    vp_estimated : np.ndarray or list
+    vp_estimated
         Estimated vp [m/s].
-    vs_estimated : np.ndarray or list
+    vs_estimated
         Estimated vs [m/s].
-    rho_estimated : np.ndarray or list
+    rho_estimated
         Estimated density [kg/m^3].
-    fname : str
+    fname
         File name for saved results.
-    estimated_set_names : str or list
+    estimated_set_names
         Name of the estimated vp-vs-rho set(s).
-    well_names : str or list
+    well_names
         Well name of the vp-vs-rho set(s).
-    file_mode : str
+    file_mode
         File open mode, default append.
-    disp_results : bool
+    disp_results
         Display results on screen.
     """
     if isinstance(estimated_set_names, str):
@@ -140,18 +141,18 @@ def _verify(
     file_mode: Literal["a", "w"],
 ):
     """Verify that arguments are either numpy arrays or lists of numpy arrays.
-    Raises
-    ------
-    ValueError
-        If not np.ndarray or list of such.
-    ValueError
-        If an entry contains NaNs.
-    ValueError
-        If an entry contains Infs.
-    ValueError
-        If mismatch in argument lengths.
-    ValueError
-        If file mode not 'a' or 'w'.
+
+    Parameters
+    ----------
+    *args
+        Arrays or lists of arrays to verify.
+    set_names
+        Names of the sets.
+    well_names
+        Names of the wells.
+    file_mode
+        File write mode.
+
     """
     # Verify that args are either numpy arrays or list of arrays
     for arg in args:

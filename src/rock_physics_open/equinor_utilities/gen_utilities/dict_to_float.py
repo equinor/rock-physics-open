@@ -9,15 +9,14 @@ def dict_value_to_float(
 
     Parameters
     ----------
-    input_dict : dict
+    input_dict
         Input dictionary.
 
     Returns
     -------
-    dict
-        Output dictionary.
-    """
+    Output dictionary.
 
+    """
     for item in input_dict:
         if isinstance(input_dict[item], float):
             pass

@@ -20,9 +20,9 @@ def gen_two_step_class_stats(
     npt.NDArray[np.float64],
 ]:
     """
-    The observations are an n x m array, where n
-    is the number of observations and m is the number of variables. With p
-    classes the returned mean value will be an array of dimension p x m,
+    The observations are an n x m array, where n is the number of observations and m is the number of variables.
+
+    With p classes the returned mean value will be an array of dimension p x m,
     covariance m x m x p and the class_id and prior probability p length vector.
 
     Generate statistics - mean, covariance and prior probability - for each
@@ -32,22 +32,27 @@ def gen_two_step_class_stats(
 
     Parameters
     ----------
-    obs : np.ndarray
+    obs
         An nxm array, where n is the number of samples and m is the number of variables.
-    class_val : np.ndarray
+    class_val
         A p length vector, where p is the number of classes, containing class_id (integer numbers).
-    thresh : float
+    thresh
         Unclassified threshold.
 
     Returns
     -------
-    tuple
-        (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray).
-        class_mean, class_cov: statistics for each class after rejects;
-        prior_prob, class_counts: based on number of observations in each class,
-        find the prior probability of each class;
-        class_id: label for each class;
-        mahal_class_id: class id from mahalanobis classification.
+    class_mean
+        Mean values per class after rejects.
+    class_cov
+        Covariance matrices per class after rejects.
+    prior_prob
+        Prior probability per class based on observation counts after rejects.
+    class_counts
+        Number of observations per class after rejects.
+    class_id
+        Label for each class.
+    mahal_class_id
+        Class id from the initial Mahalanobis classification.
     """
     mean_class_id, class_cov, _, _, class_id = gen_class_stats(obs, class_val)
     mahal_class_id = mahal_class(obs, mean_class_id, class_cov, class_id, thresh)[0]

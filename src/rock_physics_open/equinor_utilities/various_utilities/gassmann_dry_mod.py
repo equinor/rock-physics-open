@@ -26,28 +26,37 @@ def gassmann_dry_model(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    k_fl : np.ndarray
+    k_fl
         Fluid  bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid density [lg/m^3].
-    k_sat : np.ndarray
+    k_sat
         Saturated rock bulk modulus [Pa].
-    mu : np.ndarray
+    mu
         Saturated rock shear modulus [Pa].
-    rho_sat : np.ndarray
+    rho_sat
         Saturated rock density [kg/m^3].
-    por : np.ndarray
+    por
         Porosity [fraction].
 
     Returns
     -------
-    tuple
-        vp_dry, vs_dry, rho_dry, ai_dry, vpvs_dry, k_dry, mu : np.ndarray
-        vp_dry, vs_dry:  dry velocities [m/s], rho_dry: dry density [kg/m^3], ai_dry: dry acoustic impedance
-        [kg/m^3 x m/s], vpvs_dry: dry velocity ratio [unitless], k_dry, mu: dry bulk modulus and shear modulus (the
-        latter unchanged from saturated state) [Pa].
+    vp_dry
+        Dry compressional velocity [m/s].
+    vs_dry
+        Dry shear velocity [m/s].
+    rho_dry
+        Dry density [kg/m^3].
+    ai_dry
+        Dry acoustic impedance [kg/m^3 x m/s].
+    vpvs_dry
+        Dry velocity ratio [unitless].
+    k_dry
+        Dry bulk modulus [Pa].
+    mu
+        Shear modulus [Pa] (unchanged from saturated state).
     """
     rho_dry = rho_sat - por * rho_fl
     k_dry = std_functions.gassmann_dry(k_sat, por, k_fl, k_min)

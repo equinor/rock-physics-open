@@ -21,33 +21,41 @@ def gen_opt_routine(
     **opt_kwargs: Any,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    This function is a lean method for running optimisation with the given opt_function in curve_fit. Predicted values,
-    residuals to the observed values and optimal parameters are returned.
+    Run optimisation with the given opt_function in curve_fit.
+
+    Predicted values, residuals to the observed values and optimal parameters are returned.
 
     Parameters
     ----------
-    opt_function : callable
+    opt_function
         function to optimise
-    x_data_orig : np.ndarray
+    x_data_orig
         input data to the function - independent variables
-    y_data : np.ndarray
+    y_data
         results that the optimisation should match - dependent variables
-    x_init : np.ndarray
+    x_init
         initial guess for parameters
-    low_bound : np.ndarray
+    low_bound
         parameter low bound
-    high_bound : np.ndarray
+    high_bound
         parameter high bound
-    opt_kwargs : dict
+    **opt_kwargs
         optional meta-parameters to the optimisation function
 
     Returns
     -------
-    tuple
-        y_pred, y_res, opt_params : (np.ndarray, np.ndarray, np.ndarray).
-        y_pred : predicted values,
-        y_res : residual values,
-        opt_params : optimal model parameters.
+    y_pred
+        Predicted values.
+    y_res
+        Residual values (``y_pred - y_data``).
+    opt_params
+        Optimal model parameters.
+
+    Raises
+    ------
+    ValueError
+        Re-raised from :func:`scipy.optimize.curve_fit` when the optimisation
+        step fails.
     """
     try:
         opt_params, _ = cast(
@@ -89,19 +97,18 @@ def gen_mod_routine(
 
     Parameters
     ----------
-    opt_function : callable
+    opt_function
         Function to optimise.
-    xdata_orig : np.ndarray
+    xdata_orig
         Input data to the function - independent variables.
-    ydata_shape : (int, int)
+    ydata_shape
         Shape of y_data.
-    opt_params : np.ndarray
+    opt_params
         Optimal model parameters.
 
     Returns
     -------
-    np.ndarray
-        Predicted values.
+    Predicted values.
     """
     # Estimation of values
     return np.reshape(opt_function(xdata_orig, *opt_params), ydata_shape, order="F")
@@ -115,28 +122,32 @@ def gen_sub_routine(
     opt_params: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """General substitution function based on a calibrated/optimised model and with two sets of input parameters.
+
     The substituted values are calculated as the original observations plus the difference of the two modelling
     steps.
 
     Parameters
     ----------
-    opt_function : callable
+    opt_function
         Function to optimise.
-    xdata_orig : np.ndarray
+    xdata_orig
         Input data to the function step 1 - independent variables.
-    xdata_new : np.ndarray
+    xdata_new
         Input data to the function step 2 - independent variables.
-    ydata : np.ndarray
+    ydata
         Original observed values step 1.
-    opt_params : np.ndarray
+    opt_params
         Set of optimal parameters to model.
 
     Returns
     -------
-    tuple
-        y_final, y_pred, y_res : (np.ndarray, np.ndarray, np.ndarray).
-        Original observed data + difference in estimation between steps 0 and 1, y_pred - modelled data,
-        y_res - residuals, opt_params - best parameter setting.
+    y_final
+        Original observed data plus the difference in estimation between the
+        two modelling steps.
+    y_pred
+        Modelled data for the original inputs.
+    y_res
+        Residuals of the initial prediction (``y_pred - ydata``).
     """
     # Estimation of initial values
     y_pred = np.reshape(opt_function(xdata_orig, *opt_params), ydata.shape, order="F")
@@ -226,18 +237,17 @@ def save_opt_params(
     well_name: str = "Unknown well",
 ) -> None:
     """
-    Utility to save optimal parameters as a pickle file in a more readable format so that the optimisation method can be
-    recognised.
+    Utility to save optimal parameters as a pickle file in a more readable format so that the optimisation method can be recognised.
 
     Parameters
     ----------
-    opt_type : str
+    opt_type
         String defining optimisation type.
-    opt_params : np.ndarray
+    opt_params
         Numpy array with parameters from optimisation.
-    file_name : str, optional
+    file_name
         File to save results to, by default 'opt_params.pkl'.
-    well_name : str, optional
+    well_name
         Name of the well which is used in optimisation, by default 'Unknown well'.
 
     Raises
@@ -312,10 +322,15 @@ def opt_param_info() -> tuple[
     ParameterTranslationDict, ValueTranslationDict, TypeTranslationDict
 ]:
     """Hard coded dictionaries returned.
+
     Returns
     -------
-    tuple
-        parameter_translation_dict, value_translation_dict, type_translation_dict.
+    parameter_translation_dict
+        Mapping from optimisation parameter keys to human-readable descriptions.
+    value_translation_dict
+        Mapping from parameter keys to default numerical values.
+    type_translation_dict
+        Mapping from optimisation type codes to descriptive names.
     """
     parameter_translation_dict: ParameterTranslationDict = {
         "opt_ver": "Optimisation version",
@@ -373,13 +388,17 @@ def load_opt_params(
 
     Parameters
     ----------
-    file_name : str
+    file_name
         Input file name including path.
 
     Returns
     -------
-    tuple
-        opt_type: model type, no_sets: number of inclusion sets, opt_param: with all parameters for model.
+    opt_type
+        Optimisation model type.
+    opt_param
+        Array of optimal parameters for the model.
+    opt_dict
+        Full dictionary of optimisation results as loaded from the file.
     """
     with open(file_name, "rb") as fin:
         param_dict: OptParamsDict = pickle.load(fin)
@@ -401,14 +420,16 @@ def opt_param_to_ascii(
 
     Parameters
     ----------
-    in_file : str
+    in_file
         File name for stored optimised parameters.
-    display_results : bool
+    display_results
         Display results on screen, default True.
-    out_file : str or None
+    out_file
         Optional store optimised parameters in ascii file.
-    well_name : str
+    well_name
         Optional name of the well that is used in optimisation.
+    **kwargs
+        Keyword arguments for tkinter.
     """
     with open(in_file, "rb") as f_in:
         param_dict = pickle.load(f_in)

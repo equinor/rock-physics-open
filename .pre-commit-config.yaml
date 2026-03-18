@@ -33,6 +33,13 @@ repos:
         pass_filenames: false
         files: .*\.py$
 
+      - id: pydoclint
+        name: "Python: docstring lint"
+        entry: uv run pydoclint src tests
+        language: system
+        pass_filenames: false
+        files: .*\.py$
+
       - id: basedpyright
         name: "Python: static type checking"
         entry: uv run basedpyright

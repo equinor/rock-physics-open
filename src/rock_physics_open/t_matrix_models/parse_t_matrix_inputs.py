@@ -53,52 +53,94 @@ def parse_t_matrix_inputs(
     Literal[0, 1, 2],
     Literal[0, 1, 2],
 ]:
-    """Function to do all necessary checking of input type, dimension, reshaping etc. that clutter up the start of T-Matrix
+    """Function to do all necessary checking of input type, dimension, reshaping etc. that clutter up the start of T-Matrix.
+
     NB: Setting scenario will override the settings for alpha, v and tau.
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         N length numpy array, mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         N length numpy array, mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         N length numpy array, mineral density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         N length numpy array, fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
-        N length numpy array, mineral density [kg/m^3].
-    phi : np.ndarray or float
+    rho_fl
+        N length numpy array, fluid density [kg/m^3].
+    phi
         N length numpy array, total porosity [ratio].
-    perm : np.ndarray or float
+    perm
         float or N length numpy array, permeability [mD].
-    visco : np.ndarray or float
+    visco
         float or N length numpy array, fluid viscosity [cP].
-    alpha : np.ndarray
+    alpha
         M or NxM length numpy array, inclusion aspect ratio [ratio].
-    v : np.ndarray
+    v
         M or NxM length numpy array, inclusion concentration [ratio].
-    tau : np.ndarray
+    tau
         M length numpy array, relaxation time [s].
-    frequency : float
+    frequency
         single float, signal frequency [Hz].
-    angle : float
+    angle
         single float, angle of symmetry plane [degree].
-    frac_inc_con : np.ndarray or float
+    frac_inc_con
         single float or N length numpy array, fraction of connected inclusions [ratio].
-    frac_inc_ani : np.ndarray or float
+    frac_inc_ani
         single float or N length numpy array, fraction of anisotropic inclusions [ratio].
-    pressure : list or np.ndarray
+    pressure
          > 1 value list or numpy array in ascending order, effective pressure [Pa].
-    scenario : int
+    scenario
         pre-set scenarios for alpha, v and tau
-    fcn : callable | str | None.
+    fcn
         function with which to run the T-Matrix model or string with function name within t_matrix_models. If None, the C++ implementation is used.
 
     Returns
     -------
-    tuple
-        All inputs in correct dimension and data type plus ctrl_connected, ctrl_anisotropy - control parameters.
+    k_min
+        Mineral bulk modulus, validated and reshaped [Pa].
+    mu_min
+        Mineral shear modulus, validated and reshaped [Pa].
+    rho_min
+        Mineral density, validated and reshaped [kg/m^3].
+    k_fl
+        Fluid bulk modulus, validated and reshaped [Pa].
+    rho_fl
+        Fluid density, validated and reshaped [kg/m^3].
+    phi
+        Porosity, validated and reshaped [fraction].
+    perm
+        Permeability, validated and reshaped.
+    visco
+        Viscosity, validated and reshaped.
+    tau
+        Relaxation time array, validated and reshaped.
+    alpha
+        Aspect ratios, validated and reshaped.
+    v
+        Inclusion volumes, validated and reshaped.
+    frequency
+        Frequency value.
+    angle
+        Incidence angle value.
+    frac_inc_con
+        Connected inclusion fraction, validated and reshaped.
+    frac_inc_ani
+        Anisotropic inclusion fraction, validated and reshaped.
+    pressure
+        Pressure, validated and reshaped (or None if unused).
+    t_matrix_fcn
+        Resolved T-Matrix callable.
+    ctrl_connected
+        Control parameter for connected inclusions (0, 1 or 2).
+    ctrl_anisotropy
+        Control parameter for anisotropic inclusions (0, 1 or 2).
+
+    Raises
+    ------
+    ValueError
+        If inputs have wrong type, dimension, or invalid values.
     """
 
     def _assert_type(
@@ -110,11 +152,11 @@ def parse_t_matrix_inputs(
 
         Parameters
         ----------
-        arg : any
+        arg
             To be asserted.
-        exp_dtype : type
+        exp_dtype
             Expected data type.
-        err_str : str, optional
+        err_str
             Error string, by default 'check inputs, wrong type encountered'.
 
         Raises

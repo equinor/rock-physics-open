@@ -31,43 +31,67 @@ def shale_4_min_dem_overlay(
     asp: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Simple shale model with mixture of matrix minerals in Voigt-Reuss-Hill
-    and DEM inclusion model for fluid filled porosity. The model is aimed at
-    overlays in cross-plots where two input fractions are given, and the two
-    remaining are given as a proportion.
+    Simple shale model with mixture of matrix minerals in Voigt-Reuss-Hill and DEM inclusion model for fluid filled porosity.
+
+    The model is aimed at overlays in cross-plots where two input fractions are given, and the two remaining are given as a proportion.
     Fraction of carbonate and clay is implicit 1 - f1 - f2. f1 and f2 can be set to zero
     All k, mu values in [Pa], rho in [kg/m^3], f, phi, prop_clay, asp in [fraction].
 
     Parameters
     ----------
-    k1, mu1, rho1 : np.ndarray
+    k1
         Mineral 1 properties [Quartz and feldspar].
-    k2, mu2, rho2 : np.ndarray
+    mu1
+        Mineral 1 properties [Quartz and feldspar].
+    rho1
+        Mineral 1 properties [Quartz and feldspar].
+    k2
         Mineral 2 properties [Kerogen].
-    k3, mu3, rho3 : np.ndarray
+    mu2
+        Mineral 2 properties [Kerogen].
+    rho2
+        Mineral 2 properties [Kerogen].
+    k3
         Mineral 3 properties [Clay].
-    k4, mu4, rho4 : np.ndarray
+    mu3
+        Mineral 3 properties [Clay].
+    rho3
+        Mineral 3 properties [Clay].
+    k4
         Mineral 4 properties [Carbonates].
-    k_fl, rho_fl : np.ndarray
+    mu4
+        Mineral 4 properties [Carbonates].
+    rho4
+        Mineral 4 properties [Carbonates].
+    k_fl
         Fluid properties.
-    phi : np.ndarray
+    rho_fl
+        Fluid properties.
+    phi
         Porosity.
-    f1 : np.ndarray
+    f1
         Fraction of mineral 1.
-    f2 : np.ndarray
+    f2
         Fraction of mineral 2.
-    prop_clay : float
+    prop_clay
         Range 0 - 1 of the fraction that is clay and carbonate.
-    asp: np.ndarray
+    asp
         Porosity aspect ratio.
 
     Returns
     -------
-    tuple
-        k, mu, rhob : np.ndarray
-        k - effective bulk modulus [Pa], mu - effective shear modulus [Pa], rhob - effective density [kg/m^3].
-    """
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
+    rhob
+        Effective density [kg/m^3].
 
+    Raises
+    ------
+    ValueError
+        If sum of fixed mineral fractions exceeds 1.0 or if any fraction is negative.
+    """
     #   tol: DEM model calculation tolerance <= Set as a hardcoded value, not
     #   found to influence the results
     tol = 1e-6

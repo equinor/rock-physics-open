@@ -80,6 +80,7 @@ dev = [
     "matplotlib-stubs == 0.3.11",
     "pandas-stubs==3.0.0.260204",
     "pre-commit==4.5.1",
+    "pydoclint==0.8.3",
     "pytest==9.0.3",
     "pytest-cov==7.1.0",
     "ruff==0.15.8",
@@ -89,6 +90,7 @@ dev = [
 [tool.ruff]
 lint.select = [
     "C",       # Complexity
+    "D",       # Docstrings (pydocstyle)
     "E",       # Errors
     "F",       # Flake (unused variables etc.)
     "I",       # Imports
@@ -104,12 +106,27 @@ lint.select = [
 ]
 lint.ignore = [
     "C901", # Complex Code (too many branches/statements)
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D203", # One blank line before class docstring (conflicts with D211)
+    "D213", # Multi-line docstring summary should start at the second line (conflicts with D212)
+    "D401", # First line should be in imperative mood
     "E501", # Line Too Long
 ]
 line-length = 88
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+docstring-code-format = true
 
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = ["E402", "E501"]
@@ -138,3 +155,12 @@ typeCheckingMode = "recommended"
 reportAny = false
 reportExplicitAny = false
 reportMissingTypeStubs = false
+
+[tool.pydoclint]
+style = "numpy"
+quiet = true
+skip-checking-raises = true
+check-style-mismatch = true
+arg-type-hints-in-docstring = false
+check-return-types = false
+check-yield-types = false

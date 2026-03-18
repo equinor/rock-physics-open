@@ -24,29 +24,28 @@ def shale_prop_ternary(
 
     Parameters
     ----------
-    quartz : np.ndarray
+    quartz
         Quartz volume fraction [fraction].
-    carb : np.ndarray
+    carb
         Carbonate volume fraction [fraction].
-    clay : np.ndarray
+    clay
         Clay volume fraction [fraction].
-    kero : np.ndarray
+    kero
         Kerogen volume fraction [fraction].
-    phit : np.ndarray
+    phit
         Porosity [fraction].
-    col_code : np.ndarray
+    col_code
         Property used for colour coding [unknown].
-    name_col_code : str
+    name_col_code
         Plot annotation of log used for colour coding.
-    well_name : str
+    well_name
         Plot heading with well name.
-    draw_figures : bool
+    draw_figures
         Decide if figures are drawn or not, default is True.
 
     Returns
     -------
-    np.ndarray
-        hardness [float].
+    hardness [float].
     """
     KEROMAX = 0.25
 

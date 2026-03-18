@@ -26,8 +26,6 @@ def test_gas_properties():
 
 
 def test_gas_properties_float():
-    """
-    Make sure that input object type is reflected in output type
-    """
+    """Make sure that input object type is reflected in output type."""
     args = gas_properties(temp[0], pres[0], gr[0])
     assert all(isinstance(arg, float) for arg in args)

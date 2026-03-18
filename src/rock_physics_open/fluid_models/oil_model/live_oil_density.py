@@ -20,12 +20,20 @@ def live_oil_density(
 
     Equation 24 in Batzle & Wang [1].
 
-    :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
-    :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
-    :param temperature: Temperature [°C] of oil.
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :return: Density of live oil [kg/m^3].
+    Parameters
+    ----------
+    temperature
+        Temperature [°C] of oil.
+    reference_density
+        Density of the oil without dissolved gas at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
+    gas_oil_ratio
+        The volume ratio of gas to oil [l/l]
+    gas_gravity
+        molar mass of gas relative to air molar mas.
+
+    Returns
+    -------
+    Density of live oil [kg/m^3].
     """
     scalar_input = inputs_are_scalar(
         temperature,
@@ -58,17 +66,24 @@ def live_oil_pseudo_density(
     gas_gravity: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    Pseudo density used to substitute reference density in dead_oil_wave_velocity
-    for live oils.
+    Pseudo density used to substitute reference density in dead_oil_wave_velocity for live oils.
 
     Equation 22 in Batzle & Wang [1].
 
-    :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
-    :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
-    :param temperature: Temperature [°C] of oil.
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :return: Pseudo-density of live oil [kg/m^3].
+    Parameters
+    ----------
+    temperature
+        Temperature [°C] of oil.
+    reference_density
+        Density of the oil without dissolved gas at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
+    gas_oil_ratio
+        The volume ratio of gas to oil [l/l]
+    gas_gravity
+        molar mass of gas relative to air molar mas.
+
+    Returns
+    -------
+    Pseudo-density of live oil [kg/m^3].
     """
     scalar_input = inputs_are_scalar(
         temperature,
@@ -100,12 +115,21 @@ def live_oil_volume_factor(
 ) -> npt.NDArray[np.float64]:
     """
     Volume factor derived by Standing (1962), equation 23 in Batzle & Wang [1].
-    :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
-    :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
-    :param temperature: Temperature [°C] of oil.
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :return: A volume factor in calculating pseudo-density of live oil [unitless].
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C] of oil.
+    reference_density
+        Density of the oil without dissolved gas at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
+    gas_oil_ratio
+        The volume ratio of gas to oil [l/l]
+    gas_gravity
+        molar mass of gas relative to air molar mas.
+
+    Returns
+    -------
+    A volume factor in calculating pseudo-density of live oil [unitless].
     """
     scalar_input = inputs_are_scalar(
         temperature,

@@ -16,19 +16,16 @@ class BasePressureModel(ABC):
 
     Input validation is delegated to concrete implementations since
     each model has different column requirements.
+
+    Parameters
+    ----------
+    model_max_pressure
+        Maximum pressure for predict_max method. Required for predict_max to work.
+    description
+        Human-readable description of the model instance.
     """
 
     def __init__(self, model_max_pressure: float | None = None, description: str = ""):
-        """
-        Initialize base pressure model.
-
-        Parameters
-        ----------
-        model_max_pressure : float | None
-            Maximum pressure for predict_max method. Required for predict_max to work.
-        description : str
-            Human-readable description of the model instance.
-        """
         self._model_max_pressure: float | None = model_max_pressure
         self._description: str = description
 
@@ -48,13 +45,12 @@ class BasePressureModel(ABC):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Input array with pressure columns and other model-specific parameters.
 
         Returns
         -------
-        np.ndarray
-            Differential change values.
+        Differential change values.
         """
         arr = self.validate_input(inp_arr)
         return self.predict_abs(arr, case="depleted") - self.predict_abs(
@@ -67,13 +63,12 @@ class BasePressureModel(ABC):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Input array where last column (depleted pressure) will be replaced.
 
         Returns
         -------
-        np.ndarray
-            Values at model_max_pressure minus values at in_situ pressure.
+        Values at model_max_pressure minus values at in_situ pressure.
 
         Raises
         ------
@@ -97,13 +92,12 @@ class BasePressureModel(ABC):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Input array to validate.
 
         Returns
         -------
-        np.ndarray
-            Validated input array.
+        Validated input array.
 
         Raises
         ------
@@ -118,15 +112,14 @@ class BasePressureModel(ABC):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Validated input array.
-        case : str
+        case
             Either "in_situ" or "depleted" to specify which pressure to use.
 
         Returns
         -------
-        np.ndarray
-            Absolute predicted values.
+        Absolute predicted values.
         """
 
     @abstractmethod
@@ -136,8 +129,7 @@ class BasePressureModel(ABC):
 
         Returns
         -------
-        dict[str, Any]
-            Dictionary containing all model parameters.
+        Dictionary containing all model parameters.
         """
 
     def save(self, file: str | bytes) -> None:
@@ -146,7 +138,7 @@ class BasePressureModel(ABC):
 
         Parameters
         ----------
-        file : str | bytes
+        file
             File path for saving.
         """
         with open(file, "wb") as f_out:
@@ -160,11 +152,10 @@ class BasePressureModel(ABC):
 
         Parameters
         ----------
-        file : str | bytes
+        file
             File path for loading.
 
         Returns
         -------
-        BasePressureModel
-            Loaded model instance.
+        Loaded model instance.
         """

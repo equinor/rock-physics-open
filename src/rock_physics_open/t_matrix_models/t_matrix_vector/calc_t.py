@@ -19,32 +19,35 @@ def calc_t_vec(
     k_fluid: Array1D[np.float64],
 ) -> Array4D[np.complex128]:
     """
-    Returns the t-matrices (6x6x(numbers of connected pores)) of the
-    connected pores.
+    Returns the t-matrices (6x6x(numbers of connected pores)) of the connected pores.
 
     Parameters
     ----------
-    td : np.ndarray
+    td
         Dry t-matrix tensors, (nx6x6x(numbers of empty cavities) matrix).
-    theta : np.ndarray
+    theta
         Theta-tensor (nx6x6 matrix).
-    x : np.ndarray
+    x
         X-tensor (nx6x6x(numbers of empty cavities) matrix).
-    z : np.ndarray
+    z
         Z-tensor (nx6x6x(numbers of empty cavities) matrix).
-    omega : np.ndarray
+    omega
         Frequency (2*pi*f).
-    gamma : np.ndarray
+    gamma
         Gamma factor of all the inclusions (nx(numbers of empty cavities) vector).
-    tau : np.ndarray
+    tau
         Relaxation time constant (1x(numbers of empty cavities) vector).
-    k_fluid : np.ndarray
+    k_fluid
         Bulk modulus of the fluid.
 
     Returns
     -------
-    np.ndarray
-        t-matrices.
+    t-matrices.
+
+    Raises
+    ------
+    ValueError
+        If input dimensions or shapes are inconsistent.
     """
     if not (
         td.ndim == 4

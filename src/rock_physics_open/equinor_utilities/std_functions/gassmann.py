@@ -18,19 +18,18 @@ def gassmann(
 
     Parameters
     ----------
-    k_dry : np.ndarray
+    k_dry
         Dry rock bulk modulus [Pa].
-    por : np.ndarray
+    por
         Porosity [fraction].
-    k_fl : np.ndarray
-        Fluid bulk modulus.
-    k_min : np.ndarray
+    k_fl
+        Fluid bulk modulus [Pa].
+    k_min
         Mineral bulk modulus [Pa].
 
     Returns
     -------
-    np.ndarray
-        k_sat: bulk modulus for saturated rock [Pa]
+    Bulk modulus for saturated rock [Pa].
     """
     k_dry, por, k_fl, k_min = cast(
         list[npt.NDArray[np.float64]],
@@ -60,25 +59,24 @@ def gassmann2(
     k_min: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Fluid substitution by Gassmann method with substitution of one fluid to another
+    Fluid substitution by Gassmann method with substitution of one fluid to another.
 
     Parameters
     ----------
-    k_sat_1 : np.ndarray
+    k_sat_1
         bulk modulus for saturated rock with original fluid [Pa]
-    k_fl_1 : np.ndarray
+    k_fl_1
         bulk modulus for original fluid [Pa]
-    k_fl_2 : np.ndarray
+    k_fl_2
         bulk modulus for replaced fluid [Pa]
-    por : np.ndarray
+    por
         porosity of rock [fraction]
-    k_min : np.ndarray
+    k_min
         mineral bulk modulus of rock [Pa]
 
     Returns
     -------
-    np.ndarray
-        k_sat_2: bulk modulus of rock saturated with replaced fluid [Pa]
+    Bulk modulus of rock saturated with replaced fluid [Pa].
     """
     k_sat_1, k_fl_1, k_fl_2, por, k_min = cast(
         list[npt.NDArray[np.float64]],
@@ -120,23 +118,22 @@ def gassmann_dry(
     k_min: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Dry rock properties of saturated rock by Gassmann equation
+    Dry rock properties of saturated rock by Gassmann equation.
 
     Parameters
     ----------
-    k_sat : np.ndarray
+    k_sat
         saturated rock bulk modulus [Pa]
-    por : np.ndarray
+    por
         porosity of rock [fraction]
-    k_fl : np.ndarray
+    k_fl
         bulk modulus of fluid [Pa]
-    k_min : np.ndarray
+    k_min
         bulk modulus of mineral [Pa]
 
     Returns
     -------
-    np.ndarray
-        k_dry: dry rock bulk modulus [Pa]
+    Dry rock bulk modulus [Pa].
     """
     k_sat, por, k_fl, k_min = cast(
         list[npt.NDArray[np.float64]],

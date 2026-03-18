@@ -15,24 +15,23 @@ def lin_class(
 
     Parameters
     ----------
-    obs : np.ndarray
+    obs
         An nxm array, where n is the number of samples and m is the number of features.
-    class_mean : np.ndarray
+    class_mean
         A pxm array, where p is the number of classes and m is the number of features.
-    class_id : np.ndarray
+    class_id
         A p length vector, where p is the number of classes, containing class_id (integer numbers).
-    thresh : float
+    thresh
         Unclassified threshold.
 
     Returns
     -------
-    tuple
-        lin_class_arr, lin_dist : (np.ndarray, np.ndarray).
-        lin_class_arr: nx1 vector. The classes are numbered according to class_id,
-        and unclassified samples (with distance greater than thresh) are set to 0,
-        lin_dist: nx1 vector with linear distance from the closest class centre to each sample.
+    lin_class_arr
+        nx1 vector. The classes are numbered according to class_id, and
+        unclassified samples (with distance greater than thresh) are set to 0.
+    lin_dist
+        nx1 vector with linear distance from the closest class centre to each sample.
     """
-
     # Find dimensions
     n = obs.shape[0]
     p = class_mean.shape[0]

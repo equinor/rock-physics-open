@@ -11,16 +11,24 @@ def check_and_tile(
 
     Parameters
     ----------
-    s : np.ndarray
+    s
         s parameter.
-    t : np.ndarray
+    t
         t parameter.
 
     Returns
     -------
-    tuple
-        i2_i2, log_length, alpha_length : (np.ndarray, int, int).
-        i2_i2: array with upper left matrices set to 1, log_length: array dimension, alpha_length: number of inclusions.
+    i2_i2
+        Array with upper left matrices set to 1.
+    log_length
+        Array dimension.
+    alpha_length
+        Number of inclusions.
+
+    Raises
+    ------
+    ValueError
+        If input dimensions or shapes are inconsistent.
     """
     if not (
         s.ndim == 3

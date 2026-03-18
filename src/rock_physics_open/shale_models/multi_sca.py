@@ -16,8 +16,7 @@ def multi_sca(
     npt.NDArray[np.float64],
     npt.NDArray[np.float64],
 ]:
-    """SCA - Effective elastic moduli using Berryman's Self-Consistent
-    (Coherent Potential Approximation) method.
+    """SCA - Effective elastic moduli using Berryman's Self-Consistent (Coherent Potential Approximation) method.
 
     -----------------------------------------------
 
@@ -47,16 +46,20 @@ def multi_sca(
 
     Parameters
     ----------
-    args : list or tuple
+    *args
         List or tuple containing multiples of elastic properties as explained above, all numpy arrays.
-    tol : float
+    tol
         Tolerance for the SCA iterations.
 
     Returns
     -------
-    tuple
-        k_sc, mu_sc, rhob : (np.ndarray, np.ndarray, np.ndarray).
-        effective medium properties k_sc: bulk modulus [Pa], mu_sc: shear modulus [Pa], rhob: bulk density [kg/m^3].
+    k_sc
+        Effective bulk modulus [Pa].
+    mu_sc
+        Effective shear modulus [Pa].
+    rhob
+        Effective density [kg/m^3].
+
     """
     if len(args) % 5 != 0:
         raise ValueError(

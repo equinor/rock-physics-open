@@ -17,23 +17,22 @@ def calc_kd_vec(
     alpha: Array2D[np.float64],
 ) -> Array4D[np.float64]:
     """
-    kd is a (nx6x6x(number of alphas)) matrix.
+    Kd is a (nx6x6x(number of alphas)) matrix.
 
     Parameters
     ----------
-    c0 : np.ndarray
+    c0
         Stiffness tensor of the host material (nx6x6 matrix).
-    i4 : np.ndarray
+    i4
         Array of 6x6 identity matrices.
-    s_0:  np.ndarray
+    s_0
         Inverse of stiffness tensor.
-    alpha : np.ndarray
+    alpha
         Vector of aspect ratios (1x (number of aspect ratios) vector) or nx(number of (number of alphas)).
 
     Returns
     -------
-    np.ndarray
-        kd: stiffness tensor.
+    Stiffness tensor.
     """
     log_length = c0.shape[0]
 

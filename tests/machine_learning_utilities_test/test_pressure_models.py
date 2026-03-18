@@ -9,7 +9,6 @@ pytest test_pressure_models.py -v                    # Run all tests
 pytest test_pressure_models.py -m unit              # Run only unit tests
 pytest test_pressure_models.py -m benchmark         # Run only benchmarks
 pytest test_pressure_models.py -k "exponential"     # Run tests matching pattern
-
 """
 
 import os

@@ -31,50 +31,56 @@ def t_matrix_porosity_c_alpha_v(
     Array1D[np.float64],
     Array1D[np.float64],
 ]:
-    """This function can be called directly from top level, but the present recommendation is to go though the run_t_matrix
-    in order to check inputs. It is used directly from the optimisation functions for efficiency. This gives direct
-    access to the C++ compiled library for T-Matrix.
+    """Run the T-Matrix model via the compiled C++ library.
+
+    Can be called directly from top level, but the present recommendation is to go through `run_t_matrix`
+    in order to check inputs. It is used directly from the optimisation functions for efficiency.
 
     Parameters
     ----------
-    k_min : np.ndarray
-        N length array, mineral bulk modulus [Pa]
-    mu_min: np.ndarray
-        N length array, mineral shear modulus [Pa]
-    rho_min: np.ndarray
-        N length array, mineral density [kg/m^3]
-    k_fl:np.ndarray
-        N length array, fluid bulk modulus [Pa]
-    rho_fl: np.ndarray
-        N length array, fluid density [kg/m^3]
-    phi : np.ndarray
-        N length array, porosity
-    perm: np.ndarray
-        N length array, permeability [mD]
-    visco: np.ndarray
-        N length array, viscosity [cP]
-    alpha: np.ndarray or float
-        aspect ratios for inclusions
-    v: np. ndarray or float
-        fraction of porosity with given aspect ratio
-    tau: float
-        relaxation time
-    frequency: float
-        float single value, signal frequency [Hz]
-    angle: float
-        float single value, angle of symmetry plane (0 = HTI, 90 = VTI medium) [deg]
-    frac_inc_con: np.ndarray or float
-        float single value or array, fraction of inclusions that are connected
-    frac_inc_ani: np.ndarray or float
-        float single value or array, fraction of inclusions that are anisotropic
+    k_min
+        Mineral bulk modulus [Pa]
+    mu_min
+        Mineral shear modulus [Pa]
+    rho_min
+        Mineral density [kg/m^3]
+    k_fl
+        Fluid bulk modulus [Pa]
+    rho_fl
+        Fluid density [kg/m^3]
+    phi
+        Porosity
+    perm
+        Permeability [mD]
+    visco
+        Viscosity [cP]
+    alpha
+        Aspect ratios for inclusions
+    v
+        Fraction of porosity with given aspect ratio
+    tau
+        Relaxation time
+    frequency
+        Signal frequency [Hz]
+    angle
+        Angle of symmetry plane (0 = HTI, 90 = VTI medium) [deg]
+    frac_inc_con
+        Fraction of inclusions that are connected
+    frac_inc_ani
+        Fraction of inclusions that are anisotropic
 
     Returns
     -------
-    tuple
-        Tuple of np.ndarrays. Vp: Vertical P-wave velocity [m/s], Vsv: Vertical polarity S-wave velocity [m/s],
-        Vsh: Horizontal polarity S-wave velocity [m/s], Rhob [kg/m^3].
-    """
+    Vp
+        Vertical P-wave velocity [m/s].
+    Vsv
+        Vertical polarity S-wave velocity [m/s].
+    Vsh
+        Horizontal polarity S-wave velocity [m/s].
+    Rhob
+        Bulk density [kg/m^3].
 
+    """
     # ToDo: tau input is not used in the Calculo implementation of T-Matrix
     del tau
 

@@ -20,28 +20,31 @@ def kuster_toksoz_model(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Phase 1 bulk modulus [Pa].
-    mu1 : np.ndarray
+    mu1
         Phase 1 shear modulus [Pa].
-    rho1 : np.ndarray
+    rho1
         Phase 1 bulk density [kg/m^3].
-    k2 : np.ndarray
+    k2
         Phase 2 bulk modulus [Pa].
-    mu2 : np.ndarray
+    mu2
         Phase 2 shear modulus [Pa].
-    rho2 : np.ndarray
+    rho2
         Phase 2 bulk density [kg/m^3].
-    frac1 : np.ndarray
+    frac1
         Fraction of phase 1 [fraction].
-    asp2 : np.ndarray
+    asp2
         Aspect ratio for phase 2 inclusions [ratio].
 
     Returns
     -------
-    tuple
-        k_kt, mu_kt, rhob : np.ndarray
-        effective media properties: k_kt: bulk modulus [Pa], mu_kt: shear modulus [Pa], rhob: bulk density [kg/m^3].
+    k_kt
+        Effective bulk modulus [Pa].
+    mu_kt
+        Effective shear modulus [Pa].
+    rhob
+        Effective bulk density [kg/m^3].
     """
     frac2 = 1.0 - frac1
     rhob = rho1 * frac1 + rho2 * frac2

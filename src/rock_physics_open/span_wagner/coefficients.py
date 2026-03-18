@@ -1,5 +1,5 @@
 """
-Span-Wagner Coefficients
+Span-Wagner Coefficients.
 
 Coefficients defined in tables of Span & Wagner. Coefficients are divided into groups according to horizontal lines in
 the table. This is also convenient when evaluating the Helmholtz energy expressions (phi functions).

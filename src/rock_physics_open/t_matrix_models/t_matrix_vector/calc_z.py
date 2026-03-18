@@ -20,32 +20,35 @@ def calc_z_vec(
     v: Array2D[np.float64],
     tau: Array1D[np.float64],
 ) -> tuple[Array4D[np.complex128], Array4D[np.complex128]]:
-    """Returns the z tensor (6x6x(numbers of empty cavities) matrix) for more explanation see e.g.
-    Agersborg et al. 2009 or "The effects of drained and undrained loading in
+    """Returns the z tensor (6x6x(numbers of empty cavities) matrix).
+
+    For more explanation see e.g. Agersborg et al. 2009 or "The effects of drained and undrained loading in
     visco-elastic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
     (2005). Int. J. Solids and Structures (42). p. 1597-1611.
 
     Parameters
     ----------
-    s0  : np.ndarray
+    s0
         Stiffness tensor of the host material (6x6 matrix).
-    td  : np.ndarray
+    td
         Dry t-matrix tensors, (6x6x(numbers of empty cavities) matrix).
-    td_bar  : np.ndarray
+    td_bar
         Dry t-matrix tensors, (6x6x(numbers of empty cavities) matrix).
-    omega : np.ndarray
+    omega
         Frequency (2*pi*f).
-    gamma : np.ndarray
+    gamma
         Gamma factor of all the inclusions (1x(numbers of empty cavities) vector).
-    v  :  np.ndarray
+    v
         Concentration of all the empty cavities (1x(numbers of empty cavities) vector).
-    tau  :  np.ndarray
+    tau
         Relaxation time constant (1x(numbers of empty cavities) vector).
 
     Returns
     -------
-    tuple
-        z, z_bar : (np.ndarray, np.ndarray).
+    z
+        Z tensor.
+    z_bar
+        Conjugate Z tensor.
     """
     i2_i2, log_length, alpha_length = check_and_tile(s0, td)
 
