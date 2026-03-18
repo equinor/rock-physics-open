@@ -9,23 +9,27 @@ def poly_class(
     labels: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Points within the polygons are assigned to class labels. Point that do not
-    fall within any polygon are set to NULL_CLASS.
+    Points within the polygons are assigned to class labels.
+
+    Point that do not fall within any polygon are set to NULL_CLASS.
 
     Parameters
     ----------
-
-    train_data : np.ndarray
+    train_data
         Data points of two variables.
-    polygons : np.ndarray
+    polygons
         Vertices of polygons in two-dimensional space.
-    labels : np.ndarray
+    labels
         Class label for each polygon.
 
     Returns
     -------
-    np.ndarray
-        Class id.
+    Class id.
+
+    Raises
+    ------
+    ValueError
+        If number of labels are not matching number of polygons.
     """
     if len(labels) != len(polygons):
         raise ValueError("Number of labels are not matching number of polygons")

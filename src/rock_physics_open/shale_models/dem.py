@@ -23,37 +23,40 @@ def dem_model(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of background matrix [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of background matrix [Pa].
-    rho1 : np.ndarray
+    rho1
         Bulk density of background matrix [kg/m^3].
-    k2 : np.ndarray
+    k2
         Bulk modulus of inclusions [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of inclusions [Pa].
-    rho2 : np.ndarray
+    rho2
         Bulk density of inclusions [kg/m^3].
-    frac2 : np.ndarray
+    frac2
         Fraction of inclusions [fraction].
-    asp2 : np.ndarray
+    asp2
         Aspect ratio of inclusions [ratio].
-    tol: float
+    tol
         Desired accuracy in the ODE solver.
 
     Returns
     -------
-    tuple
-        k, mu, rho : np.ndarray
-        k: effective medium bulk modulus [Pa], mu: effective medium shear modulus [Pa], rho: bulk density [kg/m^3].
+    k
+        Effective medium bulk modulus [Pa].
+    mu
+        Effective medium shear modulus [Pa].
+    rhob
+        Bulk density [kg/m^3].
 
-    Comments
-    --------
+
+    Notes
+    -----
     Written by T. Mukerji, SRB, Stanford University.
     Ported to Python by Harald Flesche, Equinor 2015.
     """
-
     # Make sure all log inputs are vectors, expand scalars, throw error if uneven
     # length and not scalars
     k = np.ones(k1.shape) * np.nan
@@ -159,24 +162,23 @@ def _demy_prime(
 
     Parameters
     ----------
-    y : np.ndarray
+    y
         y array.
-    t : float
+    t
         t float.
-    k2 : np.ndarray
+    k2
         Bulk modulus of inclusions [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of inclusions [Pa].
-    asp2 : np.ndarray
+    asp2
         Aspect ratio of inclusions [ratio].
 
     Returns
     -------
-    np.ndarray
-        k, mu array.
+    Concatenated k, mu array.
 
-    Comments
-    --------
+    Notes
+    -----
     Written by T. Mukerji, Stanford University.
     Rewritten in Python by Harald Flesche, Equinor 2015.
     """

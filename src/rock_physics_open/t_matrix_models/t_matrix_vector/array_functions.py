@@ -1,24 +1,22 @@
-from typing import TypeVar
-
 import numpy as np
 
-from rock_physics_open.equinor_utilities.various_utilities.types import Array3D
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array3D,
+    ComplexOrFloat,
+)
 
-_T = TypeVar("_T", np.float64, np.complex128)
 
-
-def array_inverse(a: Array3D[_T]) -> Array3D[_T]:
+def array_inverse(a: Array3D[ComplexOrFloat]) -> Array3D[ComplexOrFloat]:
     """Inverse of higher order array (3 dim) using linalg inv routine.
 
     Parameters
     ----------
-    a : np.ndarray
+    a
         An nxmxm numpy array.
 
     Returns
     -------
-    np.ndarray
-        An nxmxm array where [i, :, :] contains the inverse of A[i, :, :].
+    An nxmxm array where [i, :, :] contains the inverse of A[i, :, :].
 
     Raises
     ------
@@ -33,24 +31,23 @@ def array_inverse(a: Array3D[_T]) -> Array3D[_T]:
 
 
 def array_matrix_mult(
-    *args: Array3D[_T],
-) -> Array3D[_T]:
+    *args: Array3D[ComplexOrFloat],
+) -> Array3D[ComplexOrFloat]:
     """3-dim arrays are matrix multiplied args[j][i, :, :] @ args[j+1][i, :, :].
-    Input args should all be numpy arrays of shape nxmxm.
+
+    Parameters
+    ----------
+    *args
+        Numpy arrays of shape nxmxm.
 
     Returns
     -------
-    np.ndarray
-        An nxmxm array with n args[i] @ args[i+1] @ ....
+    An nxmxm array with n args[i] @ args[i+1] @ ....
 
     Raises
     ------
     ValueError
-        If input is not a list or tuple.
-    ValueError
-        If mismatch in input shape/dimension.
-    ValueError
-        If mismatch in input shape/dimension.
+        If input is not a list or tuple or if there is a mismatch in input shape/dimension.
     """
     if len(args) == 0:
         raise ValueError(f"{__name__}: no input arguments provided")

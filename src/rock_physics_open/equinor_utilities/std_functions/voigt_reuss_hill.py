@@ -14,22 +14,23 @@ def voigt(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    f1 : np.ndarray
+    f1
         Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        k, mu : np.ndarray.
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa]
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
     """
     f2 = 1 - f1
     k_v = f1 * k1 + f2 * k2
@@ -50,22 +51,23 @@ def voigt_reuss_hill(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    f1 : np.ndarray
+    f1
         Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        k, mu : np.ndarray
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa]
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
     """
     k_v, mu_v = voigt(k1, mu1, k2, mu2, f1)
     k_r, mu_r = reuss(k1, mu1, k2, mu2, f1)
@@ -88,13 +90,17 @@ def multi_voigt_reuss_hill(
 
     Parameters
     ----------
-    varargin : np.ndarray
+    *varargin
+        Flat sequence ``(k1, mu1, f1, ..., kn, mun, fn)`` giving the bulk
+        modulus [Pa], shear modulus [Pa] and volume fraction [fraction] of
+        each phase. Fractions must sum to 1.0.
 
     Returns
     -------
-    tuple
-        k, mu : np.ndarray
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa].
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
     """
     k_min = np.array(varargin[::3])
     mu_min = np.array(varargin[1::3])
@@ -124,22 +130,23 @@ def reuss(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    mu1 : np.ndarray
+    mu1
         Shear modulus of phase 1 [Pa].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    mu2 : np.ndarray
+    mu2
         Shear modulus of phase 2 [Pa].
-    f1 : np.ndarray
+    f1
         Fraction of phase 1 [fraction].
 
     Returns
     -------
-    tuple
-        k, mu : np.ndarray.
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa].
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
     """
     f2 = 1 - f1
 

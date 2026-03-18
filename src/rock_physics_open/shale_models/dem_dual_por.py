@@ -24,40 +24,43 @@ def dem_model_dual_por(
 
     Parameters
     ----------
-    k1 : np.ndarray
+    k1
         Matrix bulk modulus [Pa].
-    mu1 : np.ndarray
+    mu1
         Matrix shear modulus [Pa].
-    rho1 : np.ndarray
+    rho1
         Matrix bulk density [kg/m^3].
-    k2 : np.ndarray
+    k2
         Inclusion 1 bulk modulus [Pa].
-    mu2 : np.ndarray
+    mu2
         Inclusion 1 shear modulus [Pa].
-    rho2 : np.ndarray
+    rho2
         Inclusion 1 bulk density [kg/m^3]
-    k3 : np.ndarray
+    k3
         Inclusion 2 bulk modulus [Pa].
-    mu3 : np.ndarray
+    mu3
         Inclusion 2 shear modulus [Pa].
-    rho3 : np.ndarray
+    rho3
         Inclusion 2 bulk density [kg/m^3].
-    frac_inc : np.ndarray
+    frac_inc
         Total fraction of inclusions [fraction].
-    frac_inc_1 : np.ndarray
+    frac_inc_1
         Fraction of inclusions belonging to type 1 [fraction].
-    asp_1 : np.ndarray
+    asp_1
         Aspect ratio of inclusion 1 [fraction].
-    asp_2 : np.ndarray
+    asp_2
         Aspect ratio of inclusion 2 [fraction].
-    tol : float
+    tol
         Tolerance of accuracy [unitless].
 
     Returns
     -------
-    tuple
-        k_dem_dual, mu_dem_dual, rhob_dem_dual : np.ndarray
-        k_dem_dual: bulk modulus [Pa], mu_dem_dual: shear modulus [Pa], rhob_dem_dual: bulk density [kg/m^3].
+    k_dem_dual
+        Bulk modulus [Pa].
+    mu_dem_dual
+        Shear modulus [Pa].
+    rhob_dem_dual
+        Bulk density [kg/m^3].
     """
     # Include the Type 1 inclusions into the matrix first, then run again with inclusions Type 2
     k_dem1, mu_dem1, rhob_dem1 = dem_model(

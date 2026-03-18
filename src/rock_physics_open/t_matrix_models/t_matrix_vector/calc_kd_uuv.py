@@ -8,13 +8,12 @@ def calc_kd_uuvv_vec(kd: Array4D[np.float64]) -> Array2D[np.float64]:
 
     Parameters
     ----------
-    kd : np.ndarray
+    kd
         The dry K-tensor (n, 6,6,(numbers of inclusions)) matrix.
 
     Returns
     -------
-    np.ndarray
-        Summed elements.
+    Summed elements.
 
     """
     return np.sum(kd[:, :3, :3, :], axis=(1, 2))

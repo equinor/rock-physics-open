@@ -80,9 +80,7 @@ def test_brine_velocity():
 
 
 def test_water_brine_properties_float():
-    """
-    Make sure that input object type is reflected in output type
-    """
+    """Make sure that input object type is reflected in output type."""
     for results in [
         water(temp[0], pres[0]),
         water_density(temp[0], pres[0]),

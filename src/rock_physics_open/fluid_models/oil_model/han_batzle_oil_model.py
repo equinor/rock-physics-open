@@ -24,16 +24,21 @@ def gas_apparent_density(
     gas_gravity: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    From Han and Batzle 2000: Equation 5
+    From Han and Batzle 2000: Equation 5.
+
+    Apparent liquid density of natural gas at standard conditions.
     The Rock Physics Handbook Ed. 3, Equation 6.22.42
-    Apparent liquid density of natural gas at standard conditions
 
-    Args:
-        oil_density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
-        gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
+    Parameters
+    ----------
+    oil_density
+        oil density at standard conditions [kg/m^3]
+    gas_gravity
+        gas gravity relative to air [unitless]
 
-    Returns:
-        ArrayLikeFloat: gas liquid density [kg/m^3]
+    Returns
+    -------
+    gas liquid density [kg/m^3]
     """
     scalar_input = inputs_are_scalar(oil_density, gas_gravity)
     oil_density_arr = as_float_array(oil_density)
@@ -54,21 +59,27 @@ def pseudo_liquid_density(
     gas_coefficient: float = 0.113,
 ) -> npt.NDArray[np.float64]:
     """
-    From Han and Batzle 2000: equation 7
+    From Han and Batzle 2000: equation 7.
+
     The Rock Physics Handbook Ed. 3, Equation 6.22.43-44
     Calculate the pseudo liquid density at standard conditions.
     With the default setting for the 'gas_coefficient', this is adapted to
-    the Han and Batzle model for live oil velocity
+    the Han and Batzle model for live oil velocity.
 
-    Args:
-        gor (ArrayLikeFloat): gas / oil volume ratio [unitless]
-        oil_density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
-        gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
-        gas_coefficient: (float): empirical gas coefficient
+    Parameters
+    ----------
+    oil_density
+        Oil density at standard conditions [kg/m^3].
+    gor
+        Gas / oil volume ratio [unitless].
+    gas_gravity
+        Gas gravity relative to air [unitless].
+    gas_coefficient
+        Empirical gas coefficient.
 
-
-    Returns:
-        ArrayLikeFloat: pseudo liquid density
+    Returns
+    -------
+    pseudo liquid density
     """
     # Calculate the apparent volume fraction of the pseudo-liquid gas
     # at standard conditions
@@ -99,19 +110,26 @@ def density_correction_vasquez_beggs_ahmed(
     rho0: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    Correction to Batzle and Wang 1992 oil density model for pressures above
-    bubble point. This method is referred to as 'a more widely used correction'.
-    The Rock Physics Handbook, 3rd ed, 2020: Equation 6.22.38-40
+    Correction to Batzle and Wang 1992 oil density model for pressures above bubble point.
 
-    Args:
-        gor (ArrayLikeFloat): gas / oil ratio [l/l]. The empirical constants assume
-            this is in l/l (SI convention) not scf/STB as in the original paper.
-        temp (ArrayLikeFloat): temperature [°C]
-        gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
-        rho0 (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
+    This method is referred to as 'a more widely used correction'.
+    The Rock Physics Handbook, 3rd ed, 2020: Equation 6.22.38-40.
 
-    Returns:
-        ArrayLikeFloat: exponent for correction of pressures above bubble point
+    Parameters
+    ----------
+    gor
+        Gas / oil ratio [l/l]. The empirical constants assume
+        this is in l/l (SI convention) not scf/STB as in the original paper.
+    temp
+        Temperature [°C].
+    gravity
+        Gas gravity relative to air [unitless].
+    rho0
+        Oil density at standard conditions [kg/m^3].
+
+    Returns
+    -------
+    exponent for correction of pressures above bubble point
     """
     scalar_input = inputs_are_scalar(gor, temp, gravity, rho0)
     gor_arr = as_float_array(gor)
@@ -138,19 +156,26 @@ def han_batzle_live_oil_velocity(
     gas_gravity: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    Han and Batzle 2000: oil velocity model, equation 10-16
-    The Rock Physics Handbook Ed. 3, Equation 6.22.52
+    Han and Batzle 2000: oil velocity model, equation 10-16.
 
-    Args:
-        temperature (ArrayLikeFloat): temperature [°C]
-        pressure (ArrayLikeFloat): formation pressure [Pa]
-        reference_density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
-        gas_oil_ratio (ArrayLikeFloat): gas / Oil volume ratio [l/l]
-        gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
+    The Rock Physics Handbook Ed. 3, Equation 6.22.52.
 
+    Parameters
+    ----------
+    temperature
+        Temperature [°C].
+    pressure
+        Formation pressure [Pa].
+    reference_density
+        Oil density at standard conditions [kg/m^3].
+    gas_oil_ratio
+        Gas / Oil volume ratio [l/l].
+    gas_gravity
+        Gas gravity relative to air [unitless].
 
-    Returns:
-        ArrayLikeFloat: oil velocity [m/s]
+    Returns
+    -------
+    Oil velocity [m/s].
     """
     # Estimate the bubble point pressure and identify pressure
     # values above and below bubble point
@@ -219,20 +244,25 @@ def han_batzle_live_oil_density(
     gas_gravity: ArrayLikeFloat,
 ) -> npt.NDArray[np.float64]:
     """
-    Correction to the Batzle and Wang 1992 live oil density model
-    for pressures above bubble point
+    Correction to the Batzle and Wang 1992 live oil density model for pressures above bubble point.
 
-    Args:
-        temperature (ArrayLikeFloat): temperature [°C]
-        pressure (ArrayLikeFloat): formation pressure [Pa]
-        reference_density (ArrayLikeFloat): oil density at standard conditions [kg/m^3]
-        gas_oil_ratio (ArrayLikeFloat): gas / Oil volume ratio [l/l]
-        gas_gravity (ArrayLikeFloat): gas gravity relative to air [unitless]
+    Parameters
+    ----------
+    temperature
+        Temperature [°C].
+    pressure
+        Formation pressure [Pa].
+    reference_density
+        Oil density at standard conditions [kg/m^3].
+    gas_oil_ratio
+        Gas / Oil volume ratio [l/l].
+    gas_gravity
+        Gas gravity relative to air [unitless].
 
-    Returns:
-        ArrayLikeFloat: oil density [kg/m^3]
+    Returns
+    -------
+    Oil density [kg/m^3].
     """
-
     # Estimate the bubble point pressure and identify pressure
     # values above and below bubble point
     scalar_input = inputs_are_scalar(

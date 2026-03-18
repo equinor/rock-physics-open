@@ -242,7 +242,7 @@ def _s3_dd2_dt0(
 def _s4_bigdelta(
     tau: npt.NDArray[np.float64], delta: npt.NDArray[np.float64]
 ) -> npt.NDArray[np.float64]:
-    """bigdelta = theta^2 + B4*|delta-1|^(2*a4)"""
+    """Bigdelta = theta^2 + B4*|delta-1|^(2*a4)."""
     return (
         B4 * np.abs(delta - 1) ** (2 * a4)
         + (A4 * np.abs(delta - 1) ** (beta4 ** (-1.0)) - tau + 1) ** 2
@@ -252,7 +252,7 @@ def _s4_bigdelta(
 def _s4_phi(
     delta: npt.NDArray[np.float64], tau: npt.NDArray[np.float64]
 ) -> npt.NDArray[np.float64]:
-    """phi = exp(-C4*(delta-1)^2 - D4*(tau-1)^2)"""
+    """Phi = exp(-C4*(delta-1)^2 - D4*(tau-1)^2)."""
     return np.exp(-C4 * (delta - 1) ** 2 - D4 * (tau - 1) ** 2)
 
 
@@ -443,15 +443,25 @@ def residual_helmholtz_energy(
     diff_tau: int,
 ) -> npt.NDArray[np.float64]:
     """
-    Equation 6.1 from Span & Wagner [2]. Calculates the residual helmholtz energy of co2 or its derivatives. tau_ and
-    delta_ must have be numpy arrays of shape (N, 1). This allows for vectorization.
+    Equation 6.1 from Span & Wagner [2].
 
-    :param delta_: Reduced density. Unit-less. numpy.ndarray with shape (N, 1)
-    :param tau_: Inverse reduced temperature. Unit-less. numpy.ndarray with shape (N, 1)
-    :param diff_delta: Degree of derivation wrt. delta. Integer.
-    :param diff_tau: Degree of derivation wrt. tau. Integer.
+    Calculates the residual helmholtz energy of co2 or its derivatives.
+    tau_ and delta_ must have be numpy arrays of shape (N, 1). This allows for vectorization.
 
-    :return: Helmholtz free energy. Unit-less. numpy.ndarray with shape (N,)
+    Parameters
+    ----------
+    delta_
+        Reduced density. Unit-less. numpy.ndarray with shape (N, 1)
+    tau_
+        Inverse reduced temperature. Unit-less. numpy.ndarray with shape (N, 1)
+    diff_delta
+        Degree of derivation wrt. delta. Integer.
+    diff_tau
+        Degree of derivation wrt. tau. Integer.
+
+    Returns
+    -------
+    Helmholtz free energy. Unit-less. numpy.ndarray with shape (N,)
     """
     _s1 = np.sum(_EXPRESSIONS[(1, diff_delta, diff_tau)](tau_, delta_), axis=-1)
     _s2 = np.sum(_EXPRESSIONS[(2, diff_delta, diff_tau)](tau_, delta_), axis=-1)

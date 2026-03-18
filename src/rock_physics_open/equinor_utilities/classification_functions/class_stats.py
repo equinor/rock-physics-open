@@ -15,8 +15,9 @@ def gen_class_stats(
     npt.NDArray[np.int64],
 ]:
     """
-    Generate statistics - mean, covariance and prior probability - for each
-    class in the training data.	The observations are an n x m array, where n
+    Generate statistics - mean, covariance and prior probability - for each class in the training data.
+
+    The observations are an n x m array, where n
     is the number of observations and m is the number of variables. With p
     classes the returned mean value will be an array of dimension p x m,
     covariance m x m x p and the class_id and prior probability p length vector.
@@ -24,19 +25,30 @@ def gen_class_stats(
 
     Parameters
     ----------
-    obs : np.ndarray
+    obs
         An nxm array of data samples (observations).
-    class_val : np.ndarray
+    class_val
         n length vector with class ID of the observations. Assumed to
         be integer.
 
     Returns
     -------
-    tuple
-        class_mean, class_cov, prior_prob, class_counts, class_id : (np.ndarray, np.ndarray, np.ndarray, np.ndarray,
-        np.ndarray).
-    """
+    class_mean
+        p x m array of mean values per class.
+    class_cov
+        m x m x p array of covariance matrices per class.
+    prior_prob
+        Length-p vector of prior probabilities per class.
+    class_counts
+        Length-p vector with the number of observations per class.
+    class_id
+        Length-p vector of class labels.
 
+    Raises
+    ------
+    ValueError
+        If class values are not discrete numbers.
+    """
     n, m = obs.shape
     # Find number of classes. If class_val input is not integer, raise an exception
     if not (

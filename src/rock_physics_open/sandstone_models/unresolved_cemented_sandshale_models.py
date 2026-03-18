@@ -45,69 +45,76 @@ def unresolved_constant_cement_sand_shale_model(
     npt.NDArray[np.float64],
 ]:
     """
-    Model for silisiclastic rocks with alternating layers of cemented sand and friable shale, and in which the layers
-    are not resolved by the investigating signal. Backus average is used to calculate the anisotropic effect of the
+    Model for siliciclastic rocks with alternating layers of cemented sand and friable shale, and in which the layers are not resolved by the investigating signal.
+
+    Backus average is used to calculate the anisotropic effect of the
     alternating layers.
 
     Parameters
     ----------
-    k_min_sst : np.ndarray
+    k_min_sst
         Sandstone matrix bulk modulus [Pa].
-    mu_min_sst : np.ndarray
+    mu_min_sst
         Sandstone matrix shear modulus [Pa].
-    rho_min_sst : np.ndarray
+    rho_min_sst
         Sandstone matrix bulk density [kg/m^3].
-    k_cem : np.ndarray
+    k_cem
         Sandstone cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Sandstone cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Sandstone cement bulk density [kg/m^3].
-    k_mud : np.ndarray
+    k_mud
         Shale bulk modulus [Pa].
-    mu_mud : np.ndarray
+    mu_mud
         Shale shear modulus [Pa].
-    rho_mud : np.ndarray
+    rho_mud
         Shale bulk density [kg/m^3].
-    k_fl_sst : np.ndarray
+    k_fl_sst
         Fluid bulk modulus for sandstone fluid [Pa].
-    rho_fl_sst : np.ndarray
+    rho_fl_sst
         Fluid bulk density for sandstone fluid [kg/m^3].
-    k_fl_mud : np.ndarray
+    k_fl_mud
         Fluid bulk modulus for shale fluid [Pa].
-    rho_fl_mud : np.ndarray
+    rho_fl_mud
         Fluid bulk density for shale fluid[kg/m^3].
-    phi_sst : np.ndarray
+    phi_sst
         Sandstone porosity [fraction].
-    phi_mud : np.ndarray
+    phi_mud
         Shale porosity [fraction].
-    p_eff_mud : np.ndarray
+    p_eff_mud
         Effective pressure in mud [Pa].
-    shale_frac : np.ndarray
+    shale_frac
         Shale fraction [fraction].
-    frac_cem : float
+    frac_cem
         Cement volume fraction [fraction].
-    phi_c_sst : float
+    phi_c_sst
         Critical porosity for sandstone [fraction].
-    phi_c_mud : float
+    phi_c_mud
         Critical porosity for mud [fraction].
-    n_sst : float
+    n_sst
         Coordination number for sandstone [unitless].
-    n_mud : float
-        Coordination number for shale [unitless].
-    coord_num_func_mud : str
+    coord_num_func_mud
         Indication if coordination number should be calculated from porosity or kept constant for shale.
-    shear_red_sst : float
+    n_mud
+        Coordination number for shale [unitless].
+    shear_red_sst
         Shear reduction factor for sandstone [fraction].
-    shear_red_mud : float
+    shear_red_mud
         Shear reduction factor for mud [fraction].
 
     Returns
     -------
-    tuple
-        vpv, vsv, vph, vsh, rho : np.ndarray
-        vertical p-wave velocity, vertical shear-wave velocity, horizontal p-wave velocity, horizontal shear-wave
-        velocity (all [m/s]), bulk density [kg/m^3].
+    vpv
+        Vertical p-wave velocity [m/s].
+    vsv
+        Vertical shear-wave velocity [m/s].
+    vph
+        Horizontal p-wave velocity [m/s].
+    vsh
+        Horizontal shear-wave velocity [m/s].
+    rho
+        Bulk density [kg/m^3].
     """
     # Estimate the sand end member through the constant cement model
     vp_sst, vs_sst, rho_b_sst, _, _ = constant_cement_model(

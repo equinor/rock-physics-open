@@ -11,32 +11,30 @@ def pressure(
     n: float,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Function to estimate overburden pressure and vertical effective stress (lithostatic pressure)
-    based on density.
+    Function to estimate overburden pressure and vertical effective stress (lithostatic pressure) based on density.
 
     Parameters
     ----------
-    rho : np.ndarray
-        Density log [kg/m3].
-    tvd_msl : np.ndarray
+    rho
+        Density log [kg/m^3].
+    tvd_msl
         Vertical depth log [m].
-    water_depth : float
+    water_depth
         Down to this point the difference between formation pressure and overburden pressure shall be zero [m].
-    p_form : float
+    p_form
         Formation pressure [Pa].
-    tvd_p_form : float
+    tvd_p_form
         Depth of formation pressure point [m].
-    n: float
+    n
         Biot coefficient [unitless].
 
     Returns
     -------
-    tuple
-        p_eff, p_lith : np.ndarray.
-        p_eff [Pa] - effective pressure,
-        p_lith [Pa] - overburden pressure.
+    p_eff
+        Effective pressure [Pa].
+    p_lith
+        Overburden pressure [Pa].
     """
-
     # Standard brine density with salinity 40000 ppm, 2 MPa and 4 deg. C
     rho_brine = 1.03e3
     # Gravity constant

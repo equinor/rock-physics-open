@@ -45,56 +45,86 @@ def shale_model_4_mineral_dem(
     npt.NDArray[np.float64],
 ]:
     """
-    Simple shale model with mixture of matrix minerals in self-consistent approximation
-    or Voigt-Reuss-Hill average. In the latter case the aspect ratios are ignored.
+    Simple shale model with mixture of matrix minerals in self-consistent approximation or Voigt-Reuss-Hill average.
+
+    In the latter case the aspect ratios are ignored.
     Fluid filled porosity is included through a DEM inclusion model.
 
     All k, mu inputs have unit [Pa], all rho inputs have unit [kg/m^3], phi and all f and asp have unit [fraction].
 
     Parameters
     ----------
-    k1, mu1, rho1 : np.ndarray
+    k1
         Mineral 1 properties [Quartz and feldspar].
-    k2, mu2, rho2 : np.ndarray
+    mu1
+        Mineral 1 properties [Quartz and feldspar].
+    rho1
+        Mineral 1 properties [Quartz and feldspar].
+    k2
         Mineral 2 properties [Kerogen].
-    k3, mu3, rho3 : np.ndarray
+    mu2
+        Mineral 2 properties [Kerogen].
+    rho2
+        Mineral 2 properties [Kerogen].
+    k3
         Mineral 3 properties [Clay].
-    k4, mu4, rho4 : np.ndarray
+    mu3
+        Mineral 3 properties [Clay].
+    rho3
+        Mineral 3 properties [Clay].
+    k4
         Mineral 4 properties [Carbonates].
-    k_fl, rho_fl : np.ndarray
+    mu4
+        Mineral 4 properties [Carbonates].
+    rho4
+        Mineral 4 properties [Carbonates].
+    k_fl
         Fluid properties.
-    phi : np.ndarray
+    rho_fl
+        Fluid properties.
+    phi
         Phi parameter.
-    f1 : np.ndarray
+    f1
         Fraction of mineral 1.
-    f2 : np.ndarray
+    f2
         Fraction of mineral 2.
-    f3 : np.ndarray
+    f3
         Fraction of mineral 3.
-    rhob_inp : np.ndarray
+    rhob_inp
         Observed density [kg/m^3].
-    asp1 : np.ndarray
+    asp1
         Aspect ratio mineral 1 inclusions.
-    asp2 : np.ndarray
+    asp2
         Aspect ratio mineral 2 inclusions.
-    asp3 : np.ndarray
+    asp3
         Aspect ratio mineral 3 inclusions.
-    asp4 : np.ndarray
+    asp4
         Aspect ratio mineral 4 inclusions.
-    asp : np.ndarray
+    asp
         Porosity aspect ratio.
-    mod_type : str
+    mod_type
         One of 'SCA' or 'VRH'.
 
     Returns
     -------
-    tuple
-        k, mu, rhob, vp, vs, rho_factor : (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray).
-        k - effective bulk modulus [Pa], mu - effective shear modulus [Pa], rhob - effective density [kg/m^3],
-        vp - p-wave velocity [m/s], vs - shear wave velocity [m/s], rho_factor - ratio between modelled and observed
-        density [ratio].
-    """
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
+    rhob
+        Effective density [kg/m^3].
+    vp
+        P-wave velocity [m/s].
+    vs
+        Shear wave velocity [m/s].
+    rho_factor
+        Ratio between modelled and observed density [ratio].
 
+    Raises
+    ------
+    ValueError
+        If mod_type is unknown.
+    """
     #   tol: DEM model calculation tolerance <= Set as a hardcoded value, not
     #   found to influence the results
     tol = 1.0e-6

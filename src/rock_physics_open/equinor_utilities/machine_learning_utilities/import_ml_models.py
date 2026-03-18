@@ -22,22 +22,35 @@ def import_model(
     str | list[str],
 ]:
     """
-    Utility to import a pickled dict containing information needed to run a classification or regression based on
-    a calibrated model.
+    Utility to import a pickled dict containing information needed to run a classification or regression based on a calibrated model.
 
     Parameters
     ----------
-    model_file_name : str
+    model_file_name
         Full name including path for model file.
 
     Returns
     -------
-    models, scaler, ohe, label_var, label_units, feature_var, cat_var : Any
-        models: various regression or classification models from e.g. sklearn or tensorflow keras, scaler: preprocessing
-        Robust Scaler, label_var: name(s) of label variable(s), label_unit: unit(s) of label variable(s), cat_var:
-        categorical variables that should be encoded with one-hot-encoder.
-    """
+    models
+        Regression or classification model (e.g. from sklearn or keras).
+    scaler
+        Preprocessing Robust Scaler.
+    ohe
+        One-hot encoder for categorical variables, if any.
+    label_var
+        Name(s) of label variable(s).
+    label_unit
+        Unit(s) of label variable(s).
+    feature_var
+        Names of feature variables.
+    cat_var
+        Categorical variables encoded with the one-hot-encoder.
 
+    Raises
+    ------
+    ValueError
+        If model type is unknown.
+    """
     with open(model_file_name, "rb") as fin, warnings.catch_warnings():
         # 11.04.2021 HFLE: There is an issue that is not connected to the local function, in that a warning is issued
         # when the model is loaded, claiming that it is of an older version. This is debugged in detail, and the model

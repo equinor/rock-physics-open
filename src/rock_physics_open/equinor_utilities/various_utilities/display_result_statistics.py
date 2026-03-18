@@ -15,9 +15,14 @@ def disp_result_stats(
 
     Parameters
     ----------
-    title : Title.
-    arr : items to display
-    names_arr : array of names.
+    title
+        Title.
+    arr
+        Items to display
+    names_arr
+        Array of names.
+    **kwargs
+        Keyword arguments for tkinter.
     """
     from tkinter import END, Entry, PhotoImage, Tk
 

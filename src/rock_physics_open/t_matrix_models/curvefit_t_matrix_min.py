@@ -13,30 +13,34 @@ def curve_fit_2_inclusion_sets(
     alpha2: float,
     v1: float,
 ) -> Array1D[np.float64]:
-    """Optimisation of input parameters to T-Matrix for carbonate in case where the mineral composition for each
-    sample is known, so that effective mineral moduli for each sample are part of the inputs. The optimisation
-    is made for the inclusion parameters in addition to fraction of connected and anisotropic porosity and the
-    VTI plane angle.
+    """Optimisation of input parameters to T-Matrix for carbonate.
+
+    Used in cases where the mineral composition for each sample is known, so that effective mineral moduli for each sample are part of the inputs.
+    The optimisation is made for the inclusion parameters in addition to fraction of connected and anisotropic porosity and the VTI plane angle.
 
     Parameters
     ----------
-    x_data : np.ndarray
+    x_data
         Inputs to unpack.
-    frac_ani : float
+    frac_ani
         Fraction of anisotropic inclusions.
-    frac_con : float
+    frac_con
         Fraction of connected inclusions.
-    alpha1 : float
+    alpha1
         Aspect ratio of first inclusion set.
-    alpha2 : float
+    alpha2
         Aspect ratio of second inclusion set.
-    v1 : float
+    v1
         Concentration ratio of first inclusion set.
 
     Returns
     -------
-    np.ndarray
-        Modelled velocity.
+    Modelled velocity.
+
+    Raises
+    ------
+    ValueError
+        If alpha 1 is lower than alpha 2, and v1 is not a positive fraction
     """
     # Unpack x inputs
     # In calling function:

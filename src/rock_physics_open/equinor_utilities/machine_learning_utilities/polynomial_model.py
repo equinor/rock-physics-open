@@ -16,6 +16,16 @@ class PolynomialPressureModel(BasePressureModel):
     where P(p) is a polynomial function with specified coefficients.
 
     Input format (n,3): [velocity, p_eff_in_situ, p_eff_depleted]
+
+    Parameters
+    ----------
+    weights
+        Polynomial coefficients [unitless]. First element is constant term,
+        second is linear coefficient, etc.
+    model_max_pressure
+        Maximum pressure for predict_max method [Pa].
+    description
+        Model description.
     """
 
     def __init__(
@@ -24,19 +34,6 @@ class PolynomialPressureModel(BasePressureModel):
         model_max_pressure: float | None = None,
         description: str = "",
     ):
-        """
-        Initialize polynomial pressure model.
-
-        Parameters
-        ----------
-        weights : list[float]
-            Polynomial coefficients [unitless]. First element is constant term,
-            second is linear coefficient, etc.
-        model_max_pressure : float | None
-            Maximum pressure for predict_max method [Pa].
-        description : str
-            Model description.
-        """
         super().__init__(model_max_pressure, description)
         self._weights = weights
 
@@ -52,13 +49,12 @@ class PolynomialPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Input array to validate.
 
         Returns
         -------
-        np.ndarray
-            Validated input array.
+        Validated input array.
 
         Raises
         ------
@@ -80,15 +76,19 @@ class PolynomialPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Validated input array (n,3).
-        case : str
+        case
             Pressure case: "in_situ" or "depleted".
 
         Returns
         -------
-        np.ndarray
-            Velocity values [m/s].
+        Velocity values [m/s].
+
+        Raises
+        ------
+        ValueError
+            If field "weights" is not set.
         """
         arr = self.validate_input(inp_arr)
 

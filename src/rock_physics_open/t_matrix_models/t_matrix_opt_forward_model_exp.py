@@ -32,37 +32,54 @@ def run_t_matrix_forward_model_with_opt_params_exp(
     Array1D[np.float64],
     Array1D[np.float64],
 ]:
-    """Based on the input file with parameters for the optimally fitted model, a forward modelling is done
-    with inputs of mineral properties, fluid properties and porosity per sample. Other parameters (constants)
-    can also be varied from their setting when the optimal parameters were found.
+    """
+    Run forward modelling with the T-Matrix model using exponentially fitted parameters.
+
+    Based on the input file with parameters for the optimally fitted model, a forward modelling is done with inputs of mineral properties, fluid properties and porosity per sample
+    Other parameters (constants) can also be varied from their setting when the optimal parameters were found.
 
     Parameters
     ----------
-    fl_k : np.ndarray.
+    fl_k
         Effective in situ fluid bulk modulus [Pa].
-    fl_rho : np.ndarray
+    fl_rho
         Effective in situ fluid density [kg/m^3].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    vsh : np.ndarray
+    vsh
         Shale volume [fraction].
-    angle : float
+    angle
         Angle of symmetry plane
-    perm : float
+    perm
         Permeability [mD].
-    visco : float
+    visco
         Viscosity [cP].
-    tau : float
+    tau
         Relaxation time constant [s].
-    freq : float
+    freq
         Signal frequency [Hz].
-    f_name : str
+    f_name
         File name for parameter file for optimal parameters.
 
     Returns
     -------
-    tuple
-        Tuple of np.ndarrays: vp [m/s], vs [m/s], rho [kg/m^3], ai [kg/m^3 x m/s], vp/vs [fraction] for forward model.
+    vp
+        Modelled p-wave velocity [m/s].
+    vs
+        Modelled s-wave velocity [m/s].
+    rho
+        Modelled density [kg/m^3].
+    ai
+        Modelled acoustic impedance [kg/m^3 x m/s].
+    vpvs
+        Modelled Vp/Vs ratio [fraction].
+
+    Raises
+    ------
+    TypeError
+        If input file is incorrect.
+    ValueError
+        If forward model fails.
     """
     opt_type, opt_params, opt_dict = load_opt_params(f_name)
     _, scale_val, _ = opt_param_info()

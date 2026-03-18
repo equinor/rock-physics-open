@@ -57,8 +57,9 @@ def patchy_cement_pressure_fluid_substitution(
     npt.NDArray[np.float64],
 ]:
     """
-    Patchy cement model, developed by Per Avseth and Norunn Skjei. A sandstone model in which part of the
-    matrix is pressure sensitive, and part is cemented.
+    Patchy cement model, developed by Per Avseth and Norunn Skjei.
+
+    A sandstone model in which part of the matrix is pressure sensitive, and part is cemented.
 
     Control parameters with default value:
     model_type = 'weight': A sample by sample weight between cemented (upper) and friable (lower) bound are calculated.
@@ -87,81 +88,88 @@ def patchy_cement_pressure_fluid_substitution(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral density [kg/m^3]
-    k_cem : np.ndarray
+    k_cem
         Sandstone cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Sandstone cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Cement density [kg/m^3]
-    k_fl_old : np.ndarray
+    k_fl_old
         Initial fluid bulk modulus for sandstone fluid [Pa].
-    rho_fl_old : np.ndarray
+    rho_fl_old
         Initial fluid bulk density for sandstone fluid [kg/m^3].
-    k_fl_new : np.ndarray
+    k_fl_new
         Substituted fluid bulk modulus for sandstone fluid [Pa].
-    rho_fl_new : np.ndarray
+    rho_fl_new
         Substituted fluid bulk density for sandstone fluid [kg/m^3].
-    phi : np.ndarray
+    phi
         Total porosity [fraction].
-    p_eff_old : np.ndarray
+    p_eff_old
         Initial effective pressure [Pa].
-    p_eff_new : np.ndarray
+    p_eff_new
         Substituted effective pressure [Pa].
-    p_eff_low : float
-        Lower bound effective pressure [Pa].
-    frac_cem_up : float
-        Upper bound cement volume fraction [fraction].
-    frac_cem : cement fraction of constant cement model - representative for observed data. Must be lower than
-        frac_cem_up
-    shear_red : float
-        Shear reduction factor for sandstone [fraction].
-    phi_c : float
-        Critical porosity [fraction].
-    n : float
-        Coordination number [unitless].
-    coord_num_func : str
-        Indication if coordination number should be calculated from porosity or kept constant.
-    vp_old : np.ndarray
+    vp_old
         Initial p-wave velocity [m/s].
-    vs_old : np.ndarray
+    vs_old
         Initial s-wave velocity [m/s].
-    rho_b_old : np.ndarray
+    rho_b_old
         Initial bulk density [kg/m^3].
-    model_type : str
+    p_eff_low
+        Lower bound effective pressure [Pa].
+    frac_cem_up
+        Upper bound cement volume fraction [fraction].
+    frac_cem
+        frac_cem_up
+    shear_red
+        Shear reduction factor for sandstone [fraction].
+    phi_c
+        Critical porosity [fraction].
+    coord_num_func
+        Indication if coordination number should be calculated from porosity or kept constant.
+    n
+        Coordination number [unitless].
+    model_type
         Version of model, either 'weight' or 'cement_fraction'
-    phi_below_zero : str
+    phi_below_zero
         Control for handling of negative porosity samples.
-    phi_above_phi_c : str
+    phi_above_phi_c
         Control for handling of porosity samples above critical porosity.
-    k_sat_above_k_min : str
+    k_sat_above_k_min
         Control for handling of bulk modulus samples above mineral bulk modulus.
-    above_upper_bound : str
+    above_upper_bound
         Control for handling of samples above the upper bound.
-    below_lower_bound : str
+    below_lower_bound
         Control for handling of samples below the lower bound.
 
     Returns
     -------
-    tuple
-        vp_new, vs_new, rho_b_new, ai_new, vpvs_new, k_sat_new, mu_new, wk, wmu, idx_valid :
-        (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray).
-        vp_new :Saturated P-velocity [m/s] after fluid and pressure substitution,
-        vs_new : Saturated S-velocity [m/s] after fluid and pressure substitution,
-        rho_b_new : Saturated density [kg/m3] after fluid and pressure substitution,
-        ai_new : Saturated acoustic impedance [kg/m3 x m/s] after fluid and pressure substitution,
-        vpvs_new : Saturated Vp/Vs ratio [unitless] after fluid and pressure substitution,
-        k_sat_new : New saturated rock bulk modulus [Pa],
-        mu_new : New shear modulus [Pa],
-        wk, wmu : weights for k and mu between upper and lower bound,
-        idx_valid : samples fluid substitution is performed
+    vp_new
+        Saturated P-velocity after fluid and pressure substitution [m/s].
+    vs_new
+        Saturated S-velocity after fluid and pressure substitution [m/s].
+    rho_b_new
+        Saturated density after fluid and pressure substitution [kg/m^3].
+    ai_new
+        Saturated acoustic impedance after fluid and pressure substitution [kg/m^3 x m/s].
+    vpvs_new
+        Saturated Vp/Vs ratio after fluid and pressure substitution [unitless].
+    k_sat_new
+        New saturated rock bulk modulus [Pa].
+    mu_new
+        New shear modulus [Pa].
+    wk
+        Weight for k between upper and lower bound.
+    wmu
+        Weight for mu between upper and lower bound.
+    idx_valid
+        Boolean mask of samples where fluid substitution is performed.
     """
-
     # Original saturated bulk and shear modulus
     k_sat_old, mu_old = std_functions.moduli(vp=vp_old, vs=vs_old, rhob=rho_b_old)
 
@@ -526,19 +534,22 @@ def _calculate_weight(
     force_full_range: bool = False,
 ) -> npt.NDArray[np.float64]:
     """
-    Calculates a weight for a value between a lower and upper bound. Used for moduli
-
+    Calculates a weight for a value between a lower and upper bound. Used for moduli.
 
     Parameters
     ----------
-    dry_modulus: value to be evaluated
-    low_modulus: lower bound
-    high_modulus: upper bound
-    force_full_range: do not clip weight to a range of [0.0, 1.0]
+    dry_modulus
+        Value to be evaluated.
+    low_modulus
+        Lower bound.
+    high_modulus
+        Upper bound.
+    force_full_range
+        Do not clip weight to a range of [0.0, 1.0].
 
     Returns
     -------
-    weight: value between [0.0, 1.0]
+    Weight between [0.0, 1.0]
     """
     idx = np.abs(high_modulus - low_modulus) < 2.0 * np.finfo(float).eps
     if np.any(idx):

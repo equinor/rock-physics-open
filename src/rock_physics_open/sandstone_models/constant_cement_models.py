@@ -30,6 +30,8 @@ def constant_cement_model(
     npt.NDArray[np.float64],
 ]:
     """
+    Constant cement model.
+
     Constant cement model is a sandstone model that combined a cemented and a friable sand, so that a constant
     proportion of the rock volume is made up of grain-bonding cement. Variation in porosity is due to grain sorting,
     i.e. a well-sorted sand will have high porosity, and a poorly sorted one will have low porosity. In the extreme
@@ -52,41 +54,48 @@ def constant_cement_model(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral bulk density [kg/m^3].
-    k_cem : np.ndarray
+    k_cem
         Cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Cement bulk density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid bulk density [kg/m^3].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    frac_cem : np.ndarray or float
+    frac_cem
         Cement fraction [fraction].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor [fraction].
-    extrapolate_to_max_phi : bool
+    extrapolate_to_max_phi
         If True, the model will extrapolate to the maximum porosity value (phi_c - frac_cem) if the input porosity
         exceeds this value. If False, the model will return NaN for porosity values exceeding this limit.
 
     Returns
     -------
-    tuple
-        vp, vs, rho, ai, vpvs  : np.ndarray
-        vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
+    vp
+        Compressional wave velocity of saturated rock [m/s].
+    vs
+        Shear wave velocity of saturated rock [m/s].
+    rho
+        Bulk density [kg/m^3].
+    ai
+        Acoustic impedance [m/s x kg/m^3].
+    vpvs
+        Vp/Vs ratio [ratio].
     """
     k_zero, k_dry, mu = constant_cement_model_dry(
         k_min=k_min,
@@ -172,41 +181,43 @@ def constant_cement_model_dry(
     | tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]
 ):
     """
-    Dry rock version of the constant cement model. The method is identical to the constant cement model function,
-    except that a saturation step is not performed at the end.
+    Dry rock version of the constant cement model.
+
+    The method is identical to the constant cement model function, except that a saturation step is not performed at the end.
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    k_cem : np.ndarray
+    k_cem
         Cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Cement shear modulus [Pa].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    frac_cem : float or np.ndarray
+    frac_cem
         Cement fraction [fraction].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor [fraction].
-    extrapolate_to_max_phi : bool
+    extrapolate_to_max_phi
         If True, the model will extrapolate to the maximum porosity value (phi_c - frac_cem) if the input porosity
         exceeds this value. If False, the model will return NaN for porosity values exceeding this limit.
-    return_k_zero : bool
+    return_k_zero
         If True, the model will return the zero-porosity end member bulk modulus k_zero in addition to the dry rock
         bulk modulus k_dry and shear modulus mu.
 
     Returns
     -------
-    tuple
-        k_dry, mu : np.ndarray
-        Bulk modulus k [Pa] and shear modulus mu [Pa] of dry rock.
+    k_dry
+        Bulk modulus of dry rock [Pa].
+    mu
+        Shear modulus of dry rock [Pa].
     """
     # First check if there are input values that are unphysical, i.e. negative values, separate between dry and
     # saturated rock properties. Use the filter_input_log function to identify these values

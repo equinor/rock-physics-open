@@ -44,17 +44,24 @@ def get_snapshot_name(
     include_snapshot_dir: bool = True,
 ) -> str:
     """
+    Generate a snapshot name from the call stack.
+
     Parameters
     ----------
-    step: number of steps in the trace to collect information from
-    include_snapshot_dir: absolute directory name included in snapshot name
-    include_filename: whether to include filename in snapshot name
-    include_function_name: whether to include function name in snapshot name
-    include_extension: whether to include extension in snapshot name
+    step
+        Number of steps in the trace to collect information from.
+    include_filename
+        Whether to include filename in snapshot name.
+    include_function_name
+        Whether to include function name in snapshot name.
+    include_extension
+        Whether to include extension in snapshot name.
+    include_snapshot_dir
+        Absolute directory name included in snapshot name.
 
     Returns
     -------
-    name of snapshot file
+    Name of snapshot file.
     """
     trace = inspect.stack()
     for frame in trace[step:]:
@@ -74,6 +81,24 @@ def get_snapshot_name(
 
 def store_snapshot(snapshot_name: str, *args: np.ndarray) -> bool:
     """
+    Store arrays as a snapshot.
+
+    Parameters
+    ----------
+    snapshot_name
+        Name/path of the snapshot file.
+    *args
+        Arrays to store.
+
+    Returns
+    -------
+    True if snapshot was stored successfully.
+
+    Raises
+    ------
+    IOError
+        If snapshot could not be stored.
+
     Examples
     --------
     In case there are multiple arrays to store:

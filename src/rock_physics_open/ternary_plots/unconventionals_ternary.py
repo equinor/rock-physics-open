@@ -23,30 +23,31 @@ def run_ternary(
 
     Parameters
     ----------
-    quartz : np.ndarray
+    quartz
         Quartz volume fraction [fraction].
-    carb : np.ndarray
+    carb
         Carbonate volume fraction [fraction].
-    clay : np.ndarray
+    clay
         Clay volume fraction [fraction].
-    kero : np.ndarray
+    kero
         Kerogen volume fraction [fraction].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    misc : np.ndarray
+    misc
         Property used for colour coding [unknown].
-    misc_log_type : str
+    misc_log_type
         Plot annotation of log used for colour coding.
-    well_name : str
+    well_name
         Plot heading with well name.
-    draw_figures : bool
+    draw_figures
         Decide if figures are drawn or not, default is True.
 
     Returns
     -------
-    tuple
-        lith_class, hard : (np.ndarray, np.ndarray).
-        lith_class: lithology class [int], hardness [float].
+    lith_class
+        Lithology class per sample.
+    hardness
+        Derived hardness value per sample.
     """
     if draw_figures:
         matplotlib.use("TkAgg")

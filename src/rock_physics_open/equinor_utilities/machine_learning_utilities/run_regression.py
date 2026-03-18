@@ -172,21 +172,19 @@ def run_regression(
 
     Parameters
     ----------
-    inp_df : pd.DataFrame
+    inp_df
         Input logs required for the regression.
-    first_model_file_name : str
+    first_model_file_name
         Full file name for vp model.
-    second_model_file_name : str
+    second_model_file_name
         Full file name for vs model.
-    model_dir : str | None
+    model_dir
         Directory.
 
     Returns
     -------
-    vp, vs : pd.DataFrame
-        Estimated vp and vs as series in Pandas DataFrame.
+    Estimated vp and vs as series in Pandas DataFrame.
     """
-
     (
         regression_model,
         scaler_obj,

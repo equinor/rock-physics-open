@@ -31,38 +31,47 @@ def min_3_voigt_reuss_hill(
 
     Parameters
     ----------
-    vp1 : np.ndarray
+    vp1
         Pressure wave velocity of phase 1 [m/s].
-    vs1 : np.ndarray
+    vs1
         Shear wave velocity of phase 1 [m/s].
-    rhob1 : np.ndarray
+    rhob1
         Bulk density of phase 1 [kg/m^3].
-    f1 : np.ndarray
+    f1
         Fraction of phase 1 [fraction].
-    vp2 : np.ndarray
+    vp2
         Pressure wave velocity of phase 2 [m/s].
-    vs2 : np.ndarray
+    vs2
         Shear wave velocity of phase 2 [m/s].
-    rhob2 : np.ndarray
+    rhob2
         Bulk density of phase 2 [kg/m^3].
-    f2 : np.ndarray
+    f2
         Fraction of phase 2 [fraction].
-    vp3 : np.ndarray
+    vp3
         Pressure wave velocity of phase 3 [m/s].
-    vs3 : np.ndarray
+    vs3
         Shear wave velocity of phase 3 [m/s].
-    rhob3 : np.ndarray
+    rhob3
         Bulk density of phase 3 [kg/m^3].
-    f3 : np.ndarray
+    f3
         Fraction of phase 3 [fraction].
 
     Returns
     -------
-    tuple
-        vp, vs, rhob, ai, vp_vs, k, mu : np.ndarray.
-        vp: pressure wave velocity [m/s], vs: shear wave velocity [m/s], rhob: bulk density [kg/m^3],
-        ai: acoustic impedance [m/s x kg/m^3], vp_vs: velocity ratio [ratio],
-        k: effective bulk modulus [Pa], mu: effective shear modulus [Pa].
+    vp
+        Pressure wave velocity [m/s].
+    vs
+        Shear wave velocity [m/s].
+    rhob
+        Bulk density [kg/m^3].
+    ai
+        Acoustic impedance [m/s x kg/m^3].
+    vp_vs
+        Velocity ratio [ratio].
+    k
+        Effective bulk modulus [Pa].
+    mu
+        Effective shear modulus [Pa].
     """
     k1, mu1 = std_functions.moduli(vp1, vs1, rhob1)
     k2, mu2 = std_functions.moduli(vp2, vs2, rhob2)

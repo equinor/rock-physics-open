@@ -16,6 +16,17 @@ class ExponentialPressureModel(BasePressureModel):
     where v0 is reference velocity, p is pressure, a and b are model parameters.
 
     Input format (n,3): [velocity, p_eff_in_situ, p_eff_depleted]
+
+    Parameters
+    ----------
+    a_factor
+        Exponential amplitude parameter [unitless].
+    b_factor
+        Exponential decay parameter [Pa].
+    model_max_pressure
+        Maximum pressure for predict_max method [Pa].
+    description
+        Model description.
     """
 
     def __init__(
@@ -25,20 +36,6 @@ class ExponentialPressureModel(BasePressureModel):
         model_max_pressure: float | None = None,
         description: str = "",
     ):
-        """
-        Initialize exponential pressure model.
-
-        Parameters
-        ----------
-        a_factor : float
-            Exponential amplitude parameter [unitless].
-        b_factor : float
-            Exponential decay parameter [Pa].
-        model_max_pressure : float | None
-            Maximum pressure for predict_max method [Pa].
-        description : str
-            Model description.
-        """
         super().__init__(model_max_pressure, description)
         self._a_factor = a_factor
         self._b_factor = b_factor
@@ -60,13 +57,12 @@ class ExponentialPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Input array to validate.
 
         Returns
         -------
-        np.ndarray
-            Validated input array.
+        Validated input array.
 
         Raises
         ------
@@ -88,15 +84,14 @@ class ExponentialPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Validated input array (n,3).
-        case : str
+        case
             Pressure case: "in_situ" or "depleted".
 
         Returns
         -------
-        np.ndarray
-            Velocity values [m/s].
+        Velocity values [m/s].
         """
         arr = self.validate_input(inp_arr)
 

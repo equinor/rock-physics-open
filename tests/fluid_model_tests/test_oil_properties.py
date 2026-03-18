@@ -100,9 +100,7 @@ def test_live_oil_han_batzle():
 
 
 def test_max_gor_standing():
-    """
-    Snapshot test for max_gor_standing (Standing 1962 inverse bubble-point).
-    """
+    """Snapshot test for max_gor_standing (Standing 1962 inverse bubble-point)."""
     args = max_gor_standing(rho_0, pres, gr, temp)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
@@ -112,10 +110,7 @@ def test_max_gor_standing():
 
 
 def test_max_gor_standing_float():
-    """
-    Verify that max_gor_standing returns a float when all inputs are scalar,
-    and that it is consistent with bp_standing (round-trip).
-    """
+    """Verify that max_gor_standing returns a float when all inputs are scalar, and that it is consistent with bp_standing (round-trip)."""
     result = max_gor_standing(rho_0[0], pres[0], gr[0], temp[0])
     assert isinstance(result, float)
 
@@ -126,9 +121,7 @@ def test_max_gor_standing_float():
 
 
 def test_oil_properties_float():
-    """
-    Make sure that input object type is reflected in output type
-    """
+    """Make sure that input object type is reflected in output type."""
     for results in [
         oil_properties(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         oil_properties(temp[0], pres[0], rho_0[0], gor[0], gr[0], model_version="BW"),

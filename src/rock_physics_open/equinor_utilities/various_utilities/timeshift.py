@@ -9,27 +9,27 @@ def time_shift_pp(
     multiplier: int,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Cumulative time shift calculation for 4D case. According to Equinor standard
-    the time shift is negative for an increase in velocity from base to monitor
-    survey.
+    Cumulative time shift calculation for 4D case.
+
+    According to Equinor standard the time shift is negative for an increase in velocity from base to monitor survey.
 
     Parameters
     ----------
-    tvd : np.ndarray
+    tvd
         True vertical depth along wellbore [m].
-    vp_base : np.ndarray
+    vp_base
         Initial Vp [m/s].
-    vp_mon : np.ndarray
+    vp_mon
         vp at time of monitor survey [m/s].
-    multiplier : int
+    multiplier
         Time shift multiplier.
 
     Returns
     -------
-    tuple
-        owt_pp_shift, twt_pp_shift : np.ndarray.
-        owt_pp_shift: one way time shift [ms],
-        twt_pp_shift: two way time shift [ms].
+    owt_pp_shift
+        One way time shift [ms].
+    twt_pp_shift
+        Two way time shift [ms].
 
     Notes
     -----
@@ -58,29 +58,29 @@ def time_shift_ps(
     multiplier: int,
 ) -> npt.NDArray[np.float64]:
     """
-    Cumulative time shift calculation for 4D case. According to Equinor standard
-    the time shift is negative for an increase in velocity from base to monitor
+    Cumulative time shift calculation for 4D case.
+
+    According to Equinor standard the time shift is negative for an increase in velocity from base to monitor
     survey.
 
     Parameters
     ----------
-    tvd : np.ndarray
+    tvd
         True vertical depth along wellbore [m].
-    vp_base : np.ndarray
+    vp_base
         Initial vp [m/s].
-    vp_mon : np.ndarray
+    vp_mon
         vs at time of monitor survey [m/s].
-    vs_base : np.ndarray
+    vs_base
         Initial vp [m/s].
-    vs_mon : np.ndarray
+    vs_mon
         vs at time of monitor survey [m/s].
-    multiplier : int
+    multiplier
         Time shift multiplier.
 
     Returns
     -------
-    np.ndarray
-        twt_ps_shift: two way time shift [ms]
+    twt_ps_shift: two way time shift [ms]
 
     Notes
     -----

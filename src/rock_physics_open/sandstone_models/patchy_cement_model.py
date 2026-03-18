@@ -30,10 +30,6 @@ def constant_cement_model_pcm(
     n: float,
     red_shear: float,
 ):
-    """
-    kdry, mydry = contantcementmodel_pcm(kmin, mymin, kcem, mycem, kzero, myzero, phi, cem_frac, phic, n, red_shear)
-    """
-
     #   Contact cement model (Dvorkin-Nur)for given cem_frac
     kcc, mycc = std_functions.dvorkin_contact_cement(
         frac_cem=cem_frac,
@@ -89,58 +85,61 @@ def patchy_cement_model_weight(
     npt.NDArray[np.float64],
 ]:
     """
-    Patchy cement model for sands that are a combination of friable model and constant cement model. No fluid or
-    pressure substitution. Input variables for weight of K and Mu determine the model's position between upper and
-    lower bound.
+    Patchy cement model for sands that are a combination of friable model and constant cement model.
+
+    No fluid or pressure substitution.
+    Input variables for weight of K and Mu determine the model's position between upper and lower bound.
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral bulk density [kg/m^3].
-    k_cem : np.ndarray
+    k_cem
         Sandstone cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Sandstone cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Cement bulk density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid bulk density [kg/m^3].
-    phi : np.ndarray
+    phi
         Total porosity [fraction].
-    p_eff : np.ndarray
+    p_eff
         Effective pressure [Pa].
-    frac_cem : float
+    frac_cem
         Upper bound cement volume fraction [fraction].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    coord_num_func : str
+    coord_num_func
         Indication if coordination number should be calculated from porosity or kept constant.
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor for sandstone [fraction].
-    weight_k : float
+    weight_k
         Weight between friable and cemented model for bulk modulus.
-    weight_mu : float
+    weight_mu
         Weight between friable and cemented model for shear modulus.
 
     Returns
     -------
-    tuple
-        k, mu, rhob, vp, vs : np.ndarray.
-        vp :Saturated P-velocity [m/s] after fluid and pressure substitution,
-        vs : Saturated S-velocity [m/s] after fluid and pressure substitution,
-        rhob : Saturated density [kg/m3] after fluid and pressure substitution,
-        k : Saturated rock bulk modulus [Pa],
-        mu : Shear modulus [Pa].
+    k
+        Saturated rock bulk modulus [Pa].
+    mu
+        Shear modulus [Pa].
+    rhob
+        Saturated density after fluid and pressure substitution [kg/m^3].
+    vp
+        Saturated P-velocity after fluid and pressure substitution [m/s].
+    vs
+        Saturated S-velocity after fluid and pressure substitution [m/s].
     """
-
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
         k1=k_cem,
         mu1=mu_cem,
@@ -224,55 +223,58 @@ def patchy_cement_model_cem_frac(
     npt.NDArray[np.float64],
 ]:
     """
-    Patchy cement model for sands that are a combination of friable model and constant cement model. No fluid or
-    pressure substitution. In this implementation of the patchy cement model the given cement fraction for the constant
-    cement model defines the upper bound, and the effective pressure for the friable model defines the lower bound
+    Patchy cement model for sands that are a combination of friable model and constant cement model.
+
+    No fluid or pressure substitution. In this implementation of the patchy cement model the given cement fraction for the constant
+    cement model defines the upper bound, and the effective pressure for the friable model defines the lower bound.
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral bulk density [kg/m^3].
-    k_cem : np.ndarray
+    k_cem
         Sandstone cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Sandstone cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Cement bulk density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid bulk density [kg/m^3].
-    phi : np.ndarray
+    phi
         Total porosity [fraction].
-    p_eff : np.ndarray
+    p_eff
         Effective pressure [Pa].
-    frac_cem : float
+    frac_cem
         Upper bound cement volume fraction [fraction].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    coord_num_func : str
+    coord_num_func
         Indication if coordination number should be calculated from porosity or kept constant, either "ConstVal" or
         "PoreBased" [default]
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor for sandstone [fraction].
 
     Returns
     -------
-    tuple
-        vp, vs, rhob, ai, vpvs : np.ndarray.
-        vp :Saturated P-velocity [m/s] after fluid and pressure substitution,
-        vs : Saturated S-velocity [m/s] after fluid and pressure substitution,
-        rhob : Saturated density [kg/m3] after fluid and pressure substitution,
-        ai : Saturated rock acoustic impedance [kg/m3 * m/s] after fluid and pressure substitution,
-        vpvs : Saturated rock velocity ratio [ratio].
+    vp
+        Saturated P-velocity after fluid and pressure substitution [m/s].
+    vs
+        Saturated S-velocity after fluid and pressure substitution [m/s].
+    rhob
+        Saturated density after fluid and pressure substitution [kg/m^3].
+    ai
+        Saturated rock acoustic impedance after fluid and pressure substitution [kg/m^3 x m/s].
+    vpvs
+        Saturated rock velocity ratio [ratio].
     """
-
     k_dry, mu, _ = patchy_cement_model_dry(
         k_min=k_min,
         mu_min=mu_min,
@@ -327,47 +329,49 @@ def patchy_cement_model_dry(
     shear_red: float,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Patchy cement model for sands that are a combination of friable model and constant cement model. No fluid or
-    pressure substitution. In this implementation of the patchy cement model the given cement fraction for the constant
-    cement model defines the upper bound, and the effective pressure for the friable model defines the lower bound
+    Patchy cement model for sands that are a combination of friable model and constant cement model.
+
+    No fluid or pressure substitution. In this implementation of the patchy cement model the given cement fraction for the constant
+    cement model defines the upper bound, and the effective pressure for the friable model defines the lower bound.
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral bulk density [kg/m^3].
-    k_cem : np.ndarray
+    k_cem
         Sandstone cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Sandstone cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Cement bulk density [kg/m^3].
-    phi : np.ndarray
+    phi
         Total porosity [fraction].
-    p_eff : np.ndarray
+    p_eff
         Effective pressure [Pa].
-    frac_cem : float
+    frac_cem
         Upper bound cement volume fraction [fraction].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    coord_num_func : str
+    coord_num_func
         Indication if coordination number should be calculated from porosity or kept constant, either "ConstVal" or
         "PoreBased" [default]
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor for sandstone [fraction].
 
     Returns
     -------
-    tuple
-        k:dry, mu, rho_dry : np.ndarray
-        k_dry: dry rock bulk modulus [Pa],
-        mu : dry rock shear modulus [Pa],
-        rho_dry : dry rock density [kg/m3].,
+    k_dry
+        Dry rock bulk modulus [Pa].
+    mu
+        Dry rock shear modulus [Pa].
+    rho_dry
+        Dry rock density [kg/m^3].
     """
     # There are cases which suffer from a lack of consistency check at this stage,
     # add dim_check_vector and filter input/output

@@ -24,10 +24,7 @@ def set_ternary_figure(
     title: str,
     well_name: str,
 ) -> tuple[Figure, Axes]:
-    """Find screen size, and make a suitable figure size and position, shift window with
-    number of steps given by deltaX and deltaY.
-    """
-
+    """Find screen size, and make a suitable figure size and position, shift window with number of steps given by deltaX and deltaY."""
     if platform.system() == "Windows":
         dc = ctypes.windll.user32.GetDC(0)
         pix_x = ctypes.windll.gdi32.GetDeviceCaps(dc, HORZRES)
@@ -87,13 +84,19 @@ def ternary_coord_trans(
     *args: Array1D[np.float64] | Array2D[np.float64],
 ) -> Array2D[np.float64]:
     """Routine to transform ternary coordinates to xy coordinates.
+
     Inputs can either be 3 separate coordinate arrays or a nX3 array
-    The sum of the input coordinates should be one - the routine will normalise the inputs
+    The sum of the input coordinates should be one - the routine will normalise the inputs.
+
+    Parameters
+    ----------
+    *args
+        Either 3 separate coordinate arrays or a single nX3 array.
 
     Returns
     -------
-    np.ndarray
-        Coordinates in nx2 numpy array.
+    Coordinates in nx2 numpy array.
+
     """
     trans_mat = np.array(
         [
@@ -125,16 +128,16 @@ def ternary_coord_trans(
 
 def triangle_transform(xy1: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
+    Transform triangle coordinates.
 
     Parameters
     ----------
-    xy1 : np.ndarray
+    xy1
         Input coordinates.
 
     Returns
     -------
-    np.ndarray
-        Transformed input.
+    Transformed input.
     """
     xy = np.ones_like(xy1, dtype=float)
     xy[:, 0] = 0.5 + (xy1[:, 0] - 0.5) * (1 - xy1[:, 1])

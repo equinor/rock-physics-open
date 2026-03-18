@@ -15,8 +15,7 @@ def reflectivity(
     model: Literal["AkiRichards", "SmithGidlow"] = "AkiRichards",
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.bool_]]:
     """
-    Reflectivity model according to Aki and Richards or Smith and Gidlow for weak contrasts
-    and angles less than critical angle.
+    Reflectivity model according to Aki and Richards or Smith and Gidlow for weak contrasts and angles less than critical angle.
 
     In this function it is not allowed to have any missing values in the input logs.
     Instead of interpolating here without the user knowing, raise an input value
@@ -24,27 +23,26 @@ def reflectivity(
 
     Parameters
     ----------
-    vp_inp : np.ndarray
+    vp_inp
         Compressional wave velocity [m/s].
-    vs_inp : np.ndarray
+    vs_inp
         Shear wave velocity [m/s].
-    rho_inp : np.ndarray
+    rho_inp
         Bulk density [kg/m^3].
-    theta : float
+    theta
         Incidence angle [radians] (default value 0).
-    k : float
+    k
         Background Vp/Vs ratio [ratio] (default value 2.0).
-    model : str
+    model
         One of 'AkiRichards' (default) or 'SmithGidlow'.
 
     Returns
     -------
-    tuple
-        refl_coef, idx_inp : np.ndarray.
-        refl_coef: reflection coefficient [ratio],
-        idx_inp: index to accepted part of the input arrays [bool].
+    refl_coef
+        Reflection coefficient [ratio].
+    idx_inp
+        Index to accepted part of the input arrays [bool].
     """
-
     vp, vs, rho, theta_, k_ = cast(
         list[npt.NDArray[np.float64]],
         gen_utilities.dim_check_vector((vp_inp, vs_inp, rho_inp, theta, k)),

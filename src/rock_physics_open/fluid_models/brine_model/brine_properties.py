@@ -14,10 +14,25 @@ def brine_properties(
     salinity: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    :param salinity: Salinity of solution as [ppm] of NaCl.
-    :param pressure: Formation pressure [Pa]
-    :param temperature: Temperature [°C]
-    :return: Brine velocity vel_b [m/s], brine density den_b [kg/m^3], brine bulk modulus k_b [Pa]
+    Brine properties according to Batzle & Wang [1].
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C]
+    pressure
+        Formation pressure [Pa]
+    salinity
+        Salinity of solution as [ppm] of NaCl.
+
+    Returns
+    -------
+    vel_b
+        Brine velocity [m/s].
+    den_b
+        Brine density [kg/m^3].
+    k_b
+        Brine bulk modulus [Pa].
     """
     vel_b = brine_primary_velocity(
         temperature=temperature,
@@ -39,11 +54,20 @@ def brine_density(
     salinity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    density of sodium chloride solutions, equation 27 in Batzle & Wang [1].
-    :param salinity: Salinity of solution in ppm
-    :param pressure: Formation pressure [Pa]
-    :param temperature: Temperature [°C]
-    :return: density of solution in [kg/m^3].
+    Density of sodium chloride solutions, equation 27 in Batzle & Wang [1].
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C]
+    pressure
+        Formation pressure [Pa]
+    salinity
+        Salinity of solution in ppm
+
+    Returns
+    -------
+    density of solution in [kg/m^3].
     """
     pressure_mpa = pa_to_mpa(pressure)
     # Change unit of salinity to fraction
@@ -67,12 +91,20 @@ def brine_primary_velocity(
     salinity: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Primary wave velocity of sodium chloride solutions, equation 29 in Batzle & Wang [1]
+    Primary wave velocity of sodium chloride solutions, equation 29 in Batzle & Wang [1].
 
-    :param salinity: Salinity of solution as [ppm] of sodium chloride
-    :param pressure: Formation pressure [Pa]
-    :param temperature: Temperature [°C]
-    :return: velocity of solution in m/s.
+    Parameters
+    ----------
+    temperature
+        Temperature [°C]
+    pressure
+        Formation pressure [Pa]
+    salinity
+        Salinity of solution as [ppm] of sodium chloride
+
+    Returns
+    -------
+    velocity of solution in m/s.
     """
     # Change unit for salinity from ppm to fraction
     salinity_frac = salinity / 1.0e6
@@ -105,9 +137,17 @@ def water_density(
 ) -> npt.NDArray[Any]:
     """
     Density of water,, equation 27a in Batzle & Wang [1].
-    :param pressure: Formation pressure [Pa]
-    :param temperature: Temperature [°C]
-    :return: Density of water in [kg/m^3].
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C]
+    pressure
+        Formation pressure [Pa]
+
+    Returns
+    -------
+    Density of water in [kg/m^3].
     """
     pressure_mpa = pa_to_mpa(pressure)
 
@@ -126,9 +166,17 @@ def water_primary_velocity(
 ) -> npt.NDArray[Any]:
     """
     Primary wave velocity of water, table 1 and equation 28 in Batzle & Wang [1].
-    :param pressure: Formation pressure [Pa]
-    :param temperature: Temperature [°C]
-    :return: primary wave velocity of water in m/s.
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C]
+    pressure
+        Formation pressure [Pa]
+
+    Returns
+    -------
+    primary wave velocity of water in m/s.
     """
     pressure_mpa = pa_to_mpa(pressure)
 
@@ -154,9 +202,23 @@ def water(
     pressure: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    :param pressure: Formation pressure [Pa]
-    :param temperature: Temperature [°C]
-    :return: water_velocity [m/s], water_density [kg/m^3], water_bulk_modulus [Pa]
+    Water properties according to Batzle & Wang [1].
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C]
+    pressure
+        Formation pressure [Pa]
+
+    Returns
+    -------
+    water_velocity
+        Water velocity [m/s].
+    water_density
+        Water density [kg/m^3].
+    water_bulk_modulus
+        Water bulk modulus [Pa].
     """
     water_den = water_density(temperature, pressure)
     water_vel = water_primary_velocity(temperature, pressure)
@@ -172,6 +234,17 @@ def brine_viscosity(
     Brine viscosity according to Batzle & Wang [1].
 
     Based on equation 32.
+
+    Parameters
+    ----------
+    temperature
+        Temperature [°C].
+    salinity
+        Salinity [ppm].
+
+    Returns
+    -------
+    Result.
     """
     salinity_frac = salinity / 1.0e6
     return (

@@ -46,53 +46,73 @@ def t_matrix_optimisation_petec(
     Array1D[np.float64],
     Array1D[np.float64],
 ]:
-    """T-Matrix optimisation adapted to a case with detailed information available, such as in a development or production
-    setting. Mineral and fluid composition should be known on a sample basis. Inclusion parameters are regarded as
+    """T-Matrix optimisation adapted to a case with detailed information available, such as in a development or production setting.
+
+    Mineral and fluid composition should be known on a sample basis. Inclusion parameters are regarded as
     unknown and they are optimised for.
 
     Parameters
     ----------
-    k_min :
+    k_min
         Effective mineral bulk modulus [Pa].
-    mu_min :
+    mu_min
         Effective mineral shear modulus [Pa].
-    rho_min :
+    rho_min
         Effective mineral bulk density [kg/m^3].
-    k_fl :
+    k_fl
         Effective fluid bulk modulus [Pa].
-    rho_fl :
+    rho_fl
         Effective fluid density [kg/m^3].
-    por :
+    por
         Inclusion porosity [ratio].
-    vp :
+    vp
         Compressional velocity log [m/s].
-    vs :
+    vs
         Shear velocity log [m/s].
-    rhob :
+    rhob
         Bulk density log [kg/m^3].
-    angle : float
+    angle
         Angle of symmetry plane [degrees]
-    k_r :
+    k_r
         Permeability [mD].
-    eta_f :
+    eta_f
         Fluid viscosity [cP].
-    tau :
+    tau
         Relaxation time constant [s].
-    freq :
+    freq
         Signal frequency [Hz].
-    file_out_str :
+    file_out_str
         Output file name (string) to store optimal parameters (pickle format).
-    display_results :
+    display_results
         Display optimal parameters in a window after run.
-    well_name:
+    well_name
         Name of well to be displayed in info box title.
-    opt_kwargs:
-        Additional keywords to be passed to optimisation function
+    **opt_kwargs
+        Additional keywords to be passed to optimisation function.
 
     Returns
     -------
-    tuple
-        vp_mod, vs_mod, rho_mod, ai_mod, vpvs_mod - modelled logs, vp_res, vs_res, rho_res - residual logs.
+    vp_mod
+        Modelled p-wave velocity log.
+    vs_mod
+        Modelled s-wave velocity log.
+    rho_mod
+        Modelled density log.
+    ai_mod
+        Modelled acoustic impedance log.
+    vpvs_mod
+        Modelled Vp/Vs ratio log.
+    vp_res
+        P-wave velocity residual log.
+    vs_res
+        S-wave velocity residual log.
+    rho_res
+        Density residual log.
+
+    Raises
+    ------
+    ValueError
+        If optimisation fails.
     """
     # 1. Preparation that is independent of search for minimum possible aspect ratio for second inclusion set
 

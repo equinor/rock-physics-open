@@ -18,13 +18,22 @@ def live_oil_velocity(
 
     Substitute Equation 22 in Equation 20 of Batzle & Wang [1].
 
-    :param reference_density: Density of the oil without dissolved gas
-        at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
-    :param pressure: Formation pressure [Pa] of oil
-    :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
-    :param temperature: Temperature [°C] of oil.
-    :param gas_gravity: molar mass of gas relative to air molar mas.
-    :return: Primary wave velocity of live oil [m/s].
+    Parameters
+    ----------
+    temperature
+        Temperature [°C] of oil.
+    pressure
+        Formation pressure [Pa] of oil
+    reference_density
+        Density of the oil without dissolved gas at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
+    gas_oil_ratio
+        The volume ratio of gas to oil [l/l]
+    gas_gravity
+        molar mass of gas relative to air molar mas.
+
+    Returns
+    -------
+    Primary wave velocity of live oil [m/s].
     """
     scalar_input = inputs_are_scalar(
         temperature, pressure, reference_density, gas_oil_ratio, gas_gravity

@@ -38,48 +38,57 @@ def calc_pressure_vec(
 
     Parameters
     ----------
-    alpha_con : np.ndarray
+    alpha_con
         Aspect ratio for connected inclusions (r length vector).
-    alpha_iso : np.ndarray
+    alpha_iso
         Aspect ratio for connected inclusions (s length vector).
-    v_con : np.ndarray
+    v_con
         Volume of connected inclusions (r length vector).
-    v_iso : np.ndarray
+    v_iso
         Volume of connected inclusions (s length vector).
-    c0 : np.ndarray
+    c0
         Stiffness tensor of host material (nx6x6 array).
-    s_0 : np.ndarray
+    s_0
         Inverse of stiffness tensor (nx6x6 array).
-    gd : np.ndarray
+    gd
         The correlation function (green's tensor nx6x6 matrix).
-    d_p : float
+    d_p
         Change in effective pressure.
-    tau : np.ndarray
+    tau
         Relaxation time constant ((numbers of connected pores) vector).
-    gamma : np.ndarray
+    gamma
         Gamma factor ((numbers of connected pores) vector).
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus (n length vector).
-    ctrl : int
+    ctrl
         Control parameter.
-    frac_ani : float
+    frac_ani
         Fraction of anisotropic inclusions.
 
     Returns
     -------
-    tuple
-        alpha_n_connected, v_n_connected, alpha_n_isolated, v_n_isolated, tau_n_out, gamma_n_out -
-        modified alphas, volumes, relaxation times and gamma factors.
+    alpha_n_connected
+        Modified aspect ratios for connected inclusions.
+    v_n_connected
+        Modified volumes for connected inclusions.
+    alpha_n_isolated
+        Modified aspect ratios for isolated inclusions.
+    v_n_isolated
+        Modified volumes for isolated inclusions.
+    tau_n_out
+        Modified relaxation times.
+    gamma_n_out
+        Modified gamma factors.
 
     Notes
     -----
     Equations used can be found in:
     Agersborg (2007), phd thesis:
-    https://bora.uib.no/handle/1956/2422
+    https
 
     09.03.2012
     Remy Agersborg
-    email: remy@agersborg.com
+    email
 
     Translated to Python and vectorised by Harald Flesche, hfle@equinor.com 2020
     """

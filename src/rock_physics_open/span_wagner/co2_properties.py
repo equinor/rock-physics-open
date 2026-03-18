@@ -37,25 +37,29 @@ def co2_properties(
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     CO2 properties are estimated according to Span & Wagner's equation of state model.
+
+    Parameters
+    ----------
+    temp
+        Temperature [°C]
+    pres
+        Pressure [Pa]
+
+    Returns
+    -------
+    vel_co2
+        CO2 velocity [m/s].
+    den_co2
+        CO2 density [kg/m^3].
+    k_co2
+        CO2 bulk modulus [Pa].
+
     References
     ----------
     R. Span and W. Wagner: A new equation of state for carbon dioxide covering the
     fluid region from the triple point temperature to 1100K at pressures up to
     800 MPa.
     J. Phys. Chem. Ref. Data, Vol. 25, No. 6, 1996, pp 1509 - 1596
-
-    Parameters
-    ----------
-    temp: np.ndarray
-        Temperature [°C]
-    pres: np.ndarray
-        Pressure [Pa]
-
-    Returns
-    -------
-    tuple
-        vel_co2, den_co2, k_co2 : (np.ndarray, np.ndarray, np.ndarray).
-        vel_co2: velocity [m/s], den_co2: density [kg/m^3], k_co2: bulk modulus [Pa].
     """
     abs_temp = celsius_to_kelvin(temp)
     pres_mpa = pres * 1.0e-6
@@ -73,12 +77,22 @@ def co2_helmholtz_energy(
     dt: Literal[0, 1, 2],
 ) -> npt.NDArray[np.float64] | float:
     """
-    Helmholtz energy as defined by equation 6.1 in Span & Wagner [2]
+    Helmholtz energy as defined by equation 6.1 in Span & Wagner [2].
 
-    :param delta: Reduced density, unit-less. That is, density / CO2_CRITICAL_DENSITY.
-    :param tau: Inverse reduced temperature, unit-less. That is, CO2_CRITICAL_TEMPERATURE / (absolute) temperature
-    :param dd: Degree of derivation wrt. delta. Integer between 0 and 2.
-    :param dt: Degree of derivation wrt. tau. Integer between 0 and 2, as long as (dt + dd < 3)
+    Parameters
+    ----------
+    delta
+        Reduced density, unit-less. That is, density / CO2_CRITICAL_DENSITY.
+    tau
+        Inverse reduced temperature, unit-less. That is, CO2_CRITICAL_TEMPERATURE / (absolute) temperature
+    dd
+        Degree of derivation wrt. delta. Integer between 0 and 2.
+    dt
+        Degree of derivation wrt. tau. Integer between 0 and 2, as long as (dt + dd < 3)
+
+    Returns
+    -------
+    Result.
     """
     return ideal_gas_helmholtz_energy(
         delta=delta,
@@ -100,8 +114,25 @@ def ideal_gas_helmholtz_energy(
     dt: Literal[0, 1, 2],
 ) -> npt.NDArray[np.float64] | float:
     """
-    Helmholtz energy from ideal gas behavior as defined by equation 2.3 in Span & Wagner [2]. See function
-    co2_helmholtz_energy for argument documentation.
+    Helmholtz energy from ideal gas behavior as defined by equation 2.3 in Span & Wagner [2].
+
+    See function `co2_helmholtz_energy` for argument documentation.
+
+    Parameters
+    ----------
+    delta
+        Reduced density.
+    tau
+        Inverse reduced temperature.
+    dd
+        Degree of derivation wrt. density.
+    dt
+        Degree of derivation wrt. temperature.
+
+    Returns
+    -------
+    Result.
+
     """
     # Adjust array shapes
     tau = np.asarray(tau)
@@ -148,8 +179,24 @@ def co2_residual_helmholtz_energy(
     dt: Literal[0, 1, 2],
 ) -> npt.NDArray[np.float64] | float:
     """
-    Residual part of Helmholtz energy as defined by the equation in Table 32 of Span & Wagner [2]. See
-    co2_helmholtz_energy for argument documentation.
+    Residual part of Helmholtz energy as defined by the equation in Table 32 of Span & Wagner [2].
+
+    See `co2_helmholtz_energy` for argument documentation.
+
+    Parameters
+    ----------
+    delta
+        Reduced density.
+    tau
+        Inverse reduced temperature.
+    dd
+        Degree of derivation wrt. density.
+    dt
+        Degree of derivation wrt. temperature.
+
+    Returns
+    -------
+    Result.
     """
     tau = np.asarray(tau)
     delta = np.asarray(delta)
@@ -200,13 +247,29 @@ def carbon_dioxide_pressure(
     isentropic: bool = False,
 ) -> npt.NDArray[np.float64] | None:
     """
-    CO2 pressure (MPa) as given by Table 3 of Span & Wagner [2]
+    CO2 pressure (MPa) as given by Table 3 of Span & Wagner [2].
 
-    :param absolute_temperature: Temperature in K.
-    :param density: CO2 density (kg / m^3).
-    :param d_density: Degree of derivation wrt. density.
-    :param d_temperature: Degree of derivation wrt. temperature.
-    :param isentropic: Correction for isentropic conditions. Relevant primarily for isentropic bulk modulus
+    Parameters
+    ----------
+    absolute_temperature
+        Temperature in K.
+    density
+        CO2 density (kg / m^3).
+    d_density
+        Degree of derivation wrt. density.
+    d_temperature
+        Degree of derivation wrt. temperature.
+    isentropic
+        Correction for isentropic conditions. Relevant primarily for isentropic bulk modulus
+
+    Returns
+    -------
+    Result.
+
+    Raises
+    ------
+    ValueError
+        If d_temperature must be 0, but was {d_temperature}.
     """
     tau = CO2_CRITICAL_TEMPERATURE / absolute_temperature
     delta = density / CO2_CRITICAL_DENSITY
@@ -286,10 +349,16 @@ def saturated_liquid_density(
     absolute_temperature: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Saturated liquid density as defined by equation 3.14 of Span & Wagner [2]
+    Saturated liquid density as defined by equation 3.14 of Span & Wagner [2].
 
-    :param absolute_temperature: Absolute temperature in K. Should satisfy:
-        CO2_TRIPLE_TEMPERATURE < absolute_temperature < CO2_CRITICAL_TEMPERATURE
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature in K. Should satisfy: CO2_TRIPLE_TEMPERATURE < absolute_temperature < CO2_CRITICAL_TEMPERATURE
+
+    Returns
+    -------
+    Result.
     """
     _a1 = 1.9245108
     _a2 = -0.62385555
@@ -304,10 +373,16 @@ def saturated_vapor_density(
     absolute_temperature: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Saturated vapor density as defined by equation 3.15 of Span & Wagner
+    Saturated vapor density as defined by equation 3.15 of Span & Wagner.
 
-    :param absolute_temperature: Absolute temperature in K. Should satisfy:
-        CO2_TRIPLE_TEMPERATURE < absolute_temperature < CO2_CRITICAL_TEMPERATURE
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature in K. Should satisfy: CO2_TRIPLE_TEMPERATURE < absolute_temperature < CO2_CRITICAL_TEMPERATURE
+
+    Returns
+    -------
+    Result.
     """
     # Assert temp < critical
     _a1 = -1.7074879
@@ -330,9 +405,16 @@ def sublimation_pressure(
     absolute_temperature: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Sublimation pressure as defined by equation 3.12 of Span & Wagner [2]
+    Sublimation pressure as defined by equation 3.12 of Span & Wagner [2].
 
-    :param absolute_temperature: Absolute temperature in K. Should satisfy absolute_temperature < CO2_TRIPLE_TEMPERATURE
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature in K. Should satisfy absolute_temperature < CO2_TRIPLE_TEMPERATURE
+
+    Returns
+    -------
+    Result.
     """
     _a1 = -14.740846
     _a2 = 2.4327015
@@ -346,10 +428,16 @@ def vapor_pressure(
     absolute_temperature: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Vapor pressure as defined by equation 3.13 of Span & Wagner [2]
+    Vapor pressure as defined by equation 3.13 of Span & Wagner [2].
 
-    :param absolute_temperature: Absolute temperature in K. Should satisfy:
-        CO2_TRIPLE_TEMPERATURE < absolute_temperature < CO2_CRITICAL_TEMPERATURE
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature in K. Should satisfy: CO2_TRIPLE_TEMPERATURE < absolute_temperature < CO2_CRITICAL_TEMPERATURE
+
+    Returns
+    -------
+    Result.
     """
     _a1 = -7.0602087
     _a2 = 1.9391218
@@ -364,9 +452,16 @@ def melting_pressure(
     absolute_temperature: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Melting pressure as defined by equation 3.10 of Span & Wagner [2]
+    Melting pressure as defined by equation 3.10 of Span & Wagner [2].
 
-    :param absolute_temperature: Absolute temperature in K. Should satisfy CO2_TRIPLE_TEMPERATURE < absolute_temperature
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature in K. Should satisfy CO2_TRIPLE_TEMPERATURE < absolute_temperature
+
+    Returns
+    -------
+    Result.
     """
     _a1 = 1955.5390
     _a2 = 2055.4593
@@ -379,9 +474,7 @@ def _determine_density_bounds(
     pressure: npt.NDArray[np.float64],
     force_vapor: bool | Literal["auto"],
 ) -> Array2D[np.float64]:
-    """
-    Calculate the upper and lower bound on density
-    """
+    """Calculate the upper and lower bound on density."""
     bounds = np.zeros((absolute_temperature.size, 2))
     bounds[:, 0] = 0.1
     bounds[:, 1] = 1500.0
@@ -406,7 +499,9 @@ def _determine_density_bounds(
             below_critical
         ] < vapor_pressure(absolute_temperature[below_critical])
         is_vapor = below_critical & below_vapor_pressure
-        bounds[is_vapor, 1] = saturated_vapor_density(absolute_temperature[is_vapor])
+        bounds[is_vapor, 1] = saturated_vapor_density(
+            absolute_temperature=absolute_temperature[is_vapor]
+        )
         is_liquid = below_critical & ~below_vapor_pressure
         bounds[is_liquid, 0] = saturated_liquid_density(absolute_temperature[is_liquid])
     return bounds
@@ -418,10 +513,23 @@ def _find_initial_density_values(
     pressure: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """
-    Finds approximate density values for the provided temperature(s) and pressure(s). The result is only intended to be
-    used by array_carbon_dioxide_density.
-    """
+    Finds approximate density values for the provided temperature(s) and pressure(s).
 
+    The result is only intended to be used by `array_carbon_dioxide_density`.
+
+    Parameters
+    ----------
+    bounds
+        Density bounds.
+    absolute_temperature
+        Absolute temperature (K).
+    pressure
+        Pressure (MPa).
+
+    Returns
+    -------
+    Result.
+    """
     temps = np.geomspace(
         np.min(absolute_temperature) * 0.99, np.max(absolute_temperature) * 1.01, 41
     )
@@ -449,12 +557,26 @@ def array_carbon_dioxide_density(
     force_vapor: bool,
 ) -> npt.NDArray[np.float64]:
     """
-    Alternative implementation of a vectorized carbon dioxide density function. Implemented primarily for demonstration
-    purposes. For large arrays, a look-up-table approach should be preferred.
+    Alternative implementation of a vectorized carbon dioxide density function.
+
+    Implemented primarily for demonstration purposes. For large arrays, a look-up-table approach should be preferred.
 
     Utilizes scipy.optimize.newton, which is the only root-finding method of scipy that supports a vectorized functions.
 
     For argument documentation, see carbon_dioxide_density.
+
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature (K).
+    pressure
+        Pressure (MPa).
+    force_vapor
+        Whether to force vapor phase.
+
+    Returns
+    -------
+    Result.
     """
     absolute_temperature = np.asarray(absolute_temperature)
     pressure = np.asarray(pressure)
@@ -500,21 +622,28 @@ def _calculate_carbon_dioxide_density(
     raise_error: bool = True,
 ) -> npt.NDArray[np.float64]:
     """
-    Density of carbon dioxide. Found solving the Pressure equation of Table 3 in Span & Wagner [2] numerically for
-    density using a vectorized bisection method. To ensure a single solution, the phase of the liquid must first be
+    Density of carbon dioxide.
+
+    Found solving the Pressure equation of Table 3 in Span & Wagner [2] numerically for density using a vectorized bisection method.
+
+    To ensure a single solution, the phase of the liquid must first be
     determined.
 
-    :param absolute_temperature: Absolute temperature (K).
-    :param pressure: Pressure (MPa).
-    :param force_vapor: Boolean or 'auto'. If 'auto', the phase of the fluid is automatically determined. However, along
-        the vaporization line (assuming T_triple < absolute_temperature < T_critical), the fluid is in two-phase
-        equilibrium and the phase cannot be uniquely determined. If force_vapor is set to True, vapor phase is always
-        selected, if False, liquid phase is selected. Outside the temperature bounds, this argument has no effect. This
-        argument should only be used close to the vaporization boundary, otherwise the behavior might not be as
-        expected.
-    :param raise_error: Boolean. If True, raises an error if density cannot be determined. Otherwise, returns np.nan.
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature (K).
+    pressure
+        Pressure (MPa).
+    force_vapor
+        If 'auto', the phase of the fluid is automatically determined. However, along the vaporization line (assuming T_triple < absolute_temperature < T_critical), the fluid is in two-phase equilibrium and the phase cannot be uniquely determined. If force_vapor is set to True, vapor phase is always selected, if False, liquid phase is selected. Outside the temperature bounds, this argument has no effect. This argument should only be used close to the vaporization boundary, otherwise the behavior might not be as expected.
+    raise_error
+        If True, raises an error if density cannot be determined. Otherwise, returns np.nan.
 
-    :return: Density (kg / m^3)
+    Returns
+    -------
+    Density (kg / m^3)
+
     """
     absolute_temperature = np.atleast_1d(np.asarray(absolute_temperature, dtype=float))
     pressure = np.atleast_1d(np.asarray(pressure, dtype=float))
@@ -565,15 +694,23 @@ def carbon_dioxide_density(
     **kwargs: Any,
 ) -> npt.NDArray[np.float64]:
     """
-    Density of carbon dioxide. Found either by direct calculation or interpolation. Any additional arguments are passed
-    to _calculate_carbon_dioxide_density.
+    Density of carbon dioxide. Found either by direct calculation or interpolation.
 
-    :param absolute_temperature: Absolute temperature (K).
-    :param pressure: Pressure (MPa).
-    :param interpolate: Flag whether to interpolate data or not. If not, data is calculated directly. This is more
-        accurate, but also more time-consuming. Data outside the bounds of the interpolator will be set to np.nan.
+    Any additional arguments are passed to `_calculate_carbon_dioxide_density`.
 
-    :return: Density (kg / m^3)
+    Parameters
+    ----------
+    absolute_temperature
+        Absolute temperature (K).
+    pressure
+        Pressure (MPa).
+    interpolate
+        Flag whether to interpolate data or not. If not, data is calculated directly. This is more accurate, but also more time-consuming. Data outside the bounds of the interpolator will be set to np.nan.
+    **kwargs
+
+    Returns
+    -------
+    Density (kg / m^3)
     """
     if interpolate is False:
         return _calculate_carbon_dioxide_density(
@@ -597,9 +734,7 @@ def carbon_dioxide_bulk_modulus(
     absolute_temperature: npt.NDArray[np.float64],
     density: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
-    """
-    Isentropic bulk modulus, derived from the expression for speed of sound in Table 3 of Span & Wagner
-    """
+    """Isentropic bulk modulus, derived from the expression for speed of sound in Table 3 of Span & Wagner."""
     d_pressure = carbon_dioxide_pressure(
         absolute_temperature=absolute_temperature,
         density=density,

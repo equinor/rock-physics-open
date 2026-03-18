@@ -14,11 +14,18 @@ def dead_oil_velocity(
 
     Uses equation 20a from Batzle & Wang [1].
 
-    :param reference_density: Density of oil at 15.6 degrees Celsius and atmospheric
-        pressure [kg/m^3]
-    :param pressure: Formation pressure [Pa] of oil
-    :param temperature: Temperature [°C] of oil.
-    :return: primary velocity of dead oil in m/s.
+    Parameters
+    ----------
+    temperature
+        Temperature [°C] of oil.
+    pressure
+        Formation pressure [Pa] of oil
+    reference_density
+        Density of oil at 15.6 degrees Celsius and atmospheric pressure [kg/m^3]
+
+    Returns
+    -------
+    primary velocity of dead oil in m/s.
     """
     pressure_mpa = pa_to_mpa(pressure)
     density_gcc = kg_m3_to_g_cc(reference_density)

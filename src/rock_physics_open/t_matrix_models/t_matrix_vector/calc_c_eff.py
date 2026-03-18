@@ -23,32 +23,36 @@ def calc_c_eff_vec(
     frac_aniso: float,
 ) -> Array3D[np.float64]:
     """
-    Equation  4 (page 222) Jakobsen et al. 2003 (The acoustic signature of fluid flow in complex
-    porous media).
+    Equation  4 (page 222) Jakobsen et al. 2003 (The acoustic signature of fluid flow in complex porous media).
+
     Returns the effective stiffness tensor C* (nx6x6 matrix) calculated from the t-matrices t(r) (Eq. 1).
 
     Parameters
     ----------
-    c0 : np.ndarray
+    c0
         Stiffness tensor of the host of the inclusion (nx6x6 matrix).
-    c1 : np.ndarray
+    c1
         Sum of the concentration and t-matrices (nx6x6 matrix).
-    gd : np.ndarray
+    gd
         Correlation function (nx6x6 matrix).
-    t : np.ndarray
+    t
         t-matrices of the different inclusions (nx6x6xr matrix) (anisotropic).
-    t_bar: np.ndarray
+    t_bar
         t-matrices of the different inclusions (nx6x6xr matrix) (isotropic).
-    v : np.ndarray
+    v
         Concentration of the inclusions (nxr vector).
-    frac_aniso: np.ndarray
+    frac_aniso
         Fraction of anisotropic.
 
     Returns
     -------
-    tuple
-        c_eff: np.ndarray.
-        c_eff: effective stiffness tensor C.
+    c_eff: np.ndarray.
+    c_eff: effective stiffness tensor C.
+
+    Raises
+    ------
+    ValueError
+        If input dimensions or shapes are inconsistent.
     """
     if not (
         c0.ndim == 3
@@ -121,50 +125,49 @@ def calc_c_eff_visco_vec(
 
     Parameters
     ----------
-    vs : np.ndarray
+    vs
         The velocity used to calculate the wave number.
-    k_r : np.ndarray
+    k_r
         Klinkenberg permeability.
-    eta_f : np.ndarray
+    eta_f
         Viscosity (P).
-    v : np.ndarray
+    v
         Concentration of the inclusions which are connected with respect to fluid flow.
-    gamma : np.ndarray
+    gamma
         Gamma factor for each inclusion (1x(number of connected inclusions) vector).
-    tau : float or np.ndarray
+    tau
         Relaxation time constant.
-    kd_uuvv : np.ndarray
+    kd_uuvv
         Kd_uuvv for each connected inclusion (1x(number of connected inclusions) vector.
-    kappa : np.ndarray
+    kappa
         Bulk modulus of host material.
-    kappa_f : np.ndarray
+    kappa_f
         Bulk modulus of the fluid.
-    c0 : np.ndarray
+    c0
         The stiffness tensor of host material (6x6 matrix).
-    s0 : np.ndarray
+    s0
         Inverse of C0.
-    c1 : np.ndarray
+    c1
         First order correction matrix(6x6 matrix). If there are isolated inclusions, C1 is sum of concentration and
         t-matrices of the isolated part of the porosity.
-    td : np.ndarray
+    td
         t-matrix tensors.
-    td_bar : np.ndarray
+    td_bar
         t-matrices of the connected inclusions(6x6x(numbers of inclusions) matrix).
-    x : np.ndarray
+    x
         X-tensor.
-    x_bar : np.ndarray
+    x_bar
         X-tensor of the connected inclusions (6x6x(numbers of inclusions) matrix).
-    gd : np.ndarray
+    gd
         Correlation function (6x6 matrix).
-    frequency : float
+    frequency
         Frequency under consideration.
-    frac_ani : np.ndarray
+    frac_ani
         Fraction of anisotropic inclusions.
 
     Returns
     -------
-    np.ndarray
-        Effective stiffness tensor.
+    Effective stiffness tensor.
     """
     dr = k_r / eta_f
 

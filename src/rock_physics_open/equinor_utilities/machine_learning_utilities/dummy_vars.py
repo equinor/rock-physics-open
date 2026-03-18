@@ -13,25 +13,28 @@ def generate_dummy_vars(
     ohe: OneHotEncoder | None = None,
 ) -> tuple[npt.NDArray[np.float64], int, npt.NDArray[np.str_]]:
     """
-    From categorical variables generate a one-hot-encoder, i.e. each value in the categorical variable becomes a binary
-    variable. See sklearn.preprocessing.OneHotEncoder.
+    From categorical variables generate a one-hot-encoder, i.e. each value in the categorical variable becomes a binary variable.
+
+    See sklearn.preprocessing.OneHotEncoder.
 
     Parameters
     ----------
-    inp_frame : pd.DataFrame
+    inp_frame
         Input data containing categorical variables.
-    class_var : str
+    class_var
         Name of categorical variable.
-    ohe : preprocessing.OneHotEncoder
+    ohe
         One-hot-encoder object.
 
     Returns
     -------
-    dum_features, no_dummy_cols, dum_var_names : (np.ndarray, int, np.ndarray)
-        dum_features: 2D array with transformed dummy variables, no_dummy_cols: number of columns in returned array,
-        dum_var_names: automatically generated feature names.
+    dum_features
+        2D array with transformed dummy variables.
+    no_dummy_cols
+        Number of columns in the returned array.
+    dum_var_names
+        Automatically generated feature names.
     """
-
     if is_numeric_dtype(inp_frame[class_var]):
         # Make sure that the chosen indicator variable contains discrete values
         inp_frame = inp_frame.astype({class_var: "int32"})

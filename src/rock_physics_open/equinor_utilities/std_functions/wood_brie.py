@@ -1,10 +1,13 @@
 from collections.abc import Sequence
-from typing import TypeVar, overload
+from typing import overload
 
 import numpy as np
 import numpy.typing as npt
 
-from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
+from rock_physics_open.equinor_utilities.various_utilities.types import (
+    Array1D,
+    Array1DOrFloat,
+)
 
 
 def brie(
@@ -21,27 +24,25 @@ def brie(
 
     Parameters
     ----------
-    s_gas : np.ndarray
+    s_gas
         Gas saturation [ratio].
-    k_gas : np.ndarray
+    k_gas
         Gas bulk modulus [Pa].
-    s_brine : np.ndarray
+    s_brine
         Brine saturation [ratio].
-    k_brine : np.ndarray
+    k_brine
         Brine bulk modulus [Pa].
-    s_oil : np.ndarray
+    s_oil
         Oil saturation [ratio].
-    k_oil : np.ndarray
+    k_oil
         Oil bulk modulus [Pa].
-    e : float or np.ndarray
+    e
         Exponent in Brie function [unitless].
 
     Returns
     -------
-    np.ndarray
-        k: effective bulk modulus [Pa].
+    Effective bulk modulus [Pa].
     """
-
     # Reuss average for fluids, catch zero fluid saturations
     idx = s_brine + s_oil > 0
     k_liquid = np.zeros(k_brine.shape)
@@ -62,22 +63,23 @@ def wood(
 
     Parameters
     ----------
-    s1 : np.ndarray
+    s1
         Saturation of phase 1 [ratio].
-    k1 : np.ndarray
+    k1
         Bulk modulus of phase 1 [Pa].
-    rho1 : np.ndarray
+    rho1
         Density of phase 1 [kg/m^3].
-    k2 : np.ndarray
+    k2
         Bulk modulus of phase 2 [Pa].
-    rho2 : np.ndarray
+    rho2
         Density of phase 2 [kg/m^3].
 
     Returns
     -------
-    tuple
-        k, rho : np.ndarray.
-        k: effective fluid bulk modulus [Pa], rho: effective fluid density [kg/m^3].
+    k
+        Effective fluid bulk modulus [Pa].
+    rho
+        Effective fluid density [kg/m^3].
     """
     s2 = 1 - s1
 
@@ -85,9 +87,6 @@ def wood(
     rho = s1 * rho1 + s2 * rho2
 
     return k, rho
-
-
-_T = TypeVar("_T", float, Array1D[np.float64])
 
 
 @overload
@@ -105,8 +104,8 @@ def multi_wood(
 
 
 def multi_wood(
-    fractions: Sequence[_T],
-    bulk_moduli: Sequence[_T],
+    fractions: Sequence[Array1DOrFloat],
+    bulk_moduli: Sequence[Array1DOrFloat],
 ) -> float | Array1D[np.float64]:
     assert len(fractions) == len(bulk_moduli)
     sum_fractions = sum(fractions)

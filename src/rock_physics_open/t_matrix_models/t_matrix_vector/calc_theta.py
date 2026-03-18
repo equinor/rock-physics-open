@@ -18,36 +18,37 @@ def calc_theta_vec(
     kappa: Array1D[np.float64],
     kappa_f: Array1D[np.float64],
 ) -> Array3D[np.complex128]:
-    """Returns the theta tensor (6x6 matrix) for more explanation see e.g.
-    Agersborg et al. 2009 or "The effects of drained and undrained loading in
+    """Returns the theta tensor (6x6 matrix).
+
+    For more explanation see e.g. Agersborg et al. 2009 or
+    "The effects of drained and undrained loading in
     visco-elastic waves in rock-like composites" M. Jakobsen and T.A. Johansen.
     (2005). Int. J. Solids and Structures (42). p. 1597-1611.
 
     Parameters
     ----------
-    v  : np.ndarray
+    v
         Concentration of all the empty cavities (1x(numbers of empty cavities) vector).
-    omega : np.ndarray
+    omega
         Frequency (2*pi*f).
-    gamma : np.ndarray
+    gamma
         Gamma factor of all the inclusions (1x(numbers of empty cavities) vector).
-    tau : np.ndarray
+    tau
         Relaxation time constant (1x(numbers of empty cavities) vector).
-    kd_uuvv : np.ndarray
+    kd_uuvv
         Tensor sum of the dry K tensor for all the cavities (1x(numbers of empty cavities) vector).
-    dr : np.ndarray
+    dr
         Permeability/viscosity.
-    k : np.ndarray
+    k
         Wave number vector.
-    kappa : np.ndarray
+    kappa
         Bulk modulus of the host material.
-    kappa_f : np.ndarray
+    kappa_f
         Bulk modulus of the fluid.
 
     Returns
     -------
-    np.ndarray
-        Theta tensor.
+    Theta tensor.
     """
     sigma_a = np.sum((v / (1 + 1j * omega * gamma * tau)), axis=1)
     sigma_b = np.sum((v / (1 + 1j * omega * gamma * tau)) * kd_uuvv, axis=1)

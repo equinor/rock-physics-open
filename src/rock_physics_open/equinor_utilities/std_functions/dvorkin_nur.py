@@ -17,28 +17,29 @@ def dvorkin_contact_cement(
 
     Parameters
     ----------
-    frac_cem : np.ndarray | float
+    frac_cem
         Cement fraction of volume [ratio].
-    por0_sst : np.ndarray | float
+    por0_sst
         Critical porosity of sand [ratio].
-    mu0_sst : np.ndarray
+    mu0_sst
         Mineral shear modulus of sand [Pa].
-    k0_sst : np.ndarray
+    k0_sst
         Mineral bulk modulus of sand [Pa].
-    mu0_cem : np.ndarray
+    mu0_cem
         Mineral shear modulus of cement [Pa].
-    k0_cem : np.ndarray
+    k0_cem
         Mineral bulk modulus of cement [Pa].
-    vs_red : np.ndarray | float
+    vs_red
         Shear modulus reduction factor [ratio].
-    c : np.ndarray | float
+    c
         Coordination number (grain contacts per grain) [unitless].
 
     Returns
     -------
-    tuple
-        k_cc, mu_cc : numpy.ndarray.
-        k_cc: bulk modulus [Pa], mu_cc: shear modulus [Pa].
+    k_cc
+        Bulk modulus [Pa].
+    mu_cc
+        Shear modulus [Pa].
     """
     alpha = (2 * frac_cem / (3 * (1 - por0_sst))) ** 0.5
     poiss = (3 * k0_sst - 2 * mu0_sst) / (2 * (3 * k0_sst + mu0_sst))

@@ -20,6 +20,27 @@ class SigmoidalPressureModel(BasePressureModel):
     The model applies two sigmoid transformations:
     1. Porosity -> velocity amplitude using phi_model parameters
     2. Effective pressure -> velocity using p_eff_model parameters and amplitude
+
+    Parameters
+    ----------
+    phi_amplitude
+        Amplitude parameter for porosity sigmoid [m/s].
+    phi_median_point
+        Median point for porosity sigmoid [fraction].
+    phi_x_scaling
+        X-scaling parameter for porosity sigmoid [unitless].
+    phi_bias
+        Bias parameter for porosity sigmoid [m/s].
+    p_eff_median_point
+        Median point for pressure sigmoid [Pa].
+    p_eff_x_scaling
+        X-scaling parameter for pressure sigmoid [1/Pa].
+    p_eff_bias
+        Bias parameter for pressure sigmoid [m/s].
+    model_max_pressure
+        Maximum pressure for predict_max method [Pa].
+    description
+        Model description.
     """
 
     def __init__(
@@ -34,30 +55,6 @@ class SigmoidalPressureModel(BasePressureModel):
         model_max_pressure: float | None = None,
         description: str = "",
     ):
-        """
-        Initialize sigmoidal pressure model.
-
-        Parameters
-        ----------
-        phi_amplitude : float
-            Amplitude parameter for porosity sigmoid [m/s].
-        phi_median_point : float
-            Median point for porosity sigmoid [fraction].
-        phi_x_scaling : float
-            X-scaling parameter for porosity sigmoid [unitless].
-        phi_bias : float
-            Bias parameter for porosity sigmoid [m/s].
-        p_eff_median_point : float
-            Median point for pressure sigmoid [Pa].
-        p_eff_x_scaling : float
-            X-scaling parameter for pressure sigmoid [1/Pa].
-        p_eff_bias : float
-            Bias parameter for pressure sigmoid [m/s].
-        model_max_pressure : float | None
-            Maximum pressure for predict_max method [Pa].
-        description : str
-            Model description.
-        """
         super().__init__(model_max_pressure, description)
         # Porosity model parameters
         self._phi_amplitude = phi_amplitude
@@ -111,13 +108,12 @@ class SigmoidalPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Input array to validate.
 
         Returns
         -------
-        np.ndarray
-            Validated input array.
+        Validated input array.
 
         Raises
         ------
@@ -138,13 +134,12 @@ class SigmoidalPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        phi : np.ndarray
+        phi
             Porosity values [fraction].
 
         Returns
         -------
-        np.ndarray
-            Velocity amplitude values [m/s].
+        Velocity amplitude values [m/s].
         """
         return (
             self._phi_amplitude
@@ -158,15 +153,14 @@ class SigmoidalPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        p_eff : np.ndarray
+        p_eff
             Effective pressure values [Pa].
-        amplitude : np.ndarray
+        amplitude
             Velocity amplitude values [m/s].
 
         Returns
         -------
-        np.ndarray
-            Velocity values [m/s].
+        Velocity values [m/s].
         """
         return (
             amplitude
@@ -181,15 +175,14 @@ class SigmoidalPressureModel(BasePressureModel):
 
         Parameters
         ----------
-        inp_arr : np.ndarray
+        inp_arr
             Validated input array (n,3).
-        case : str
+        case
             Pressure case: "in_situ" or "depleted".
 
         Returns
         -------
-        np.ndarray
-            Velocity values [m/s].
+        Velocity values [m/s].
         """
         arr = self.validate_input(inp_arr)
 

@@ -43,40 +43,52 @@ def friable_model_optimisation(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Cement bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Cement shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Cement density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid density [kg/m^3].
-    por : np.ndarray
+    por
         Inclusion porosity [ratio].
-    p_eff : np.ndarray
+    p_eff
         Effective pressure log [Pa].
-    vp : np.ndarray
+    vp
         Compressional velocity log [m/s].
-    vs : np.ndarray
+    vs
         Shear velocity log [m/s].
-    rhob : np.ndarray
+    rhob
         Bulk density log [kg/m^3].
-    file_out_str : str
+    file_out_str
         Output file name (string) to store optimal parameters (pickle format).
-    display_results : bool
+    display_results
         Display optimal parameters in a window after run.
-    well_name : str
+    well_name
         Name of well to be displayed in info box title.
 
     Returns
     -------
-    tuple
-        vp_mod, vs_mod, rhob_mod, ai_mod, vpvs_mod, vp_res, vs_res, rhob_res : np.ndarray
-        modelled logs, vp_res, vs_res, rho_res - residual logs.
+    vp_mod
+        Modelled p-wave velocity log.
+    vs_mod
+        Modelled s-wave velocity log.
+    rhob_mod
+        Modelled bulk density log.
+    ai_mod
+        Modelled acoustic impedance log.
+    vpvs_mod
+        Modelled Vp/Vs ratio log.
+    vp_res
+        P-wave velocity residual log.
+    vs_res
+        S-wave velocity residual log.
+    rhob_res
+        Bulk density residual log.
     """
-
     # Skip hardcoded Vp/Vs ratio
     def_vpvs = np.mean(vp / vs)
     # Set weight to vs to give vp and vs similar influence on optimisation

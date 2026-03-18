@@ -16,8 +16,9 @@ def filter_input_log(
     positive: bool = True,
 ) -> tuple[npt.NDArray[np.bool_], list[npt.NDArray[Any] | pd.DataFrame]]:
     """
-    Check for valid input values in numpy arrays or pandas data frames. Default behaviour is to
-    identify missing values - assumed to be NaN and Inf. Other conditions
+    Check for valid input values in numpy arrays or pandas data frames.
+
+    Default behaviour is to identify missing values - assumed to be NaN and Inf. Other conditions
     can be stated in the key word arguments. Unknown conditions are ignored and a warning
     is issued. Run dim_check_vector to make sure that all inputs have the same length.
     Erroneous values in a sample in one log will remove the sample from all the logs.
@@ -25,23 +26,24 @@ def filter_input_log(
 
     Parameters
     ----------
-    args : list or tuple or np.ndarray or pd.DataFrame
+    args
         Inputs to be filtered, single array or dataframe or lists of arrays or data frames.
-    working_int : np.ndarray
+    working_int
         Valid positions are shown as values > 0.
-    negative : bool
+    negative
         Positive values are excluded (zero values are retained).
-    no_zero : bool
+    no_zero
         Zero values are excluded.
-    positive : bool
+    positive
         Negative values are excluded.
 
     Returns
     -------
-    tuple
-        idx, output_args : (np.ndarray, list)
-        indices of valid values [bool],
-        list of input arrays at valid indices.
+    idx
+        Boolean indices of valid values.
+    output_args
+        List of input arrays filtered to valid indices.
+
     """
     type_error = "filter_input_log: unknown input data type: {}".format(type(args))
     size_error = "filter_input_log: inputs of different length"

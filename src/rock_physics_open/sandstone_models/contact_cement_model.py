@@ -28,8 +28,9 @@ def contact_cement_model(
     npt.NDArray[np.float64],
 ]:
     """
-    Contact cement model is a sandstone model where all variation in porosity is explained by variation in grain contact
-    cement. This is leads to the stiffest transition from critical porosity to the mineral point.
+    Contact cement model is a sandstone model where all variation in porosity is explained by variation in grain contact cement.
+
+    This is leads to the stiffest transition from critical porosity to the mineral point.
 
     Mineral properties k_min, muMin, rho_min are effective properties. For mixtures of minerals, effective properties
     are calculated by Hashin-Shtrikman or similar.
@@ -49,40 +50,46 @@ def contact_cement_model(
 
     Parameters
     ----------
-    k_min : np.ndarray
+    k_min
         Mineral bulk modulus [Pa].
-    mu_min : np.ndarray
+    mu_min
         Mineral shear modulus [Pa].
-    rho_min : np.ndarray
+    rho_min
         Mineral bulk density [kg/m^3].
-    k_cem : np.ndarray
+    k_cem
         Cement bulk modulus [Pa].
-    mu_cem : np.ndarray
+    mu_cem
         Cement shear modulus [Pa].
-    rho_cem : np.ndarray
+    rho_cem
         Cement bulk density [kg/m^3].
-    k_fl : np.ndarray
+    k_fl
         Fluid bulk modulus [Pa].
-    rho_fl : np.ndarray
+    rho_fl
         Fluid bulk density [kg/m^3].
-    phi : np.ndarray
+    phi
         Porosity [fraction].
-    frac_cem : float
+    frac_cem
         Cement fraction [fraction].
-    phi_c : float
+    phi_c
         Critical porosity [fraction].
-    n : float
+    n
         Coordination number [unitless].
-    shear_red : float
+    shear_red
         Shear reduction factor [fraction].
 
     Returns
     -------
-    tuple
-        vp, vs, rho, ai, vpvs  : np.ndarray
-        vp [m/s] and vs [m/s], bulk density [kg/m^3], ai [m/s x kg/m^3], vpvs [ratio] of saturated rock.
+    vp
+        Compressional wave velocity of saturated rock [m/s].
+    vs
+        Shear wave velocity of saturated rock [m/s].
+    rho
+        Bulk density [kg/m^3].
+    ai
+        Acoustic impedance [m/s x kg/m^3].
+    vpvs
+        Vp/Vs ratio [ratio].
     """
-
     # Identify porosity values that are above (phi_c - frac_cem), for which the model is not defined
     (
         idx_phi,

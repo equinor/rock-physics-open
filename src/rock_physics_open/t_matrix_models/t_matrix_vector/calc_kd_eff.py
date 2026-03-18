@@ -27,6 +27,7 @@ def calc_kd_eff_vec(
     frac_ani: float,
 ) -> tuple[Array4D[np.float64] | None, Array4D[np.float64] | None]:
     """Returns the effective dry K-tensor (6x6x(numbers of inclusions) matrix.
+
     If there is no connected or no isolated pores, the function returns a NaN for
     the case which is not considered. E.g. if only isolated pores, the kd_eff_connected = NaN.
 
@@ -35,41 +36,43 @@ def calc_kd_eff_vec(
 
     Parameters
     ----------
-    c0 : np.ndarray
+    c0
         Stiffness tensor of the host material (nx6x6 matrix).
-    s_0 : np.ndarray
+    s_0
         Inverse of the stiffness tensor.
-    k_fl : np.ndarray
+    k_fl
         Bulk modulus of the fluid (n length vector).
-    alpha_con : np.ndarray
+    alpha_con
         Aspect ratio of connected inclusions.
-    alpha_iso : np.ndarray
+    alpha_iso
         Aspect ratio of isolated inclusions.
-    v_con : np.ndarray
+    v_con
         Concentration of connected pores.
-    v_iso : np.ndarray
+    v_iso
         Concentration of isolated pores.
-    gd : np.ndarray
+    gd
         Correlation function (nx6x6 matrix).
-    ctrl : int
+    ctrl
         0 :only isolated pores, 1 :both isolated and connected pores, 2 :only connected pores.
-    frac_ani : float
+    frac_ani
         Fraction of anisotropic inclusions.
 
     Returns
     -------
-    tuple
-         kd_eff_isolated, kd_eff_connected: (np.ndarray, np.ndarray).
+    kd_eff_isolated
+        Effective dry K-tensor for isolated inclusions.
+    kd_eff_connected
+        Effective dry K-tensor for connected inclusions.
 
     Notes
     -----
     Equations used can be found in:
     Agersborg (2007), phd thesis:
-    https://bora.uib.no/handle/1956/2422
+    https
 
     09.03.2012
     Remy Agersborg
-    email: remy@agersborg.com
+    email
 
     Translated to Python and vectorised by Harald Flesche, hfle@equinor.com 2020.
     """

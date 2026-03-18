@@ -12,27 +12,26 @@ def _refl_models(
     k: npt.NDArray[np.float64] | float = 2.0,
     mod: Literal["aki_richards", "smith_gidlow"] = "aki_richards",
 ) -> npt.NDArray[np.float64]:
-    """Calculate reflect coeff.
+    """Compute two-term reflection coefficients between layer pairs.
 
     Parameters
     ----------
-    vp : np.ndarray
-        vp array.
-    vs : np.ndarray
-        vs array.
-    rho : np.ndarray
-        rho array.
-    theta : float, np.ndarray
-        Theta value.
-    k : float, np.ndarray, optional
-        By default 2.0.
-    mod : str, optional
-        By default 'aki_richards'.
+    vp
+        Compressional wave velocity [m/s].
+    vs
+        Shear wave velocity [m/s].
+    rho
+        Bulk density [kg/m^3].
+    theta
+        Incidence angle [degree].
+    k
+        Background Vp/Vs ratio, by default 2.0.
+    mod
+        Reflection model, by default ``'aki_richards'``.
 
     Returns
     -------
-    np.ndarray
-        Reflect coeff.
+    Reflection coefficient per interface [ratio].
     """
     theta = theta / 180 * np.pi
     r_vp = (vp[1:] - vp[0:-1]) / (vp[0:-1] + vp[1:])
@@ -69,21 +68,20 @@ def aki_richards(
 
     Parameters
     ----------
-    vp : np.ndarray
+    vp
         Pressure wave velocity [m/s].
-    vs : np.ndarray
+    vs
         Shear wave velocity [m/s].
-    rho : np.ndarray
+    rho
         Density [kg/m^3].
-    theta : np.ndarray
+    theta
         Angle of incident ray [radians].
-    k : float, np.ndarray
+    k
         Background vp/vs [unitless].
 
     Returns
     -------
-    refl_coeff : np.ndarray
-        Reflection coefficient [unitless].
+    Reflection coefficient [unitless].
     """
     return _refl_models(vp, vs, rho, theta, k, mod="aki_richards")
 
@@ -100,21 +98,19 @@ def smith_gidlow(
 
     Parameters
     ----------
-    vp : np.ndarray
+    vp
         Pressure wave velocity [m/s].
-    vs : np.ndarray
+    vs
         Shear wave velocity [m/s].
-    rho : np.ndarray
+    rho
         Density [kg/m^3].
-    theta : np.ndarray
+    theta
         Angle of incident ray [radians].
-    k : float, np.ndarray
+    k
         Background vp/vs [unitless].
 
     Returns
     -------
-    refl_coeff : np.ndarray
-        Reflection coefficient [unitless].
+    Reflection coefficient [unitless].
     """
-
     return _refl_models(vp, vs, rho, theta, k, mod="smith_gidlow")

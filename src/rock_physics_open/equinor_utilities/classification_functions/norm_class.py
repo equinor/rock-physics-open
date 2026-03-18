@@ -13,37 +13,38 @@ def norm_class(
     thresh: float = np.inf,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
-    Normal distribution classification routine. All data points are assigned a
-    class, unless a threshold is set. The "dist" calculated here is the quadratic
+    Normal distribution classification routine.
+
+    All data points are assigned a  class, unless a threshold is set. The "dist" calculated here is the quadratic
     discriminant function according to a Bayes classification. This is a negative
     number, and the closest class has the smallest absolute value.
 
     Parameters
     ----------
-    obs : np.ndarray
+    obs
         An nxm array, where n is the number of samples and m is the number of variables.
-    class_mean : np.ndarray
+    class_mean
         A pxm array, where p is the number of classes and m is the number of variables.
-    class_cov : np.ndarray
+    class_cov
         A pxm array, where p is the number of classes and m is the number of variables.
-    prior_prob : np.ndarray
+    prior_prob
         A p length vector, where p is the number of classes containing prior probabilities for each class.
-    class_id : np.ndarray
+    class_id
         A p length vector, where p is the number of classes, containing class_id (integer numbers).
-    thresh : float
+    thresh
         Unclassified threshold.
 
 
     Returns
-    --------
-    tuple
-        norm_class_id, norm_dist, norm_pp : (np.ndarray, np.ndarray, np.ndarray).
-        norm_class_id:	nx1 vector. The classes are numbered 1 to m, and unclassified
-        samples (with absolute distance greater than thresh) are set to 0,
-        norm_dist: nx1 vector with quadratic discriminant distance from the closest class centre to sample,
-        norm_pp: nx1 vector with posterior probability based on the distance to each class.
+    -------
+    norm_class_id
+        nx1 vector. The classes are numbered 1 to m, and unclassified samples
+        (with absolute distance greater than thresh) are set to 0.
+    norm_dist
+        nx1 vector with quadratic discriminant distance from the closest class centre to sample.
+    norm_pp
+        nx1 vector with posterior probability based on the distance to each class.
     """
-
     # Find dimensions
     n = obs.shape[0]
     p = class_mean.shape[0]
