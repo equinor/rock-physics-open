@@ -16,7 +16,6 @@ def gas_properties(
     temperature: npt.NDArray[np.float64],
     pressure: npt.NDArray[np.float64],
     gas_gravity: npt.NDArray[np.float64],
-    model: str | None = None,  # pyright: ignore[reportUnusedParameter]
 ) -> tuple[
     npt.NDArray[np.float64],
     npt.NDArray[np.float64],
@@ -27,7 +26,6 @@ def gas_properties(
     :param gas_gravity: molar mass of gas relative to air molar mas.
     :param pressure: Formation pressure (Pa)
     :param temperature: Temperature (Celsius).
-    :param model: for future use
     :return: vel_gas [m/s], den_gas [kg/m^3], k_gas [Pa], eta_gas [cP]
     """
 

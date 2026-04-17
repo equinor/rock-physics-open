@@ -29,7 +29,7 @@ gr = 1.0 * np.linspace(0.7, 1.05, 101)
 
 
 def test_gas_properties():
-    args = gas_properties(temp, pres, gr, model="model")
+    args = gas_properties(temp, pres, gr)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         _ = store_snapshot(get_snapshot_name(), *args)
@@ -41,5 +41,5 @@ def test_gas_properties_float():
     """
     Make sure that input object type is reflected in output type
     """
-    args = gas_properties(temp[0], pres[0], gr[0], model="model")
+    args = gas_properties(temp[0], pres[0], gr[0])
     assert all(isinstance(arg, float) for arg in args)

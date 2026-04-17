@@ -157,40 +157,50 @@ def live_oil(
     :param model_version: Batzle-Wang 1992 "BW" or Han-Batzle 2000 "HB"
     :return: live_oil_velocity [m/s], live_oil_density [kg/m^3]
     """
-    if model_version == "BW":
-        vel_func = live_oil_velocity
-        den_func = live_oil_density
-    elif model_version == "HB":
-        vel_func = han_batzle_live_oil_velocity
-        den_func = han_batzle_live_oil_density
-    else:
-        assert_never(model_version)
-    scalar_input = inputs_are_scalar(
-        temperature,
-        pressure,
-        reference_density,
-        gas_oil_ratio,
-        gas_gravity,
-    )
     temperature_arr = as_float_array(temperature)
     pressure_arr = as_float_array(pressure)
     reference_density_arr = as_float_array(reference_density)
     gas_oil_ratio_arr = as_float_array(gas_oil_ratio)
     gas_gravity_arr = as_float_array(gas_gravity)
 
-    live_oil_den = den_func(
-        temperature=temperature_arr,
-        pressure=pressure_arr,
-        reference_density=reference_density_arr,
-        gas_oil_ratio=gas_oil_ratio_arr,
-        gas_gravity=gas_gravity_arr,
-    )
-    live_oil_vel = vel_func(
-        temperature=temperature_arr,
-        pressure=pressure_arr,
-        reference_density=reference_density_arr,
-        gas_oil_ratio=gas_oil_ratio_arr,
-        gas_gravity=gas_gravity_arr,
+    if model_version == "BW":
+        live_oil_vel = live_oil_velocity(
+            temperature=temperature_arr,
+            pressure=pressure_arr,
+            reference_density=reference_density_arr,
+            gas_oil_ratio=gas_oil_ratio_arr,
+            gas_gravity=gas_gravity_arr,
+        )
+        live_oil_den = live_oil_density(
+            temperature=temperature_arr,
+            reference_density=reference_density_arr,
+            gas_oil_ratio=gas_oil_ratio_arr,
+            gas_gravity=gas_gravity_arr,
+        )
+    elif model_version == "HB":
+        live_oil_vel = han_batzle_live_oil_velocity(
+            temperature=temperature_arr,
+            pressure=pressure_arr,
+            reference_density=reference_density_arr,
+            gas_oil_ratio=gas_oil_ratio_arr,
+            gas_gravity=gas_gravity_arr,
+        )
+        live_oil_den = han_batzle_live_oil_density(
+            temperature=temperature_arr,
+            pressure=pressure_arr,
+            reference_density=reference_density_arr,
+            gas_oil_ratio=gas_oil_ratio_arr,
+            gas_gravity=gas_gravity_arr,
+        )
+    else:
+        assert_never(model_version)
+
+    scalar_input = inputs_are_scalar(
+        temperature,
+        pressure,
+        reference_density,
+        gas_oil_ratio,
+        gas_gravity,
     )
     if scalar_input:
         return live_oil_vel[0], live_oil_den[0]

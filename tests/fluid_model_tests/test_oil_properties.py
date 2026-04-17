@@ -50,7 +50,7 @@ def test_oil_prop_bw():
 
 
 def test_live_oil_density():
-    args = live_oil_density(temp, pres, rho_0, gor, gr)
+    args = live_oil_density(temp, rho_0, gor, gr)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         _ = store_snapshot(get_snapshot_name(), args)
@@ -134,7 +134,7 @@ def test_oil_properties_float():
     for results in [
         oil_properties(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         oil_properties(temp[0], pres[0], rho_0[0], gor[0], gr[0], model_version="BW"),
-        live_oil_density(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
+        live_oil_density(temp[0], rho_0[0], gor[0], gr[0]),
         live_oil_velocity(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         han_batzle_live_oil_density(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
         han_batzle_live_oil_velocity(temp[0], pres[0], rho_0[0], gor[0], gr[0]),
