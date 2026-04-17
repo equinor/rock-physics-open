@@ -11,7 +11,6 @@ from rock_physics_open.fluid_models.oil_model.oil_utilities import (
 
 def live_oil_density(
     temperature: ArrayLikeFloat,
-    pressure: ArrayLikeFloat | None,  # pyright: ignore[reportUnusedParameter]
     reference_density: ArrayLikeFloat,
     gas_oil_ratio: ArrayLikeFloat,
     gas_gravity: ArrayLikeFloat,
@@ -23,7 +22,6 @@ def live_oil_density(
 
     :param reference_density: Density of the oil without dissolved gas
         at 15.6 degrees Celsius and atmospheric pressure. [kg/m^3]
-    :param pressure: Formation pressure [Pa] of oil (for future implementation only)
     :param gas_oil_ratio: The volume ratio of gas to oil [l/l]
     :param temperature: Temperature [°C] of oil.
     :param gas_gravity: molar mass of gas relative to air molar mas.

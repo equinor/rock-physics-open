@@ -30,7 +30,7 @@ gor_co2 = 50 * np.ones(101)
 
 
 def test_brine_properties():
-    args = brine_properties(temp, pres, sal, nacl, kcl, cacl)
+    args = brine_properties(temp, pres, sal)
 
     if not os.path.isfile(get_snapshot_name()) or INITIATE:
         _ = store_snapshot(get_snapshot_name(), *args)

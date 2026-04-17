@@ -12,17 +12,11 @@ def brine_properties(
     temperature: npt.NDArray[np.float64],
     pressure: npt.NDArray[np.float64],
     salinity: npt.NDArray[np.float64],
-    p_nacl: npt.NDArray[np.float64] | float | None = None,  # pyright: ignore[reportUnusedParameter]
-    p_kcl: npt.NDArray[np.float64] | float | None = None,  # pyright: ignore[reportUnusedParameter]
-    p_cacl: npt.NDArray[np.float64] | float | None = None,  # pyright: ignore[reportUnusedParameter]
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     :param salinity: Salinity of solution as [ppm] of NaCl.
     :param pressure: Formation pressure [Pa]
     :param temperature: Temperature [°C]
-    :param p_nacl: NaCl percentage, for future use
-    :param p_kcl: KCl percentage, for future use
-    :param p_cacl: CaCl percentage, for future use
     :return: Brine velocity vel_b [m/s], brine density den_b [kg/m^3], brine bulk modulus k_b [Pa]
     """
     vel_b = brine_primary_velocity(

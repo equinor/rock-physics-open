@@ -261,7 +261,6 @@ def han_batzle_live_oil_density(
     # and issue a warning
     in_situ_oil_density = live_oil_density(
         temperature=temperature_arr,
-        pressure=bubble_point_pres,
         reference_density=reference_density_arr,
         gas_oil_ratio=gas_oil_ratio_arr,
         gas_gravity=gas_gravity_arr,
