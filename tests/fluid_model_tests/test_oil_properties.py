@@ -27,8 +27,6 @@ pres = 30.0e6 * np.linspace(0.8, 1.2, 101)
 rho_0 = 850.0 * np.ones(101)
 gor = 120.0 * np.ones(101)
 gr = 0.7 * np.ones(101)
-gor_co2 = 50.0 * np.ones(101)
-gr_co2 = 1.52 * np.ones(101)
 
 
 def test_oil_prop():

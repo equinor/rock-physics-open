@@ -195,14 +195,13 @@ def live_oil(
     else:
         assert_never(model_version)
 
-    scalar_input = inputs_are_scalar(
+    if inputs_are_scalar(
         temperature,
         pressure,
         reference_density,
         gas_oil_ratio,
         gas_gravity,
-    )
-    if scalar_input:
+    ):
         return live_oil_vel[0], live_oil_den[0]
     return live_oil_vel, live_oil_den
 

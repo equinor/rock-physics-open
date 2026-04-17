@@ -13,18 +13,6 @@ from rock_physics_open.fluid_models import gas_properties
 
 temp = 100.0 * np.linspace(0.8, 1.2, 101)
 pres = 23.0e6 * np.linspace(0.8, 1.2, 101)
-c1 = 0.1 * np.ones(101)
-c2 = 0.1 * np.ones(101)
-c3 = 0.1 * np.ones(101)
-c4 = 0.1 * np.ones(101)
-c5 = 0.1 * np.ones(101)
-c6 = 0.1 * np.ones(101)
-c7 = 0.1 * np.ones(101)
-n2 = 0.1 * np.ones(101)
-co2 = 0.05 * np.ones(101)
-h2s = 0.05 * np.ones(101)
-sgc7 = 0.81 * np.ones(101)
-mwc7 = 161 * np.ones(101)
 gr = 1.0 * np.linspace(0.7, 1.05, 101)
 
 
