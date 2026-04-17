@@ -11,40 +11,6 @@ from scipy.optimize import curve_fit
 from rock_physics_open.equinor_utilities.various_utilities.types import OptCallable
 
 
-def curve_fit_wrapper(
-    x_init: npt.NDArray[np.float64],
-    opt_func: OptCallable,
-    x_data: npt.NDArray[np.float64],
-    y_data: npt.NDArray[np.float64],
-    *args: Any,
-    **opt_kwargs: Any,
-) -> npt.NDArray[np.float64]:
-    """Use in tests with scipy.optimize.minimize instead of curve_fit.
-
-    Parameters
-    ----------
-    x_init : np.ndarray
-        Initial guess for parameters.
-    opt_func : callable
-        Function to optimize.
-    x_data : np.ndarray
-        Input data to opt_func.
-    y_data : np.ndarray
-        Results that the optimisation should match.
-    args :
-        args opt_func.
-    opt_kwargs :
-        kwargs opt_func.
-
-    Returns
-    -------
-    np.ndarray
-        res values.
-    """
-    y_pred = opt_func(x_data, *x_init, *args, **opt_kwargs)
-    return np.sum(np.sqrt((y_data - y_pred) ** 2))
-
-
 def gen_opt_routine(
     opt_function: OptCallable,
     x_data_orig: npt.NDArray[np.float64],
@@ -109,13 +75,6 @@ def gen_opt_routine(
             opt_function(x_data_orig, *opt_params), y_data.shape, order="F"
         )
         y_res = y_pred - y_data
-
-        # Alternative implementation, not shown to improve results
-        # alt_opt_params = minimize(curve_fit_wrapper, x_init, args=(opt_function, x_data_orig, y_data.flatten('F')),
-        #                          bounds=Bounds(low_bound, high_bound), method='SLSQP', options={'maxiter': 10000})
-        # y_pred_1 = np.reshape(opt_function(x_data_orig, *alt_opt_params['x'], **opt_kwargs), y_data.shape, order='F')
-        # y_res_1 = y_pred_1 - y_data
-        # return y_pred_1, y_res_1, alt_opt_params['x']
 
         return y_pred, y_res, opt_params
 

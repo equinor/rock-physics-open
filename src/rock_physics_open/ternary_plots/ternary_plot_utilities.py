@@ -17,10 +17,6 @@ from rock_physics_open.equinor_utilities.various_utilities.types import Array1D,
 HORZRES = 8
 VERTRES = 10
 
-# The following code is only needed if the figure size is given in inches
-# LOGPIXELSX = 88
-# LOGPIXELSY = 90
-
 
 def set_ternary_figure(
     delta_x: int,

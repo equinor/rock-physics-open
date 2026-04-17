@@ -1,20 +1,12 @@
 import sys
-from ctypes import c_double, c_int
+from ctypes import c_int
 from typing import Any, cast
 
 import numpy as np
-import numpy.ctypeslib as npct
 from tmatrix import tmatrix_porosity_noscenario
 
 from rock_physics_open.equinor_utilities import gen_utilities
 from rock_physics_open.equinor_utilities.various_utilities.types import Array1D, Array2D
-
-# Definition of input types for the T Matrix function
-# this will affect the tests on the input data, dim_check_vector is therefore set up to
-# return data on the specified format
-array_1d_double = npct.ndpointer(dtype=c_double, ndim=1, flags="CONTIGUOUS")
-array_1d_int = npct.ndpointer(dtype=c_int, ndim=1, flags="CONTIGUOUS")
-array_2d_double = npct.ndpointer(dtype=c_double, ndim=2, flags="CONTIGUOUS")
 
 
 def t_matrix_porosity_c_alpha_v(

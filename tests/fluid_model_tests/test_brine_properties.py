@@ -23,10 +23,6 @@ from rock_physics_open.fluid_models.brine_model.brine_properties import (
 pres = 23.0e6 * np.linspace(0.8, 1.2, 101)
 temp = 100.0 * np.linspace(0.8, 1.2, 101)
 sal = 35000.0 * np.ones(101)
-nacl = 80.0 * np.ones(101)
-cacl = 15.0 * np.ones(101)
-kcl = 5.0 * np.ones(101)
-gor_co2 = 50 * np.ones(101)
 
 
 def test_brine_properties():

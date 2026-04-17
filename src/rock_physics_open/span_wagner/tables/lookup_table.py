@@ -6,20 +6,6 @@ import numpy.typing as npt
 from scipy.interpolate import RegularGridInterpolator
 
 
-def generate_lookup_table(
-    func: Callable[..., npt.NDArray[np.float64]],
-    x: npt.NDArray[np.float64],
-    y: npt.NDArray[np.float64],
-    filename: str,
-):
-    grids2d = np.meshgrid(x, y, indexing="ij")
-    grids = [g.flatten() for g in grids2d]
-    z = func(*grids)
-    z_grid = z.reshape(grids2d[0].shape)
-    np.savez(filename, z_grid=z_grid, x=x, y=y)
-    return grids2d, z_grid
-
-
 @functools.lru_cache(maxsize=10)
 def load_lookup_table_interpolator(
     filename: str,

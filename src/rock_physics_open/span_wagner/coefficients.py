@@ -163,29 +163,3 @@ A4 = np.array([[0.700, 0.700, 0.700]])
 B4 = np.array([[0.3, 0.3, 1.0]])
 C4 = np.array([[10.0, 10.0, 12.5]])
 D4 = np.array([[275, 275, 275]])
-
-
-coeff_vars = [
-    n1,
-    t1,
-    d1,
-    n2,
-    d2,
-    t2,
-    c2,
-    n3,
-    d3,
-    t3,
-    alpha3,
-    epsilon3,
-    beta3,
-    gamma3,
-    n4,
-    b4,
-    a4,
-    beta4,
-    A4,
-    B4,
-    C4,
-    D4,
-]
