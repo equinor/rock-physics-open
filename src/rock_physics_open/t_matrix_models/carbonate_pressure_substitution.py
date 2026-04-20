@@ -7,6 +7,7 @@ import pandas as pd
 from rock_physics_open.equinor_utilities.machine_learning_utilities.run_regression import (
     run_regression,
 )
+from rock_physics_open.equinor_utilities.units import kg_m3_to_g_cc, pa_to_mpa
 
 
 def carbonate_pressure_model(
@@ -95,11 +96,11 @@ def carbonate_pressure_model(
     # Porosity in percent
     phi_percent = phi * 100.0
     # Pressure in MPa
-    pres_overburden *= 1.0e-6
-    pres_formation *= 1.0e-6
-    pres_form_depleted *= 1.0e-6
+    pres_overburden = pa_to_mpa(pres_overburden)
+    pres_formation = pa_to_mpa(pres_formation)
+    pres_form_depleted = pa_to_mpa(pres_form_depleted)
     # Density in g/cm^3
-    rho_dry *= 1.0e-3
+    rho_dry = kg_m3_to_g_cc(rho_dry)
 
     # Generate DataFrame with necessary inputs for in situ and depleted cases
     input_dict = {
