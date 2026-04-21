@@ -7,11 +7,10 @@ import pandas as pd
 from rock_physics_open.equinor_utilities.machine_learning_utilities.run_regression import (
     run_regression,
 )
-from rock_physics_open.equinor_utilities.units import kg_m3_to_g_cc, pa_to_mpa
+from rock_physics_open.equinor_utilities.units import pa_to_mpa
 
 
 def carbonate_pressure_model(
-    rho_fluid: npt.NDArray[np.float64],
     vp_in_situ: npt.NDArray[np.float64],
     vs_in_situ: npt.NDArray[np.float64],
     rho_in_situ: npt.NDArray[np.float64],
@@ -49,8 +48,6 @@ def carbonate_pressure_model(
 
     Parameters
     ----------
-    rho_fluid
-        Fluid density [kg/m^3]
     vp_in_situ
         In situ Vp [m/s]
     vs_in_situ
@@ -93,9 +90,6 @@ def carbonate_pressure_model(
     vpvs_pres_sub
         Derived Vp/Vs ratio [fraction].
     """
-    # Plug measurements are reported or dry rock density, bulk density needs to be corrected for fluid effect
-    rho_dry = rho_in_situ - rho_fluid * phi
-
     # Change unit to comply with laboratory units
     # Porosity in percent
     phi_percent = phi * 100.0
@@ -103,8 +97,6 @@ def carbonate_pressure_model(
     pres_overburden = pa_to_mpa(pres_overburden)
     pres_formation = pa_to_mpa(pres_formation)
     pres_form_depleted = pa_to_mpa(pres_form_depleted)
-    # Density in g/cm^3
-    rho_dry = kg_m3_to_g_cc(rho_dry)
 
     # Generate DataFrame with necessary inputs for in situ and depleted cases
     input_dict = {
