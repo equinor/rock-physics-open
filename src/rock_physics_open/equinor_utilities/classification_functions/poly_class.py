@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+
 import matplotlib.path as mplpath
 import numpy as np
 import numpy.typing as npt
@@ -5,9 +7,9 @@ import numpy.typing as npt
 
 def poly_class(
     train_data: npt.NDArray[np.float64],
-    polygons: npt.NDArray[np.float64],
-    labels: npt.NDArray[np.float64],
-) -> npt.NDArray[np.float64]:
+    polygons: Sequence[npt.NDArray[np.float64]] | npt.NDArray[np.float64],
+    labels: Sequence[int] | npt.NDArray[np.integer],
+) -> npt.NDArray[np.integer]:
     """
     Points within the polygons are assigned to class labels.
 
