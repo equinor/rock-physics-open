@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.shale_models import (
     dem_model,
     dem_model_dual_por,
@@ -49,17 +41,12 @@ tol = 1.0e-6
 prop_clay = 0.33
 
 
-def test_dem_model():
-    args = dem_model(k1, mu1, rho1, k2, mu2, rho2, frac2, asp_2, tol)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_dem_model(snapshot: SnapshotAssertion):
+    assert snapshot == dem_model(k1, mu1, rho1, k2, mu2, rho2, frac2, asp_2, tol)
 
 
-def test_dem_dual_por_model():
-    args = dem_model_dual_por(
+def test_dem_dual_por_model(snapshot: SnapshotAssertion):
+    assert snapshot == dem_model_dual_por(
         k1,
         mu1,
         rho1,
@@ -76,14 +63,9 @@ def test_dem_dual_por_model():
         tol,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_dem_4_min_model():
-    args = shale_model_4_mineral_dem(
+def test_dem_4_min_model(snapshot: SnapshotAssertion):
+    assert snapshot == shale_model_4_mineral_dem(
         k1,
         mu1,
         rho1,
@@ -111,14 +93,9 @@ def test_dem_4_min_model():
         mod_type="SCA",
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_dem_4_min_overlay_model():
-    args = shale_4_min_dem_overlay(
+def test_dem_4_min_overlay_model(snapshot: SnapshotAssertion):
+    assert snapshot == shale_4_min_dem_overlay(
         k1,
         mu1,
         rho1,
@@ -139,8 +116,3 @@ def test_dem_4_min_overlay_model():
         prop_clay,
         asp,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

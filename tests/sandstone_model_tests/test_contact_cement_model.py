@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.sandstone_models import contact_cement_model
 
 k_min = 36.8e9 * np.ones(20)
@@ -26,8 +18,8 @@ n = 8.0
 shear_red = 0.25
 
 
-def test_contact_cement_model():
-    args = contact_cement_model(
+def test_contact_cement_model(snapshot: SnapshotAssertion):
+    assert snapshot == contact_cement_model(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -42,8 +34,3 @@ def test_contact_cement_model():
         n=n,
         shear_red=shear_red,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

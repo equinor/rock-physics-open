@@ -1,15 +1,8 @@
-import os
 from pathlib import Path
 
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.t_matrix_models import (
     run_t_matrix_forward_model_with_opt_params_exp,
     run_t_matrix_forward_model_with_opt_params_petec,
@@ -37,9 +30,11 @@ freq = 1000
 pressure = np.array([20.0e6, 22.0e6])
 
 
-def test_run_t_matrix_with_opt_params_petec(data_dir: Path):
+def test_run_t_matrix_with_opt_params_petec(
+    data_dir: Path, snapshot: SnapshotAssertion
+):
     fname = data_dir.joinpath("petec_opt_param.pkl")
-    args = run_t_matrix_with_opt_params_petec(
+    assert snapshot == run_t_matrix_with_opt_params_petec(
         min_k=k_min,
         min_mu=mu_min,
         min_rho=rho_min,
@@ -60,15 +55,10 @@ def test_run_t_matrix_with_opt_params_petec(data_dir: Path):
         fluid_sub=True,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_run_t_matrix_with_opt_params_exp(data_dir: Path):
+def test_run_t_matrix_with_opt_params_exp(data_dir: Path, snapshot: SnapshotAssertion):
     fname = data_dir.joinpath("exp_opt_param.pkl")
-    args = run_t_matrix_with_opt_params_exp(
+    assert snapshot == run_t_matrix_with_opt_params_exp(
         fl_k_orig=k_fl_orig,
         fl_rho_orig=rho_fl_orig,
         fl_k_sub=k_fl_sub,
@@ -87,15 +77,12 @@ def test_run_t_matrix_with_opt_params_exp(data_dir: Path):
         fluid_sub=True,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_run_t_matrix_opt_forward_model_petec(data_dir: Path):
+def test_run_t_matrix_opt_forward_model_petec(
+    data_dir: Path, snapshot: SnapshotAssertion
+):
     fname = data_dir.joinpath("petec_opt_param.pkl")
-    args = run_t_matrix_forward_model_with_opt_params_petec(
+    assert snapshot == run_t_matrix_forward_model_with_opt_params_petec(
         min_k=k_min,
         min_mu=mu_min,
         min_rho=rho_min,
@@ -110,15 +97,12 @@ def test_run_t_matrix_opt_forward_model_petec(data_dir: Path):
         f_name=fname,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_run_t_matrix_opt_forward_model_exp(data_dir: Path):
+def test_run_t_matrix_opt_forward_model_exp(
+    data_dir: Path, snapshot: SnapshotAssertion
+):
     fname = data_dir.joinpath("exp_opt_param.pkl")
-    args = run_t_matrix_forward_model_with_opt_params_exp(
+    assert snapshot == run_t_matrix_forward_model_with_opt_params_exp(
         fl_k=k_fl_orig,
         fl_rho=rho_fl_orig,
         phi=phi,
@@ -130,8 +114,3 @@ def test_run_t_matrix_opt_forward_model_exp(data_dir: Path):
         freq=freq,
         f_name=fname,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

@@ -1,17 +1,9 @@
-import os
-
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+from syrupy.assertion import SnapshotAssertion
 
 from rock_physics_open.equinor_utilities.optimisation_utilities import gen_opt_routine
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.equinor_utilities.units import g_cc_to_kg_m3
 from rock_physics_open.t_matrix_models.curvefit_t_matrix_exp import (
     curvefit_t_matrix_exp,
@@ -84,7 +76,7 @@ def poly_function(
     return a + b * x_data + c * x_data**2 + d * x_data**3 + e * x_data**4
 
 
-def test_optimisation_part():
+def test_optimisation_part(snapshot: SnapshotAssertion):
     a = 0.25398574328
     b = 0.28536214953
     c = 0.98235978612
@@ -96,7 +88,8 @@ def test_optimisation_part():
     lower_bound = np.zeros(5)  # Number of parameters in estimation
     upper_bound = np.ones(5)
     y = poly_function(x, a, b, c, d, e)
-    _, _, args = gen_opt_routine(
+
+    _, _, opt_params = gen_opt_routine(
         opt_function=poly_function,
         x_data_orig=x,
         y_data=y,
@@ -104,14 +97,10 @@ def test_optimisation_part():
         low_bound=lower_bound,
         high_bound=upper_bound,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == opt_params
 
 
-def test_t_matrix_opt_params_petec():
+def test_t_matrix_opt_params_petec(snapshot: SnapshotAssertion):
     x_data = np.stack(
         (
             phi,
@@ -131,15 +120,10 @@ def test_t_matrix_opt_params_petec():
     )
     # Arbitrary setting for T Matrix parameters
     par = [0.5, 0.5, 0.5, 0.2, 0.2]
-    args = curve_fit_2_inclusion_sets(x_data, *par)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == curve_fit_2_inclusion_sets(x_data, *par)
 
 
-def test_t_matrix_opt_params_exp():
+def test_t_matrix_opt_params_exp(snapshot: SnapshotAssertion):
     x_data = np.stack(
         (
             phi,
@@ -157,9 +141,4 @@ def test_t_matrix_opt_params_exp():
     )
     # Arbitrary setting for T Matrix parameters
     par = [0.5, 0.5, 0.5, 0.30, 0.7, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    args = curvefit_t_matrix_exp(x_data, *par)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == curvefit_t_matrix_exp(x_data, *par)

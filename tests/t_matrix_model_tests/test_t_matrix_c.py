@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.t_matrix_models import (
     t_matrix_porosity_c_alpha_v,
     t_matrix_porosity_vectorised,
@@ -31,8 +23,8 @@ frac_inc_con = 0.5
 frac_inc_ani = 0.5
 
 
-def test_t_matrix_c():
-    args = t_matrix_porosity_c_alpha_v(
+def test_t_matrix_c(snapshot: SnapshotAssertion):
+    assert snapshot == t_matrix_porosity_c_alpha_v(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -50,14 +42,9 @@ def test_t_matrix_c():
         frac_inc_ani=frac_inc_ani,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_t_matrix_vectorised():
-    args = t_matrix_porosity_vectorised(
+def test_t_matrix_vectorised(snapshot: SnapshotAssertion):
+    assert snapshot == t_matrix_porosity_vectorised(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -74,8 +61,3 @@ def test_t_matrix_vectorised():
         frac_inc_con=frac_inc_con,
         frac_inc_ani=frac_inc_ani,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

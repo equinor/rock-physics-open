@@ -1,15 +1,8 @@
-import os
 import warnings
 
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.equinor_utilities.units import celsius_to_kelvin
 from rock_physics_open.span_wagner import co2_properties
 from rock_physics_open.span_wagner.co2_properties import (
@@ -43,14 +36,9 @@ mwc7 = 161 * np.ones(101)
 gr = 1.0 * np.linspace(0.7, 1.05, 101)
 
 
-def test_co2_properties():
+def test_co2_properties(snapshot: SnapshotAssertion):
     temp_sw = np.linspace(-56, 28, 101)
-    args = co2_properties(temp_sw, pres)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_sw, pres)
 
 
 def test_co2_properties_above_critical_temperature_no_warning():
@@ -65,77 +53,47 @@ def test_co2_properties_above_critical_temperature_no_warning():
     assert np.all(np.isfinite(k))
 
 
-def test_co2_properties_vapor_phase():
+def test_co2_properties_vapor_phase(snapshot: SnapshotAssertion):
     """Snapshot test for vapor phase: T between triple and critical, P below vapor pressure."""
     temp_vapor = np.linspace(-40, 20, 50)
     pres_low = 0.5e6 * np.ones(50)
-    args = co2_properties(temp_vapor, pres_low)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_vapor, pres_low)
 
 
-def test_co2_properties_below_triple_point():
+def test_co2_properties_below_triple_point(snapshot: SnapshotAssertion):
     """Snapshot test for below triple point temperature (gas phase, sublimation region)."""
     temp_low = np.linspace(-80, -60, 20)
     pres_low = 5000.0 * np.ones(20)  # 5 kPa = 0.005 MPa
-    args = co2_properties(temp_low, pres_low)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_low, pres_low)
 
 
-def test_co2_properties_high_temperature():
+def test_co2_properties_high_temperature(snapshot: SnapshotAssertion):
     """Snapshot test for high temperatures well above critical point."""
     temp_high = np.linspace(100, 500, 50)
     pres_high = 50.0e6 * np.ones(50)
-    args = co2_properties(temp_high, pres_high)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_high, pres_high)
 
 
-def test_co2_properties_near_critical_supercritical():
+def test_co2_properties_near_critical_supercritical(snapshot: SnapshotAssertion):
     """Snapshot test near the critical point on the supercritical side."""
     temp_near = np.linspace(32, 40, 20)
     pres_near = np.linspace(8.0e6, 15.0e6, 20)
-    args = co2_properties(temp_near, pres_near)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_near, pres_near)
 
 
-def test_co2_properties_wide_pressure_range():
+def test_co2_properties_wide_pressure_range(snapshot: SnapshotAssertion):
     """Snapshot test across a wide range of pressures at constant above-critical temperature."""
     n = 30
     temp_const = 50.0 * np.ones(n)
     pres_range = np.geomspace(1.0e6, 100.0e6, n)
-    args = co2_properties(temp_const, pres_range)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_const, pres_range)
 
 
-def test_co2_properties_mixed_phase_array():
+def test_co2_properties_mixed_phase_array(snapshot: SnapshotAssertion):
     """Snapshot test spanning multiple phase regions: below triple, vapor, liquid, supercritical."""
     temp_mixed = np.array([-80.0, -50.0, -10.0, 0.0, 15.0, 50.0, 200.0])
     pres_mixed = np.array([0.005e6, 0.5e6, 0.5e6, 10.0e6, 10.0e6, 10.0e6, 50.0e6])
-    args = co2_properties(temp_mixed, pres_mixed)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == co2_properties(temp_mixed, pres_mixed)
 
 
 def test_vapor_pressure_at_triple_and_critical():

@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.sandstone_models import friable_model, friable_model_dry
 from rock_physics_open.sandstone_models.friable_models import CoordinateNumberFunction
 
@@ -25,8 +17,8 @@ n = 8.0
 shear_red = 0.25
 
 
-def test_friable_model():
-    args = friable_model(
+def test_friable_model(snapshot: SnapshotAssertion):
+    assert snapshot == friable_model(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -40,14 +32,9 @@ def test_friable_model():
         shear_red=shear_red,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_friable_model_dry():
-    args = friable_model_dry(
+def test_friable_model_dry(snapshot: SnapshotAssertion):
+    assert snapshot == friable_model_dry(
         k_min=k_min,
         mu_min=mu_min,
         phi=phi,
@@ -57,8 +44,3 @@ def test_friable_model_dry():
         n=n,
         shear_red=shear_red,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

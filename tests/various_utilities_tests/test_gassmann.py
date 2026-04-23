@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.equinor_utilities.std_functions import moduli
 from rock_physics_open.equinor_utilities.various_utilities import (
     gassmann_dry_model,
@@ -54,8 +46,8 @@ vp_sat, vs_sat, rho_sat, _, _ = friable_model(
 k_sat, mu_sat = moduli(vp_sat, vs_sat, rho_sat)
 
 
-def test_gassmann():
-    args = gassmann_model(
+def test_gassmann(snapshot: SnapshotAssertion):
+    assert snapshot == gassmann_model(
         k_min=k_min,
         k_fl=k_fl_orig,
         rho_fl=rho_fl_orig,
@@ -65,29 +57,14 @@ def test_gassmann():
         por=por,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_gassmann_dry():
-    args = gassmann_dry_model(
+def test_gassmann_dry(snapshot: SnapshotAssertion):
+    assert snapshot == gassmann_dry_model(
         k_min, k_fl_orig, rho_fl_orig, k_sat, mu_sat, rho_sat, por
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_gassmann_sub():
-    args = gassmann_sub_model(
+def test_gassmann_sub(snapshot: SnapshotAssertion):
+    assert snapshot == gassmann_sub_model(
         k_min, k_fl_orig, rho_fl_orig, k_fl_sub, rho_fl_sub, k_sat, mu_dry, rho_sat, por
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

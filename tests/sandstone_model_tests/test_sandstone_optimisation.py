@@ -1,16 +1,9 @@
-import os
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.sandstone_models import (
     constant_cement_model_optimisation,
     friable_model_optimisation,
@@ -38,10 +31,10 @@ p_eff = 20.0e6 * np.ones_like(phit)
 phi_c = 0.45
 
 
-def test_friable_optimisation(data_dir: Path):
+def test_friable_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
     file_name = str(data_dir.joinpath("friable_model_optimisation.pkl"))
 
-    args = friable_model_optimisation(
+    assert snapshot == friable_model_optimisation(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -55,16 +48,11 @@ def test_friable_optimisation(data_dir: Path):
         file_out_str=file_name,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_constant_cement_optimisation(data_dir: Path):
+def test_constant_cement_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
     file_name = str(data_dir.joinpath("constant_cement_model_optimisation.pkl"))
 
-    args = constant_cement_model_optimisation(
+    assert snapshot == constant_cement_model_optimisation(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -80,16 +68,11 @@ def test_constant_cement_optimisation(data_dir: Path):
         file_out_str=file_name,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_patchy_cement_optimisation(data_dir: Path):
+def test_patchy_cement_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
     file_name = str(data_dir.joinpath("patchy_cement_model_optimisation.pkl"))
 
-    args = patchy_cement_model_optimisation(
+    assert snapshot == patchy_cement_model_optimisation(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -106,8 +89,3 @@ def test_patchy_cement_optimisation(data_dir: Path):
         phi_c=phi_c,
         file_out_str=file_name,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
