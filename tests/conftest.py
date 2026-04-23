@@ -21,3 +21,9 @@ def setup_rock_physics_open_test_data(
     _ = copytree(testdata, start_dir, dirs_exist_ok=True)
 
     return start_dir
+
+
+# load and use fixtures from the `fixtures` directory
+pytest_plugins = [
+    "tests.fixtures.snapshot",
+]
