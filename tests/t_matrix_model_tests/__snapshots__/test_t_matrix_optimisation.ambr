@@ -1,9 +1,6 @@
 # serializer version: 1
 # name: test_optimisation_part
-  '''
-  [2.53981929e-01 2.85449495e-01 9.81973375e-01 2.40454590e-01
-   4.58701332e-01]
-  '''
+  '[2.540e-01 2.854e-01 9.820e-01 2.405e-01 4.587e-01]'
 # ---
 # name: test_t_matrix_opt_params_exp
   '''

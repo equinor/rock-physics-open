@@ -54,3 +54,12 @@ def _snapshot_matcher(significant_digits: int) -> PropertyMatcher:
 def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
     """Compare with snapshot where numerical values are written with 9 significant digits."""
     return snapshot.with_defaults(matcher=_snapshot_matcher(significant_digits=9))
+
+
+@pytest.fixture
+def snapshot_approx(snapshot: SnapshotAssertion) -> SnapshotAssertion:
+    """Compare with snapshot where numerical values are written with 4 significant digits.
+
+    Useful for tests that are more susceptible to small numerical differences across systems.
+    """
+    return snapshot.with_defaults(matcher=_snapshot_matcher(significant_digits=4))
