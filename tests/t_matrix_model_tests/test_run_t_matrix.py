@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.t_matrix_models import run_t_matrix, t_matrix_porosity_vectorised
 
 k_min = np.ones(11) * 71.0e9
@@ -29,8 +21,8 @@ frac_inc_ani = 0.5
 pressure = np.array([18.0e6, 28.0e6])
 
 
-def test_run_t_matrix():
-    args = run_t_matrix(
+def test_run_t_matrix(snapshot: SnapshotAssertion):
+    assert snapshot == run_t_matrix(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -49,14 +41,9 @@ def test_run_t_matrix():
         pressure=pressure,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(tuple(args), read_snapshot(get_snapshot_name()))
 
-
-def test_run_t_matrix_porosity_vectorised():
-    args = t_matrix_porosity_vectorised(
+def test_run_t_matrix_porosity_vectorised(snapshot: SnapshotAssertion):
+    assert snapshot == t_matrix_porosity_vectorised(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -74,8 +61,3 @@ def test_run_t_matrix_porosity_vectorised():
         frac_inc_ani=frac_inc_ani,
         pressure=pressure,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

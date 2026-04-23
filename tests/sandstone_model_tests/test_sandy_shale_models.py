@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.sandstone_models import (
     cemented_shaly_sand_sandy_shale_model,
     friable_shaly_sand_sandy_shale_model,
@@ -44,8 +36,8 @@ shear_red_mud = 1.0
 phi_intr_mud = 0.05
 
 
-def test_cemented_sandy_shale_model():
-    args = cemented_shaly_sand_sandy_shale_model(
+def test_cemented_sandy_shale_model(snapshot: SnapshotAssertion):
+    assert snapshot == cemented_shaly_sand_sandy_shale_model(
         k_sst=k_sst,
         mu_sst=mu_sst,
         rho_sst=rho_sst,
@@ -73,14 +65,9 @@ def test_cemented_sandy_shale_model():
         shear_red_mud=shear_red_mud,
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_friable_sandy_shale_model():
-    args = friable_shaly_sand_sandy_shale_model(
+def test_friable_sandy_shale_model(snapshot: SnapshotAssertion):
+    assert snapshot == friable_shaly_sand_sandy_shale_model(
         k_sst=k_sst,
         mu_sst=mu_sst,
         rho_sst=rho_sst,
@@ -105,8 +92,3 @@ def test_friable_sandy_shale_model():
         shear_red_sst=shear_red_sst,
         shear_red_mud=shear_red_mud,
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

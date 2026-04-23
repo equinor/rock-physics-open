@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.shale_models import (
     multi_sca,
     self_consistent_approximation_model,
@@ -31,23 +23,13 @@ asp2 = 0.85 * np.ones(20)
 tol = 1.0e-6
 
 
-def test_sca_model():
-    args = self_consistent_approximation_model(
+def test_sca_model(snapshot: SnapshotAssertion):
+    assert snapshot == self_consistent_approximation_model(
         k1, mu1, rho1, k2, mu2, rho2, frac1, asp1, asp2, tol
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
-
-def test_multi_sca_model():
-    args = multi_sca(
+def test_multi_sca_model(snapshot: SnapshotAssertion):
+    assert snapshot == multi_sca(
         k1, mu1, rho1, asp1, frac1, k2, mu2, rho2, asp2, 1 - frac1, tol=tol
     )
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

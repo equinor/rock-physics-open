@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.fluid_models import oil_properties
 from rock_physics_open.fluid_models.oil_model.han_batzle_oil_model import (
     han_batzle_live_oil_density,
@@ -29,62 +21,32 @@ gor = 120.0 * np.ones(101)
 gr = 0.7 * np.ones(101)
 
 
-def test_oil_prop():
-    args = oil_properties(temp, pres, rho_0, gor, gr)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_oil_prop(snapshot: SnapshotAssertion):
+    assert snapshot == oil_properties(temp, pres, rho_0, gor, gr)
 
 
-def test_oil_prop_bw():
-    args = oil_properties(temp, pres, rho_0, gor, gr, model_version="BW")
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_oil_prop_bw(snapshot: SnapshotAssertion):
+    assert snapshot == oil_properties(temp, pres, rho_0, gor, gr, model_version="BW")
 
 
-def test_live_oil_density():
-    args = live_oil_density(temp, rho_0, gor, gr)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_live_oil_density(snapshot: SnapshotAssertion):
+    assert snapshot == live_oil_density(temp, rho_0, gor, gr)
 
 
-def test_live_oil_velocity():
-    args = live_oil_velocity(temp, pres, rho_0, gor, gr)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_live_oil_velocity(snapshot: SnapshotAssertion):
+    assert snapshot == live_oil_velocity(temp, pres, rho_0, gor, gr)
 
 
-def test_han_batzle_live_oil_density():
-    args = han_batzle_live_oil_density(temp, pres, rho_0, gor, gr)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_han_batzle_live_oil_density(snapshot: SnapshotAssertion):
+    assert snapshot == han_batzle_live_oil_density(temp, pres, rho_0, gor, gr)
 
 
-def test_han_batzle_live_oil_velocity():
-    args = han_batzle_live_oil_velocity(temp, pres, rho_0, gor, gr)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_han_batzle_live_oil_velocity(snapshot: SnapshotAssertion):
+    assert snapshot == han_batzle_live_oil_velocity(temp, pres, rho_0, gor, gr)
 
 
-def test_live_oil_han_batzle():
-    args = live_oil(
+def test_live_oil_han_batzle(snapshot: SnapshotAssertion):
+    assert snapshot == live_oil(
         temperature=temp,
         pressure=pres,
         reference_density=rho_0,
@@ -93,20 +55,21 @@ def test_live_oil_han_batzle():
         model_version="HB",
     )
 
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+
+def test_live_oil_batzle_wang(snapshot: SnapshotAssertion):
+    assert snapshot == live_oil(
+        temperature=temp,
+        pressure=pres,
+        reference_density=rho_0,
+        gas_oil_ratio=gor,
+        gas_gravity=gr,
+        model_version="BW",
+    )
 
 
-def test_max_gor_standing():
+def test_max_gor_standing(snapshot: SnapshotAssertion):
     """Snapshot test for max_gor_standing (Standing 1962 inverse bubble-point)."""
-    args = max_gor_standing(rho_0, pres, gr, temp)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+    assert snapshot == max_gor_standing(rho_0, pres, gr, temp)
 
 
 def test_max_gor_standing_float():

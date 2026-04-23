@@ -1,15 +1,7 @@
-import os
-
 import numpy as np
 import pandas as pd
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.equinor_utilities.units import g_cc_to_kg_m3
 from rock_physics_open.sandstone_models import (
     patchy_cement_model_cem_frac,
@@ -54,8 +46,8 @@ weight_k = 0.6
 weight_mu = 0.4
 
 
-def test_patchy_cement_fluid_sub_model_no_change():
-    args = patchy_cement_pressure_fluid_substitution(
+def test_patchy_cement_fluid_sub_model_no_change(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_pressure_fluid_substitution(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -86,14 +78,10 @@ def test_patchy_cement_fluid_sub_model_no_change():
         above_upper_bound="disregard",
         below_lower_bound="disregard",
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_fluid_sub_model_weight():
-    args = patchy_cement_pressure_fluid_substitution(
+def test_patchy_cement_fluid_sub_model_weight(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_pressure_fluid_substitution(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -124,14 +112,10 @@ def test_patchy_cement_fluid_sub_model_weight():
         above_upper_bound="disregard",
         below_lower_bound="disregard",
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_fluid_sub_model_weight_snap():
-    args = patchy_cement_pressure_fluid_substitution(
+def test_patchy_cement_fluid_sub_model_weight_snap(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_pressure_fluid_substitution(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -162,14 +146,10 @@ def test_patchy_cement_fluid_sub_model_weight_snap():
         above_upper_bound="snap",
         below_lower_bound="snap",
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_fluid_sub_model_cem_frac():
-    args = patchy_cement_pressure_fluid_substitution(
+def test_patchy_cement_fluid_sub_model_cem_frac(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_pressure_fluid_substitution(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -200,14 +180,10 @@ def test_patchy_cement_fluid_sub_model_cem_frac():
         above_upper_bound="disregard",
         below_lower_bound="disregard",
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_fluid_sub_model_cem_frac_snap():
-    args = patchy_cement_pressure_fluid_substitution(
+def test_patchy_cement_fluid_sub_model_cem_frac_snap(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_pressure_fluid_substitution(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -238,14 +214,10 @@ def test_patchy_cement_fluid_sub_model_cem_frac_snap():
         above_upper_bound="snap",
         below_lower_bound="snap",
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_model_weight():
-    args = patchy_cement_model_weight(
+def test_patchy_cement_model_weight(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_model_weight(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -264,14 +236,10 @@ def test_patchy_cement_model_weight():
         weight_k=weight_k,
         weight_mu=weight_mu,
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_model_cem_frac():
-    args = patchy_cement_model_cem_frac(
+def test_patchy_cement_model_cem_frac(snapshot: SnapshotAssertion):
+    assert snapshot == patchy_cement_model_cem_frac(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -288,16 +256,12 @@ def test_patchy_cement_model_cem_frac():
         n=n,
         shear_red=shear_red,
     )
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
 
 
-def test_patchy_cement_model_exceed_phi_extrapolate():
+def test_patchy_cement_model_exceed_phi_extrapolate(snapshot: SnapshotAssertion):
     frac_cem = 0.10
     phi_c = 0.40
-    args = patchy_cement_model_cem_frac(
+    assert snapshot == patchy_cement_model_cem_frac(
         k_min=k_min,
         mu_min=mu_min,
         rho_min=rho_min,
@@ -333,8 +297,3 @@ def test_patchy_cement_model_exceed_phi_extrapolate():
         shear_red=shear_red,
     )
     assert not np.any(np.isnan(args[0]))
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))

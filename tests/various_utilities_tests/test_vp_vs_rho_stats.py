@@ -1,12 +1,12 @@
-import numpy as np
+from pathlib import Path
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    get_snapshot_name,
-)
+import numpy as np
+from syrupy.assertion import SnapshotAssertion
+
 from rock_physics_open.equinor_utilities.various_utilities import vp_vs_rho_stats
 
 
-def test_vp_vs_rho_stats():
+def test_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
     rng = np.random.default_rng(123456)
     vp_obs = rng.uniform(low=0.0, high=1.0, size=100)
     vs_obs = rng.uniform(low=0.0, high=1.0, size=100)
@@ -14,8 +14,7 @@ def test_vp_vs_rho_stats():
     vp_est = rng.uniform(low=0.0, high=1.0, size=100)
     vs_est = rng.uniform(low=0.0, high=1.0, size=100)
     rho_est = rng.uniform(low=0.0, high=1.0, size=100)
-    # fname = os.path.join(os.path.dirname(__file__), "snapshots", "vp_vs_rho_stats.csv")
-    fname = get_snapshot_name(include_extension=False, include_filename=False) + ".csv"
+    fname = str(data_dir / "vp_vs_rho_stats.csv")
     file_open_mode = "w"
     disp_res = False
     vp_vs_rho_stats(
@@ -31,9 +30,10 @@ def test_vp_vs_rho_stats():
         file_mode=file_open_mode,
         disp_results=disp_res,
     )
+    assert snapshot == Path(fname).read_text().strip()
 
 
-def test_multi_vp_vs_rho_stats():
+def test_multi_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
     rng = np.random.default_rng(123456)
     vp_obs = [rng.uniform(low=0.0, high=1.0, size=100)] * 3
     vs_obs = [rng.uniform(low=0.0, high=1.0, size=100)] * 3
@@ -43,7 +43,7 @@ def test_multi_vp_vs_rho_stats():
     rho_est = [rng.uniform(low=0.0, high=1.0, size=100)] * 3
     set_names = ["pytest_1", "pytest_2", "pytest_3"]
     well_names = ["pytest_well_1", "pytest_well_2", "pytest_well_3"]
-    fname = get_snapshot_name(include_extension=False, include_filename=False) + ".csv"
+    fname = str(data_dir / "multi_vp_vs_rho_stats.csv")
     file_open_mode = "w"
     disp_res = False
     vp_vs_rho_stats(
@@ -59,3 +59,4 @@ def test_multi_vp_vs_rho_stats():
         file_mode=file_open_mode,
         disp_results=disp_res,
     )
+    assert snapshot == Path(fname).read_text().strip()

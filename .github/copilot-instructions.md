@@ -76,7 +76,6 @@ src/rock_physics_open/      # Main package (editable install)
 │   ├── gen_utilities/              # Input filtering, conversions
 │   ├── machine_learning_utilities/ # Pressure models
 │   ├── optimisation_utilities/     # Curve fitting helpers
-│   ├── snapshot_test_utilities/    # Snapshot testing helpers
 │   ├── std_functions/              # Core equations (Gassmann, Hertz-Mindlin, Hashin-Shtrikman, etc.)
 │   └── various_utilities/          # Misc (reflectivity, VRH, time shift)
 ├── fluid_models/           # Brine, gas, oil property models (Batzle-Wang)
@@ -88,8 +87,8 @@ src/rock_physics_open/      # Main package (editable install)
 
 tests/                      # Mirrors src structure with *_tests/ directories
 ├── conftest.py             # Session-scoped fixtures (testdata dir, data_dir)
-├── data/                   # Test data files (CSV, PKL) and snapshots/
-└── <module>_tests/         # Test directories per module
+├── data/                   # Test data files (CSV, PKL)
+└── <module>_tests/         # Test directories per module (snapshots stored in __snapshots__/ via syrupy)
 
 .github/workflows/
 ├── on-pull-request.yaml    # Triggers lint-and-format + test on PRs
@@ -113,5 +112,5 @@ tests/                      # Mirrors src structure with *_tests/ directories
 2. **Do not modify `uv.lock` manually** — if you need to add a dependency, add it to `pyproject.toml` and run `uv lock` then `uv sync`.
 3. **`version.py` is auto-generated** — never edit it; it is created by setuptools_scm from git tags.
 4. **The `t_matrix_models` directory contains compiled binaries** (`.dll`, `.so`) — these are pre-built C/Fortran extensions. Do not modify or rebuild them.
-5. **Test data files in `tests/data/snapshots/`** use `.log` extension and are tracked via `.gitattributes` — preserve LF line endings.
+5. **Snapshot tests use [syrupy](https://github.com/syrupy-project/syrupy)** — snapshots live in `__snapshots__/` directories next to the tests. Update with `uv run pytest --snapshot-update`.
 6. **All source code is under `src/`** — imports use `from rock_physics_open.…` (not `from src.…`).

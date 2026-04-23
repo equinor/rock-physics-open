@@ -1,14 +1,6 @@
-import os
-
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
-from rock_physics_open.equinor_utilities.snapshot_test_utilities import (
-    INITIATE,
-    compare_snapshots,
-    get_snapshot_name,
-    read_snapshot,
-    store_snapshot,
-)
 from rock_physics_open.fluid_models.brine_model import (
     brine_properties,
 )
@@ -25,58 +17,28 @@ temp = 100.0 * np.linspace(0.8, 1.2, 101)
 sal = 35000.0 * np.ones(101)
 
 
-def test_brine_properties():
-    args = brine_properties(temp, pres, sal)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_brine_properties(snapshot: SnapshotAssertion):
+    assert snapshot == brine_properties(temp, pres, sal)
 
 
-def test_water_properties():
-    args = water(temp, pres)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), *args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_water_properties(snapshot: SnapshotAssertion):
+    assert snapshot == water(temp, pres)
 
 
-def test_water_density():
-    args = water_density(temp, pres)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_water_density(snapshot: SnapshotAssertion):
+    assert snapshot == water_density(temp, pres)
 
 
-def test_water_velocity():
-    args = water_primary_velocity(temp, pres)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_water_velocity(snapshot: SnapshotAssertion):
+    assert snapshot == water_primary_velocity(temp, pres)
 
 
-def test_brine_density():
-    args = brine_density(temp, pres, sal)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_brine_density(snapshot: SnapshotAssertion):
+    assert snapshot == brine_density(temp, pres, sal)
 
 
-def test_brine_velocity():
-    args = brine_primary_velocity(temp, pres, sal)
-
-    if not os.path.isfile(get_snapshot_name()) or INITIATE:
-        _ = store_snapshot(get_snapshot_name(), args)
-    else:
-        assert compare_snapshots(args, read_snapshot(get_snapshot_name()))
+def test_brine_velocity(snapshot: SnapshotAssertion):
+    assert snapshot == brine_primary_velocity(temp, pres, sal)
 
 
 def test_water_brine_properties_float():

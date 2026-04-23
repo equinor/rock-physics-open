@@ -14,7 +14,6 @@ version.py
 .dccache
 .coverage
 
-/tests/**/snapshots/*.log
 /tests/data/*.txt
 /tests/data/pat_cem.pkl
 
