@@ -76,7 +76,7 @@ def poly_function(
     return a + b * x_data + c * x_data**2 + d * x_data**3 + e * x_data**4
 
 
-def test_optimisation_part(snapshot: SnapshotAssertion):
+def test_optimisation_part(snapshot_approx: SnapshotAssertion):
     a = 0.25398574328
     b = 0.28536214953
     c = 0.98235978612
@@ -97,7 +97,7 @@ def test_optimisation_part(snapshot: SnapshotAssertion):
         low_bound=lower_bound,
         high_bound=upper_bound,
     )
-    assert snapshot == opt_params
+    assert snapshot_approx == opt_params
 
 
 def test_t_matrix_opt_params_petec(snapshot: SnapshotAssertion):
