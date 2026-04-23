@@ -499,7 +499,11 @@ def opt_param_to_ascii(
             else:
                 root.title(well_name)
             if sys.platform.startswith("win"):
-                ico_file = os.path.join(os.path.dirname(__file__), "Equinor_logo.ico")
+                ico_file = os.path.join(
+                    os.path.dirname(os.path.dirname(__file__)),
+                    "various_utilities",
+                    "Equinor_logo.ico",
+                )
                 root.iconbitmap(ico_file)
             _ = Table(root, info_array.shape[0], info_array.shape[1], info_array)
             _ = root.attributes("-topmost", True)

@@ -720,10 +720,7 @@ def carbon_dioxide_density(
         )
     assert interpolate is True
 
-    ref = (
-        files("rock_physics.fluid_models.gas_model.span_wagner.tables")
-        / "carbon_dioxide_density.npz"
-    )
+    ref = files("rock_physics_open.span_wagner.tables") / "carbon_dioxide_density.npz"
     with as_file(ref) as fp:
         interpolator = load_lookup_table_interpolator(fp)
 
