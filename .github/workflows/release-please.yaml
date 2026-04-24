@@ -4,30 +4,26 @@ on:
   workflow_call:
     outputs:
       release_created:
-        description: "If true, a release PR has been merged"
+        description: "If 'true', a release PR was merged and GitHub release was created"
         value: ${{ jobs.release-please.outputs.release_created }}
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate token
-        id: generate-token
+      - name: Create Token
+        id: create-token
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.APP_ID }}
+          client-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - uses: googleapis/release-please-action@v4
-        id: release
+      - name: release-please
+        id: release-please
+        uses: googleapis/release-please-action@v4
         with:
           config-file: .github/release-please-config.json
           manifest-file: .github/release-please-manifest.json
-          token: ${{ steps.generate-token.outputs.token }}
+          token: ${{ steps.create-token.outputs.token }}
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
+      release_created: ${{ steps.release-please.outputs.release_created }}

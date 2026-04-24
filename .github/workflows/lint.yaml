@@ -1,10 +1,10 @@
-name: lint-and-format
-permissions:
-  contents: read
+name: lint
 
 on:
   workflow_call:
-  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   pre-commit:
@@ -13,13 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install uv
+      - name: Set up Python (uv)
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv sync --locked --all-extras --dev
+        run: uv sync --locked
 
-      - name: Run pre-commit
+      - name: pre-commit
         run: uv run pre-commit run --all-files
