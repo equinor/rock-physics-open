@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -109,9 +107,8 @@ def shale_4_min_dem_overlay(
     )
     rho_mat = rho1 * f1 + rho2 * f2 + rho3 * f3 + rho4 * f4
 
-    k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp)),
+    k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = dim_check_vector(
+        (k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp)
     )
     k, mu, rhob = dem_model(
         k1=k_mat,

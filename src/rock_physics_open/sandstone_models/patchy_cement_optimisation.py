@@ -1,4 +1,4 @@
-from typing import Callable, cast
+from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
@@ -103,10 +103,7 @@ def patchy_cement_model_optimisation(
     # Optimisation function for selected parameters
     opt_fun: Callable[..., npt.NDArray[np.float64]] = curvefit_patchy_cement
     # expand single value parameters to match logs length
-    por, phi_c_, def_vpvs = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((por, phi_c, def_vpvs)),
-    )
+    por, phi_c_, def_vpvs = gen_utilities.dim_check_vector((por, phi_c, def_vpvs))
     x_data = np.stack(
         (
             k_min,

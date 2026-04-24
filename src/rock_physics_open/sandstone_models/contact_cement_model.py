@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -105,28 +103,24 @@ def contact_cement_model(
             phi,
             _,
         ),
-    ) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        gen_utilities.filter_input_log(
-            (
-                k_min,
-                mu_min,
-                rho_min,
-                k_cem,
-                mu_cem,
-                rho_cem,
-                k_fl,
-                rho_fl,
-                phi,
-                phi_c - frac_cem - phi,
-            )
-        ),
+    ) = gen_utilities.filter_input_log(
+        (
+            k_min,
+            mu_min,
+            rho_min,
+            k_cem,
+            mu_cem,
+            rho_cem,
+            k_fl,
+            rho_fl,
+            phi,
+            phi_c - frac_cem - phi,
+        )
     )
 
     # Expand input parameters to arrays
-    phi, frac_cem_, phi_c_, _, _ = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((phi, frac_cem, phi_c, n, shear_red)),
+    phi, frac_cem_, phi_c_, _, _ = gen_utilities.dim_check_vector(
+        (phi, frac_cem, phi_c, n, shear_red)
     )
 
     # At the zero-porosity point, all original porosity (critical porosity) is
@@ -186,9 +180,8 @@ def contact_cement_model(
     vp, vs, ai, vpvs = std_functions.velocity(k=k, mu=mu, rhob=rho)
 
     # Restore original array length
-    vp, vs, rho, ai, vpvs = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.filter_output(idx_phi, (vp, vs, rho, ai, vpvs)),
+    vp, vs, rho, ai, vpvs = gen_utilities.filter_output(
+        idx_phi, (vp, vs, rho, ai, vpvs)
     )
 
     return vp, vs, rho, ai, vpvs

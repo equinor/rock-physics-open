@@ -1,7 +1,4 @@
-from typing import cast
-
 import numpy as np
-import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 from rock_physics_open.equinor_utilities.optimisation_utilities import opt_param_info
@@ -88,19 +85,16 @@ def curvefit_t_matrix_exp(
 
     # Mineral properties
     # Expand elastic properties to vectors of the same length as the x_data inputs
-    k_c_, mu_c_, rho_c_, k_sh_, mu_sh_, rho_sh_, _ = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector(
-            (
-                k_c,
-                mu_c,
-                rho_c,
-                k_sh,
-                mu_sh,
-                rho_sh,
-                phi,
-            )
-        ),
+    k_c_, mu_c_, rho_c_, k_sh_, mu_sh_, rho_sh_, _ = dim_check_vector(
+        (
+            k_c,
+            mu_c,
+            rho_c,
+            k_sh,
+            mu_sh,
+            rho_sh,
+            phi,
+        )
     )
     k_min, mu_min = hashin_shtrikman_average(
         k1=k_sh_,

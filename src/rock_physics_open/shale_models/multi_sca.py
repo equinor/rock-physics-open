@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -66,7 +64,7 @@ def multi_sca(
             "Call function with (k_sc,mu_sc,rhob) = multi_sca((k1,mu1,rho1,asp1,frac1, ...,k_n,mu_n,rho_n,asp_n,frac_n,tol)). Fractions must add up to 1.0"
         )
 
-    args_ = cast(list[npt.NDArray[np.float64]], dim_check_vector(args))
+    args_ = dim_check_vector(args)
 
     # Proceed without the parameter, all other inputs should be arrays
 

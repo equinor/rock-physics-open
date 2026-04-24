@@ -1,17 +1,28 @@
-from typing import Any
+from typing import Any, overload
 
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
 
 
+@overload
 def filter_output(
     idx_inp: npt.NDArray[np.bool_],
-    inp_log: list[npt.NDArray[Any] | pd.DataFrame]
-    | tuple[npt.NDArray[Any] | pd.DataFrame, ...]
-    | npt.NDArray[Any]
-    | pd.DataFrame,
-) -> list[npt.NDArray[Any] | pd.DataFrame]:
+    inp_log: tuple[npt.NDArray[np.float64], ...] | list[npt.NDArray[np.float64]],
+) -> list[npt.NDArray[np.float64]]: ...
+
+
+@overload
+def filter_output(
+    idx_inp: npt.NDArray[np.bool_],
+    inp_log: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
+) -> list[Any]: ...
+
+
+def filter_output(
+    idx_inp: npt.NDArray[np.bool_],
+    inp_log: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
+) -> list[Any]:
     """
     Function to restore outputs from a plugin to original length and with values at correct positions.
 

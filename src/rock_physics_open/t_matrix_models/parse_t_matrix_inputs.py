@@ -242,23 +242,20 @@ def parse_t_matrix_inputs(
             visco,
             frac_inc_con,
             frac_inc_ani,
-        ) = cast(  # Casting since dim_check_vector typing is incomplete
-            list[Array1D[np.float64]],
-            gen_utilities.dim_check_vector(
-                (
-                    k_min,
-                    mu_min,
-                    rho_min,
-                    k_fl,
-                    rho_fl,
-                    phi,
-                    perm,
-                    visco,
-                    frac_inc_con,
-                    frac_inc_ani,
-                ),
-                force_type=np.dtype(float),
+        ) = gen_utilities.dim_check_vector(
+            (
+                k_min,
+                mu_min,
+                rho_min,
+                k_fl,
+                rho_fl,
+                phi,
+                perm,
+                visco,
+                frac_inc_con,
+                frac_inc_ani,
             ),
+            force_type=np.dtype(np.float64),
         )
     except ValueError:
         raise ValueError("t-matrix inputs: {}".format(str(sys.exc_info())))
@@ -303,18 +300,13 @@ def parse_t_matrix_inputs(
     alpha_shape = alpha.shape
     # First make sure that alpha and v have the same number of elements
     try:
-        alpha_flat, v_flat = (
-            cast(  # casting since dim_check_vector typing is incomplete
-                list[Array1D[np.float64]],
-                gen_utilities.dim_check_vector((alpha, v), force_type=np.dtype(float)),
-            )
+        alpha, v = gen_utilities.dim_check_vector(
+            (alpha, v), force_type=np.dtype(np.float64)
         )
     except ValueError:
         raise ValueError("t-matrix inputs: {}".format(str(sys.exc_info())))
-    alpha = cast(
-        Array1D[np.float64] | Array2D[np.float64], alpha_flat.reshape(alpha_shape)
-    )
-    v = cast(Array1D[np.float64] | Array2D[np.float64], v_flat.reshape(alpha_shape))
+    alpha = cast(Array1D[np.float64] | Array2D[np.float64], alpha.reshape(alpha_shape))
+    v = cast(Array1D[np.float64] | Array2D[np.float64], v.reshape(alpha_shape))
     # If they are 2D arrays, the first dimension should match log_length
     if alpha.ndim == 2:
         if not (alpha_shape[0] == log_length or alpha_shape[0] == 1):

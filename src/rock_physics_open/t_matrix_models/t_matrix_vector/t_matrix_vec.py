@@ -1,5 +1,5 @@
 import warnings
-from typing import Literal, TypedDict, cast
+from typing import Literal, TypedDict
 
 import numpy as np
 
@@ -122,11 +122,8 @@ def t_matrix_porosity_vectorised(
         phi,
         perm,
         visco,
-    ) = cast(  # casting since dim_check_vector typing is incomplete
-        list[Array1D[np.float64]],
-        gen_utilities.dim_check_vector(
-            (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco)
-        ),
+    ) = gen_utilities.dim_check_vector(
+        (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco)
     )
 
     # Conversion to SI units
@@ -134,10 +131,7 @@ def t_matrix_porosity_vectorised(
     visco = visco * 1.0e-2
 
     # Alpha, v and tau should be of the same length
-    (alpha, v, tau) = cast(  # casting since dim_check_vector typing is incomplete
-        list[Array1D[np.float64]],
-        gen_utilities.dim_check_vector((alpha, v, tau)),
-    )
+    (alpha, v, tau) = gen_utilities.dim_check_vector((alpha, v, tau))
     shape_len = alpha.shape[0]
 
     # Shape parameters go into a dict, duplicate here, can be changed with pressure effect

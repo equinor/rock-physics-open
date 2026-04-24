@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -138,36 +136,30 @@ def friable_shaly_sand_sandy_shale_model(
             _,
             _,
         ),
-    ) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        gen_utilities.filter_input_log(
-            (
-                k_sst,
-                mu_sst,
-                rho_sst,
-                k_mud,
-                mu_mud,
-                rho_mud,
-                k_fl_sst,
-                rho_fl_sst,
-                k_fl_mud,
-                rho_fl_mud,
-                phi,
-                p_eff_sst,
-                p_eff_mud,
-                shale_frac,
-                phi_c_sst - phi,
-                phi - phi_intr_mud,
-            ),
-            no_zero=False,
+    ) = gen_utilities.filter_input_log(
+        (
+            k_sst,
+            mu_sst,
+            rho_sst,
+            k_mud,
+            mu_mud,
+            rho_mud,
+            k_fl_sst,
+            rho_fl_sst,
+            k_fl_mud,
+            rho_fl_mud,
+            phi,
+            p_eff_sst,
+            p_eff_mud,
+            shale_frac,
+            phi_c_sst - phi,
+            phi - phi_intr_mud,
         ),
+        no_zero=False,
     )
 
     # Expand the needed variables from float to numpy array
-    phi, phi_intr_mud_ = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((phi, phi_intr_mud)),
-    )
+    phi, phi_intr_mud_ = gen_utilities.dim_check_vector((phi, phi_intr_mud))
 
     sandy_shale_idx = shale_frac > phi
     shaly_sand_idx = ~sandy_shale_idx
@@ -264,9 +256,8 @@ def friable_shaly_sand_sandy_shale_model(
     vp, vs, ai, vpvs = std_functions.velocity(k=k, mu=mu, rhob=rho)
 
     # Restore original array length
-    vp, vs, rho, ai, vpvs = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.filter_output(idx_phi, (vp, vs, rho, ai, vpvs)),
+    vp, vs, rho, ai, vpvs = gen_utilities.filter_output(
+        idx_phi, (vp, vs, rho, ai, vpvs)
     )
 
     return vp, vs, rho, ai, vpvs

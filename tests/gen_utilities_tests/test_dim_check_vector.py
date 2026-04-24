@@ -58,9 +58,6 @@ class TestDimCheckVector:
         np.testing.assert_equal(a_out, a_ref)
         np.testing.assert_equal(b_out, b_ref)
         np.testing.assert_equal(c_out, c_ref)
-        if isinstance(a_out, np.ndarray):
-            assert a_out.dtype == a_ref.dtype
-        if isinstance(b_out, np.ndarray):
-            assert b_out.dtype != b_ref.dtype
-        if isinstance(c_out, np.ndarray):
-            assert c_out.dtype != c_ref.dtype
+        assert a_out.dtype == a_ref.dtype
+        assert b_out.dtype != b_ref.dtype
+        assert c_out.dtype != c_ref.dtype

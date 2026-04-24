@@ -1,4 +1,4 @@
-from typing import Literal, cast, overload
+from typing import Literal, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -221,9 +221,8 @@ def constant_cement_model_dry(
     """
     # First check if there are input values that are unphysical, i.e. negative values, separate between dry and
     # saturated rock properties. Use the filter_input_log function to identify these values
-    idx, (k_min, mu_min, k_cem, mu_cem, phi) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        gen_utilities.filter_input_log((k_min, mu_min, k_cem, mu_cem, phi)),
+    idx, (k_min, mu_min, k_cem, mu_cem, phi) = gen_utilities.filter_input_log(
+        (k_min, mu_min, k_cem, mu_cem, phi)
     )
 
     # Identify porosity values that exceed (phi_c - frac_cem). This is regardless of setting for extrapolate_to_max_phi
@@ -282,10 +281,7 @@ def constant_cement_model_dry(
         k_dry[idx_phi] = np.nan
         mu[idx_phi] = np.nan
 
-    k_dry, mu = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.filter_output(idx, (k_dry, mu)),
-    )
+    k_dry, mu = gen_utilities.filter_output(idx, (k_dry, mu))
     if return_k_zero:
         return k_zero, k_dry, mu
     return k_dry, mu

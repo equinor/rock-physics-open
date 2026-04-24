@@ -117,9 +117,8 @@ def run_t_matrix_with_opt_params_exp(
     opt_type, opt_params, opt_dict = load_opt_params(f_name)
     y_data = np.stack([vp, vs], axis=1)
     y_shape = y_data.shape
-    phi, angle_, perm_, visco_, tau_, freq_, def_vpvs = cast(
-        list[Array1D[np.float64]],
-        gen_utilities.dim_check_vector((phi, angle, perm, visco, tau, freq, 1.0)),
+    phi, angle_, perm_, visco_, tau_, freq_, def_vpvs = gen_utilities.dim_check_vector(
+        (phi, angle, perm, visco, tau, freq, 1.0)
     )
 
     rho_sub = rhob + (fl_rho_sub - fl_rho_orig) * phi
