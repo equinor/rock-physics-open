@@ -7,6 +7,11 @@ on:
         description: "If 'true', a release PR was merged and GitHub release was created"
         value: ${{ jobs.release-please.outputs.release_created }}
 
+permissions:
+  issues: write
+  contents: write
+  pull-requests: write
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
