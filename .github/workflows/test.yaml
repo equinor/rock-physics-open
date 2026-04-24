@@ -1,20 +1,21 @@
 name: test
-permissions:
-  contents: read
 
 on:
   workflow_call:
-  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
-        module-resolution: ["uv.lock"]
-        include: # to ensure the "most outdated" versions still work
+        python-version: [ "3.11", "3.12", "3.13", "3.14" ]
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        module-resolution: [ "uv.lock" ]
+        # to ensure the "most outdated" versions still work
+        include:
           - os: windows-latest
             python-version: "3.11"
             module-resolution: lowest
@@ -26,23 +27,20 @@ jobs:
             module-resolution: lowest
 
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} / ${{ matrix.python-version }}${{ matrix.module-resolution == 'lowest' && ' (lowest deps)' || '' }}
+    name: ${{ matrix.python-version }} - ${{ matrix.os }}${{ matrix.module-resolution == 'lowest' && ' (lowest)' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install uv
+      - name: Set up Python (uv)
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
           cache-suffix: ${{ matrix.module-resolution }}
 
-      - name: Show Machine Information
-        run: uvx --from py-cpuinfo cpuinfo
-
       - name: Install dependencies
-        run: uv sync --all-extras --dev ${{ matrix.module-resolution == 'uv.lock' && '--locked' || '--resolution=lowest-direct' }}
+        run: uv sync ${{ matrix.module-resolution == 'uv.lock' && '--locked' || '--resolution=lowest-direct' }}
 
-      - name: Test
+      - name: pytest
         run: uv run pytest

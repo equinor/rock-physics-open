@@ -15,7 +15,7 @@
 Always run this first after cloning or pulling:
 
 ```sh
-uv sync --locked --all-extras --dev
+uv sync --locked
 ```
 
 This installs the package in editable mode plus all dev dependencies into `.venv/`. The `--locked` flag ensures `uv.lock` is respected exactly — **do not run `uv lock`** unless intentionally updating dependencies.

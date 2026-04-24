@@ -1,33 +1,34 @@
 name: push to main branch
 
-permissions:
-  contents: read
-
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
-  lint-and-format:
-    uses: ./.github/workflows/lint-and-format.yaml
+  lint:
+    uses: ./.github/workflows/lint.yaml
 
   test:
     uses: ./.github/workflows/test.yaml
 
   release-please:
-    needs: test
+    name: release-please
+    needs: [ lint, test ]
     permissions:
-      contents: write
       issues: write
+      contents: write
       pull-requests: write
-    uses: ./.github/workflows/release-please.yaml
     secrets: inherit
+    uses: ./.github/workflows/release-please.yaml
 
   build:
-    name: Build for publishing
-    if: ${{ needs.release-please.outputs.release_created }}
+    name: Build Package
     needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,39 +36,38 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.11
+          python-version-file: .python-version
 
       - name: Build
         run: |
           pip install build
           python -m build
 
-      - name: Upload Artifact
+      - name: Upload Package Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: distribution
+          name: rock-physics-open-distribution
           path: dist/
 
   publish:
-    name: Publish to PyPI
+    name: Publish Package to PyPI
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/rock-physics-open
     permissions:
-      id-token: write # required for Trusted Publishing to PyPI
+      id-token: write # required for trusted publishing to PyPI
 
     steps:
-      - name: Download Artifact
+      - name: Download Package Artifact
         uses: actions/download-artifact@v8
         with:
-          name: distribution
+          name: rock-physics-open-distribution
           path: dist/
-          merge-multiple: true
 
-      - name: Publish to PyPI
+      - name: Publish Package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
