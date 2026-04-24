@@ -10,8 +10,8 @@ pytest test_pressure_models.py -m benchmark         # Run only benchmarks
 pytest test_pressure_models.py -k "exponential"     # Run tests matching pattern
 """
 
-import os
 import tempfile
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -188,7 +188,7 @@ class TestExponentialPressureModel:
             assert loaded_model.b_factor == exponential_model.b_factor
             assert loaded_model.max_pressure == exponential_model.max_pressure
         finally:
-            os.unlink(tmp_path)
+            Path(tmp_path).unlink()
 
 
 # Test PolynomialPressureModel
@@ -313,7 +313,7 @@ class TestModelIntegration:
                 assert original_dict == loaded_dict
 
             finally:
-                os.unlink(tmp_path)
+                Path(tmp_path).unlink()
 
 
 # Performance Tests

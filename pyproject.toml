@@ -99,6 +99,7 @@ lint.select = [
     "PIE",     # Python idioms and style
     "PLR1711", # Redundant Return
     "PT",      # PyTest
+    "PTH",     # Use pathlib
     "Q",       # Quotes
     "RET",     # Return statements
     "RSE",     # Raising exceptions
