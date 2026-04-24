@@ -1,4 +1,5 @@
 import warnings
+from pathlib import Path
 from pickle import load
 
 from sklearn.preprocessing import OneHotEncoder, RobustScaler
@@ -51,7 +52,7 @@ def import_model(
     ValueError
         If model type is unknown.
     """
-    with open(model_file_name, "rb") as fin, warnings.catch_warnings():
+    with Path(model_file_name).open("rb") as fin, warnings.catch_warnings():
         # 11.04.2021 HFLE: There is an issue that is not connected to the local function, in that a warning is issued
         # when the model is loaded, claiming that it is of an older version. This is debugged in detail, and the model
         # IS of the correct version, so the error arise elsewhere. To avoid confusion, the warning is suppressed here
@@ -72,7 +73,7 @@ def import_model(
     cat_var: str | list[str] = []
     try:
         if mod_dict["ohe"]:
-            with open(mod_dict["ohe"], "rb") as f:
+            with Path(mod_dict["ohe"]).open("rb") as f:
                 ohe_dict = load(f)
                 ohe = ohe_dict["ohe"]
                 cat_var = ohe_dict["cat_var"]

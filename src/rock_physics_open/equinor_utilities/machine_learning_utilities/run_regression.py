@@ -27,7 +27,7 @@ def _read_models(
     list[str],
 ]:
     # Find the directory of the model files, change working directory, return to original directory at end of function
-    orig_dir = os.getcwd()
+    orig_dir = Path.cwd()
     if model_dir is None:
         model_dir, _ = os.path.split(model_files[0])
     os.chdir(model_dir)

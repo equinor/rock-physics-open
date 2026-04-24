@@ -1,4 +1,3 @@
-import os
 import pickle
 import sys
 from pathlib import Path
@@ -321,7 +320,7 @@ def save_opt_params(
     else:
         assert_never(opt_type)
 
-    with open(file_name, "wb") as file_out:
+    with Path(file_name).open("wb") as file_out:
         pickle.dump(opt_param_dict, file_out)
 
 
@@ -407,7 +406,7 @@ def load_opt_params(
     opt_dict
         Full dictionary of optimisation results as loaded from the file.
     """
-    with open(file_name, "rb") as fin:
+    with Path(file_name).open("rb") as fin:
         param_dict: OptParamsDict = pickle.load(fin)
         opt_type = param_dict["opt_ver"]
         opt_param = param_dict["opt_vec"]
@@ -438,7 +437,7 @@ def opt_param_to_ascii(
     **kwargs
         Keyword arguments for tkinter.
     """
-    with open(in_file, "rb") as f_in:
+    with Path(in_file).open("rb") as f_in:
         param_dict = pickle.load(f_in)
         if well_name.lower() == "unknown well":
             well_name = param_dict.pop("well_name", "Unknown Well")
@@ -506,10 +505,10 @@ def opt_param_to_ascii(
             else:
                 root.title(well_name)
             if sys.platform.startswith("win"):
-                ico_file = os.path.join(
-                    os.path.dirname(os.path.dirname(__file__)),
-                    "various_utilities",
-                    "Equinor_logo.ico",
+                ico_file = (
+                    Path(__file__).parent.parent
+                    / "various_utilities"
+                    / "Equinor_logo.ico"
                 )
                 root.iconbitmap(ico_file)
             _ = Table(root, info_array.shape[0], info_array.shape[1], info_array)
@@ -517,7 +516,7 @@ def opt_param_to_ascii(
             root.mainloop()
 
         if out_file is not None:
-            with open(out_file, "w") as f_out:
+            with Path(out_file).open("w") as f_out:
                 _ = f_out.write(disp_string)
 
         return

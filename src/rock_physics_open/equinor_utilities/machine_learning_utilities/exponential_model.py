@@ -1,4 +1,5 @@
 import pickle
+from pathlib import Path
 from typing import Any, Self, final
 
 import numpy as np
@@ -117,9 +118,9 @@ class ExponentialPressureModel(BasePressureModel):
 
     @override
     @classmethod
-    def load(cls, file: str | bytes) -> Self:
+    def load(cls, file: str | Path) -> Self:
         """Load exponential model from pickle file."""
-        with open(file, "rb") as f_in:
+        with Path(file).open("rb") as f_in:
             d = pickle.load(f_in)
 
         return cls(

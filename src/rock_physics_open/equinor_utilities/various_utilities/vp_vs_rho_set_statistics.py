@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import Literal, cast
 
 import numpy as np
@@ -127,7 +127,7 @@ def vp_vs_rho_stats(
             )
     # Test if the file already exists. If so, and the file_mode is set to 'a', drop the column headers when writing
     # the file
-    if os.path.exists(fname) and file_mode == "a":
+    if Path(fname).exists() and file_mode == "a":
         est_frame.to_csv(fname, mode=file_mode, header=False)
     else:
         est_frame.to_csv(fname, mode=file_mode)

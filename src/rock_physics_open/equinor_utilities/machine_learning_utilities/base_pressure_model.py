@@ -1,5 +1,6 @@
 import pickle
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, Self
 
 import numpy as np
@@ -132,7 +133,7 @@ class BasePressureModel(ABC):
         Dictionary containing all model parameters.
         """
 
-    def save(self, file: str | bytes) -> None:
+    def save(self, file: str | Path) -> None:
         """
         Save model to pickle file.
 
@@ -141,12 +142,12 @@ class BasePressureModel(ABC):
         file
             File path for saving.
         """
-        with open(file, "wb") as f_out:
+        with Path(file).open("wb") as f_out:
             pickle.dump(self.todict(), f_out)
 
     @classmethod
     @abstractmethod
-    def load(cls, file: str | bytes) -> Self:
+    def load(cls, file: str | Path) -> Self:
         """
         Load model from pickle file.
 

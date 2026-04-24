@@ -1,6 +1,6 @@
-import os
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
@@ -86,11 +86,9 @@ def disp_result_stats(
     )
 
     if sys.platform.startswith("win"):
-        root.iconbitmap(os.path.join(os.path.dirname(__file__), "Equinor_logo.ico"))
+        root.iconbitmap(Path(__file__).parent / "Equinor_logo.ico")
     else:
-        logo = PhotoImage(
-            file=os.path.join(os.path.dirname(__file__), "Equinor_logo.gif")
-        )
+        logo = PhotoImage(file=Path(__file__).parent / "Equinor_logo.gif")
         root.wm_iconphoto(True, logo)
 
     root.mainloop()
