@@ -86,7 +86,8 @@ src/rock_physics_open/      # Main package (editable install)
 └── ternary_plots/          # Ternary diagram utilities
 
 tests/                      # Mirrors src structure with *_tests/ directories
-├── conftest.py             # Session-scoped fixtures (testdata dir, data_dir)
+├── conftest.py             # Loads fixtures from fixtures/
+├── fixtures/               # Global fixture definitions
 ├── data/                   # Test data files (CSV, PKL)
 └── <module>_tests/         # Test directories per module (snapshots stored in __snapshots__/ via syrupy)
 

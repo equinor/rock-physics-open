@@ -31,8 +31,8 @@ p_eff = 20.0e6 * np.ones_like(phit)
 phi_c = 0.45
 
 
-def test_friable_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
-    file_name = str(data_dir.joinpath("friable_model_optimisation.pkl"))
+def test_friable_optimisation(snapshot: SnapshotAssertion, testdata: Path):
+    file_name = str(testdata / "friable_model_optimisation.pkl")
 
     assert snapshot == friable_model_optimisation(
         k_min=k_min,
@@ -49,8 +49,8 @@ def test_friable_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
     )
 
 
-def test_constant_cement_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
-    file_name = str(data_dir.joinpath("constant_cement_model_optimisation.pkl"))
+def test_constant_cement_optimisation(snapshot: SnapshotAssertion, testdata: Path):
+    file_name = str(testdata / "constant_cement_model_optimisation.pkl")
 
     assert snapshot == constant_cement_model_optimisation(
         k_min=k_min,
@@ -69,8 +69,8 @@ def test_constant_cement_optimisation(data_dir: Path, snapshot: SnapshotAssertio
     )
 
 
-def test_patchy_cement_optimisation(data_dir: Path, snapshot: SnapshotAssertion):
-    file_name = str(data_dir.joinpath("patchy_cement_model_optimisation.pkl"))
+def test_patchy_cement_optimisation(snapshot: SnapshotAssertion, testdata: Path):
+    file_name = str(testdata / "patchy_cement_model_optimisation.pkl")
 
     assert snapshot == patchy_cement_model_optimisation(
         k_min=k_min,
