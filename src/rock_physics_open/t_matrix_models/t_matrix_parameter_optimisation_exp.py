@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 
@@ -106,11 +106,8 @@ def t_matrix_optimisation_exp(
     # rho_min = (rhob - por * rho_fl) / (1 - por)
     # EXP adapted inputs: include fluid data and other params in x_data
     # expand single value parameters to match logs length
-    por, angle_, k_r_, eta_f_, tau_, freq_, def_vpvs = cast(
-        list[Array1D[np.float64]],
-        gen_utilities.dim_check_vector(
-            (por, angle, k_r, eta_f, tau, freq, DEF_VP_VS_RATIO)
-        ),
+    por, angle_, k_r_, eta_f_, tau_, freq_, def_vpvs = gen_utilities.dim_check_vector(
+        (por, angle, k_r, eta_f, tau, freq, DEF_VP_VS_RATIO)
     )
     x_data = np.stack(
         (por, vsh, k_fl, rho_fl, angle_, k_r_, eta_f_, tau_, freq_, def_vpvs), axis=1

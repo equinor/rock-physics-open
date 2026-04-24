@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -146,29 +144,26 @@ def cemented_shaly_sand_sandy_shale_model(
         p_eff_mud,
         shale_frac,
         frac_cem_,
-    ) = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector(
-            (
-                k_sst,
-                mu_sst,
-                rho_sst,
-                k_cem,
-                mu_cem,
-                rho_cem,
-                k_mud,
-                mu_mud,
-                rho_mud,
-                k_fl_sst,
-                rho_fl_sst,
-                k_fl_mud,
-                rho_fl_mud,
-                phi,
-                p_eff_mud,
-                shale_frac,
-                frac_cem,
-            )
-        ),
+    ) = gen_utilities.dim_check_vector(
+        (
+            k_sst,
+            mu_sst,
+            rho_sst,
+            k_cem,
+            mu_cem,
+            rho_cem,
+            k_mud,
+            mu_mud,
+            rho_mud,
+            k_fl_sst,
+            rho_fl_sst,
+            k_fl_mud,
+            rho_fl_mud,
+            phi,
+            p_eff_mud,
+            shale_frac,
+            frac_cem,
+        )
     )
     (
         idx_phi,
@@ -193,32 +188,29 @@ def cemented_shaly_sand_sandy_shale_model(
             _,
             _,
         ),
-    ) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        gen_utilities.filter_input_log(
-            (
-                k_sst,
-                mu_sst,
-                rho_sst,
-                k_cem,
-                mu_cem,
-                rho_cem,
-                k_mud,
-                mu_mud,
-                rho_mud,
-                k_fl_sst,
-                rho_fl_sst,
-                k_fl_mud,
-                rho_fl_mud,
-                phi,
-                p_eff_mud,
-                shale_frac,
-                frac_cem_,
-                phi_c_sst - frac_cem - phi,
-                phi - phi_intr_mud,
-            ),
-            no_zero=False,
+    ) = gen_utilities.filter_input_log(
+        (
+            k_sst,
+            mu_sst,
+            rho_sst,
+            k_cem,
+            mu_cem,
+            rho_cem,
+            k_mud,
+            mu_mud,
+            rho_mud,
+            k_fl_sst,
+            rho_fl_sst,
+            k_fl_mud,
+            rho_fl_mud,
+            phi,
+            p_eff_mud,
+            shale_frac,
+            frac_cem_,
+            phi_c_sst - frac_cem - phi,
+            phi - phi_intr_mud,
         ),
+        no_zero=False,
     )
     # Reduce range of porosity by frac_cem
     phi_c = phi_c_sst - frac_cem
@@ -236,10 +228,7 @@ def cemented_shaly_sand_sandy_shale_model(
     # log.  Make sure that it is of the same length as the other
 
     # Expand the needed variables from float to numpy array
-    phi, phi_intr_mud_ = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((phi, phi_intr_mud)),
-    )
+    phi, phi_intr_mud_ = gen_utilities.dim_check_vector((phi, phi_intr_mud))
 
     vp_sat_mud, vs_sat_mud, rho_b_mud, _, _ = friable_model(
         k_min=k_mud,
@@ -339,9 +328,8 @@ def cemented_shaly_sand_sandy_shale_model(
     vp, vs, ai, vpvs = std_functions.velocity(k=k, mu=mu, rhob=rhob)
 
     # Restore original length
-    vp, vs, rhob, ai, vpvs = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.filter_output(idx_phi, (vp, vs, rhob, ai, vpvs)),
+    vp, vs, rhob, ai, vpvs = gen_utilities.filter_output(
+        idx_phi, (vp, vs, rhob, ai, vpvs)
     )
 
     return vp, vs, rhob, ai, vpvs

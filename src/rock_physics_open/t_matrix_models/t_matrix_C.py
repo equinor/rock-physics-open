@@ -1,6 +1,6 @@
 import sys
 from ctypes import c_int
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 from tmatrix import tmatrix_porosity_noscenario
@@ -89,11 +89,8 @@ def t_matrix_porosity_c_alpha_v(
     # alpha and v
 
     # frac_inc_con and frac_inc_ani must be of the same length
-    frac_inc_con_, frac_inc_ani_ = (
-        cast(  # casting since dim_check_vector typing is incomplete
-            list[Array1D[np.float64]],
-            gen_utilities.dim_check_vector((frac_inc_con, frac_inc_ani)),
-        )
+    frac_inc_con_, frac_inc_ani_ = gen_utilities.dim_check_vector(
+        (frac_inc_con, frac_inc_ani)
     )
 
     # test for frac_inc_con and frac_inc_ani being of the same length as the logs
@@ -110,23 +107,20 @@ def t_matrix_porosity_c_alpha_v(
             visco,
             frac_inc_con_,
             frac_inc_ani_,
-        ) = cast(  # casting since dim_check_vector typing is incomplete
-            list[Array1D[np.float64]],
-            gen_utilities.dim_check_vector(
-                (
-                    k_min,
-                    mu_min,
-                    rho_min,
-                    k_fl,
-                    rho_fl,
-                    phi,
-                    perm,
-                    visco,
-                    frac_inc_con_,
-                    frac_inc_ani_,
-                ),
-                force_type=np.dtype("float64"),
+        ) = gen_utilities.dim_check_vector(
+            (
+                k_min,
+                mu_min,
+                rho_min,
+                k_fl,
+                rho_fl,
+                phi,
+                perm,
+                visco,
+                frac_inc_con_,
+                frac_inc_ani_,
             ),
+            force_type=np.dtype(np.float64),
         )
         frac_inc_length = log_length
     else:  # Single float value of frac_inc_con, frac_inc_ani or matching number of inclusions
@@ -139,12 +133,9 @@ def t_matrix_porosity_c_alpha_v(
             phi,
             perm,
             visco,
-        ) = cast(  # casting since dim_check_vector typing is incomplete
-            list[Array1D[np.float64]],
-            gen_utilities.dim_check_vector(
-                (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco),
-                np.dtype("float64"),
-            ),
+        ) = gen_utilities.dim_check_vector(
+            (k_min, mu_min, rho_min, k_fl, rho_fl, phi, perm, visco),
+            np.dtype("float64"),
         )
         frac_inc_length = frac_inc_ani_.shape[0]
 
@@ -155,9 +146,8 @@ def t_matrix_porosity_c_alpha_v(
 
     # Make sure that alpha and v are of the same shape - more about length of alpha further down
     alpha_shape = alpha.shape
-    alpha, v = cast(  # casting since dim_check_vector typing is incomplete
-        list[Array2D[np.float64]],
-        gen_utilities.dim_check_vector((alpha, v), force_type=np.dtype("float64")),
+    alpha, v = gen_utilities.dim_check_vector(
+        (alpha, v), force_type=np.dtype(np.float64)
     )
     alpha = alpha.reshape(alpha_shape)
     v = v.reshape(alpha_shape)

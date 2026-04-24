@@ -1,4 +1,4 @@
-from typing import Literal, assert_never, cast
+from typing import Literal, assert_never
 
 import numpy as np
 import numpy.typing as npt
@@ -43,17 +43,13 @@ def reflectivity(
     idx_inp
         Index to accepted part of the input arrays [bool].
     """
-    vp, vs, rho, theta_, k_ = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((vp_inp, vs_inp, rho_inp, theta, k)),
+    vp, vs, rho, theta_, k_ = gen_utilities.dim_check_vector(
+        (vp_inp, vs_inp, rho_inp, theta, k)
     )
 
-    idx_inp, (vp, vs, rho, theta_, k_) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        gen_utilities.filter_input_log(
-            [vp, vs, rho, theta_, k_],
-            positive=True,
-        ),
+    idx_inp, (vp, vs, rho, theta_, k_) = gen_utilities.filter_input_log(
+        [vp, vs, rho, theta_, k_],
+        positive=True,
     )
 
     if np.any(~idx_inp):

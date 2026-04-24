@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import cast
 
 import numpy as np
 
@@ -87,9 +86,8 @@ def run_t_matrix_forward_model_with_opt_params_petec(
         If forward model fails.
     """
     opt_type, opt_params, _ = load_opt_params(f_name)
-    phi, angle_, perm_, visco_, tau_, freq_, def_vpvs = cast(
-        list[Array1D[np.float64]],
-        gen_utilities.dim_check_vector((phi, angle, perm, visco, tau, freq, 1.0)),
+    phi, angle_, perm_, visco_, tau_, freq_, def_vpvs = gen_utilities.dim_check_vector(
+        (phi, angle, perm, visco, tau, freq, 1.0)
     )
     rho_mod = min_rho * (1.0 - phi) + fl_rho * phi
     y_shape = (phi.shape[0], 2)

@@ -1,4 +1,4 @@
-from typing import Literal, assert_never, cast
+from typing import Literal, assert_never
 
 import numpy as np
 import numpy.typing as npt
@@ -166,9 +166,8 @@ def shale_model_4_mineral_dem(
     else:
         assert_never(mod_type)
 
-    k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp)),
+    k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = dim_check_vector(
+        (k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp)
     )
     k, mu, rhob = dem_model(
         k1=k_mat,

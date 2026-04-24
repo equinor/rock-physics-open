@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -375,13 +373,11 @@ def patchy_cement_model_dry(
     """
     # There are cases which suffer from a lack of consistency check at this stage,
     # add dim_check_vector and filter input/output
-    phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)),
+    phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff = dim_check_vector(
+        (phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)
     )
-    (idx, (phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        filter_input_log((phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)),
+    (idx, (phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff)) = (
+        filter_input_log((phi, k_min, mu_min, rho_min, k_cem, mu_cem, rho_cem, p_eff))
     )
 
     k_zero, mu_zero = std_functions.hashin_shtrikman_walpole(
@@ -463,8 +459,6 @@ def patchy_cement_model_dry(
 
     rho_dry = (1 - phi - frac_cem) * rho_min + frac_cem * rho_cem
 
-    k_dry, mu, rho_dry = cast(
-        list[npt.NDArray[np.float64]], filter_output(idx, (k_dry, mu, rho_dry))
-    )
+    k_dry, mu, rho_dry = filter_output(idx, (k_dry, mu, rho_dry))
 
     return k_dry, mu, rho_dry

@@ -7,9 +7,17 @@ import pandas as pd
 
 @overload
 def dim_check_vector(
+    args: tuple[npt.NDArray[np.float64] | float | int, ...]
+    | list[npt.NDArray[np.float64] | float | int],
+    force_type: np.dtype[np.float64] | None = ...,
+) -> list[npt.NDArray[np.float64]]: ...
+
+
+@overload
+def dim_check_vector(
     args: list[Any] | tuple[Any, ...],
     force_type: np.dtype | None = ...,
-) -> list[npt.NDArray[Any] | pd.DataFrame]: ...
+) -> list[Any]: ...
 
 
 @overload
@@ -29,7 +37,7 @@ def dim_check_vector(
 def dim_check_vector(
     args: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
     force_type: np.dtype | None = None,
-) -> npt.NDArray[Any] | pd.DataFrame | list[npt.NDArray[Any] | pd.DataFrame]:
+) -> npt.NDArray[Any] | pd.DataFrame | list[Any]:
     """
     Check that all inputs are of the same (one-dimensional) size.
 

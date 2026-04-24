@@ -1,4 +1,4 @@
-from typing import Callable, cast
+from typing import Callable
 
 import numpy as np
 import numpy.typing as npt
@@ -96,10 +96,7 @@ def friable_model_optimisation(
     # Optimisation function for selected parameters
     opt_fun: Callable[..., NDArray[float64]] = curvefit_friable
     # expand single value parameters to match logs length
-    por, def_vpvs = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((por, def_vpvs)),
-    )
+    por, def_vpvs = gen_utilities.dim_check_vector((por, def_vpvs))
     x_data = np.stack(
         (k_min, mu_min, rho_min, k_fl, rho_fl, por, p_eff, def_vpvs), axis=1
     )

@@ -1,5 +1,4 @@
 import warnings
-from typing import cast
 
 import numpy as np
 import numpy.typing as npt
@@ -31,10 +30,7 @@ def gassmann(
     -------
     Bulk modulus for saturated rock [Pa].
     """
-    k_dry, por, k_fl, k_min = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((k_dry, por, k_fl, k_min)),
-    )
+    k_dry, por, k_fl, k_min = dim_check_vector((k_dry, por, k_fl, k_min))
 
     idx = np.logical_or(k_dry == k_min, por == 0)
     k_sat = np.ones(k_dry.shape) * np.nan
@@ -78,9 +74,8 @@ def gassmann2(
     -------
     Bulk modulus of rock saturated with replaced fluid [Pa].
     """
-    k_sat_1, k_fl_1, k_fl_2, por, k_min = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((k_sat_1, k_fl_1, k_fl_2, por, k_min)),
+    k_sat_1, k_fl_1, k_fl_2, por, k_min = dim_check_vector(
+        (k_sat_1, k_fl_1, k_fl_2, por, k_min)
     )
 
     idx = np.any(
@@ -135,10 +130,7 @@ def gassmann_dry(
     -------
     Dry rock bulk modulus [Pa].
     """
-    k_sat, por, k_fl, k_min = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((k_sat, por, k_fl, k_min)),
-    )
+    k_sat, por, k_fl, k_min = dim_check_vector((k_sat, por, k_fl, k_min))
 
     idx = np.any(np.array([k_sat == k_min, por == 0, k_fl == k_min]), axis=0)
     k_dry = np.ones(k_sat.shape)

@@ -1,4 +1,4 @@
-from typing import Literal, cast
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -120,10 +120,7 @@ def hashin_shtrikman_walpole(
         effective shear modulus [Pa].
 
     """
-    k1, mu1, k2, mu2, f1 = cast(
-        list[npt.NDArray[np.float64]],
-        dim_check_vector((k1, mu1, k2, mu2, f1)),
-    )
+    k1, mu1, k2, mu2, f1 = dim_check_vector((k1, mu1, k2, mu2, f1))
     if bound.lower() not in ["lower", "upper"]:
         raise ValueError(f'{__file__}: bound must be one of "lower" or "upper"')
 
@@ -194,12 +191,11 @@ def multi_hashin_shtrikman(
             "multi_hashin_shtrikman: inputs not vectors of k, mu and fraction for each mineral"
         )
 
-    k_arr = np.array(coeffs[::3])
-    mu_arr = np.array(coeffs[1::3])
-    f = np.array(coeffs[2::3])
-    if not np.all(
-        cast(npt.NDArray[np.float64], np.around(np.sum(f, axis=0), decimals=6)) == 1.0
-    ):
+    k_arr = np.array(coeffs[::3], dtype=np.float64)
+    mu_arr = np.array(coeffs[1::3], dtype=np.float64)
+    f = np.array(coeffs[2::3], dtype=np.float64)
+    f_sum = np.around(np.sum(f, axis=0, dtype=np.float64), decimals=6)
+    if not np.all(f_sum == 1.0):
         raise ValueError("multi_hashin_shtrikman: all fractions do not add up to 1.0")
 
     if mode.lower() not in ["average", "upper", "lower"]:

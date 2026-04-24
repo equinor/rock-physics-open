@@ -1,5 +1,5 @@
 from sys import byteorder
-from typing import Any
+from typing import Any, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -8,13 +8,33 @@ import pandas as pd
 WRONG_BYTEORDER = ">" if byteorder == "little" else "<"
 
 
+@overload
+def filter_input_log(
+    args: tuple[npt.NDArray[np.float64], ...] | list[npt.NDArray[np.float64]],
+    working_int: npt.NDArray[Any] | None = ...,
+    negative: bool = ...,
+    no_zero: bool = ...,
+    positive: bool = ...,
+) -> tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]]: ...
+
+
+@overload
+def filter_input_log(
+    args: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
+    working_int: npt.NDArray[Any] | None = ...,
+    negative: bool = ...,
+    no_zero: bool = ...,
+    positive: bool = ...,
+) -> tuple[npt.NDArray[np.bool_], list[Any]]: ...
+
+
 def filter_input_log(
     args: list[Any] | tuple[Any, ...] | npt.NDArray[Any] | pd.DataFrame,
     working_int: npt.NDArray[Any] | None = None,
     negative: bool = False,
     no_zero: bool = False,
     positive: bool = True,
-) -> tuple[npt.NDArray[np.bool_], list[npt.NDArray[Any] | pd.DataFrame]]:
+) -> tuple[npt.NDArray[np.bool_], list[Any]]:
     """
     Check for valid input values in numpy arrays or pandas data frames.
 

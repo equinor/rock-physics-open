@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 
@@ -121,8 +121,7 @@ def t_matrix_optimisation_petec(
     rhob_mod = rho_min * (1 - por) + rho_fl * por
     rhob_res = rhob - rhob_mod
     # PETEC adapted inputs: include fluid data and other params in x_data
-    por, angle_, k_r_, eta_f_, tau_, freq_, def_vp_vs_ratio = cast(
-        list[Array1D[np.float64]],
+    por, angle_, k_r_, eta_f_, tau_, freq_, def_vp_vs_ratio = (
         gen_utilities.dim_check_vector(
             (
                 por,
@@ -133,7 +132,7 @@ def t_matrix_optimisation_petec(
                 freq,
                 DEF_VP_VS_RATIO,
             )
-        ),
+        )
     )
     x_data = np.stack(
         (

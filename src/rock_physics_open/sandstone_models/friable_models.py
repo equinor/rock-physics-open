@@ -1,4 +1,4 @@
-from typing import Literal, cast
+from typing import Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -188,22 +188,16 @@ def friable_model_dry(
         Shear modulus of dry rock [Pa].
     """
     # Expand floats to arrays, check for equal length
-    phi, phi_c_, shear_red_, k_min, mu_min, p_eff, n_ = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector(
-            (phi, phi_c, shear_red, k_min, mu_min, p_eff, n)
-        ),
+    phi, phi_c_, shear_red_, k_min, mu_min, p_eff, n_ = gen_utilities.dim_check_vector(
+        (phi, phi_c, shear_red, k_min, mu_min, p_eff, n)
     )
     # Valid porosity values are less or equal to the critical porosity
     # Use filter_input_log to remove values that do not comply with this
     (
         idx_phi,
         (phi, phi_c_, shear_red_, k_min, mu_min, p_eff, _),
-    ) = cast(
-        tuple[npt.NDArray[np.bool_], list[npt.NDArray[np.float64]]],
-        gen_utilities.filter_input_log(
-            (phi, phi_c_, shear_red_, k_min, mu_min, p_eff, phi_c - phi)
-        ),
+    ) = gen_utilities.filter_input_log(
+        (phi, phi_c_, shear_red_, k_min, mu_min, p_eff, phi_c - phi)
     )
 
     # Dry rock properties of high-porosity end member calculated with
@@ -239,8 +233,6 @@ def friable_model_dry(
         k_min, mu_min, k_hm, mu_hm, f1, bound="lower"
     )
 
-    k_dry, mu = cast(
-        list[npt.NDArray[np.float64]], gen_utilities.filter_output(idx_phi, (k_dry, mu))
-    )
+    k_dry, mu = gen_utilities.filter_output(idx_phi, (k_dry, mu))
 
     return k_dry, mu

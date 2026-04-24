@@ -1,7 +1,7 @@
 import os
 import sys
 from collections.abc import Sequence
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -35,9 +35,10 @@ def disp_result_stats(
             text_justify: list[Literal["center", "left"]] = ["center", "left"]
             text_weight: list[str] = ["bold", "normal"]
             for i in range(no_rows):
-                weigh = text_weight[cast(int, np.sign(i))]
+                sign_i = int(np.sign(i))
+                weigh = text_weight[sign_i]
                 for j in range(no_cols):
-                    just = text_justify[cast(int, np.sign(i))]
+                    just = text_justify[sign_i]
                     max_len = np.max(str_len(info[:, j]))
                     self.e: Entry = Entry(
                         tk_root,

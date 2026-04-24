@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy as np
 import numpy.typing as npt
 
@@ -92,9 +90,8 @@ def cfactors2cij(
     -------
     A 6x6x(number of samples) stiffness tensor.
     """
-    c11, c12, c13, c33, c44, c66 = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((c11, c12, c13, c33, c44, c66)),
+    c11, c12, c13, c33, c44, c66 = gen_utilities.dim_check_vector(
+        (c11, c12, c13, c33, c44, c66)
     )
 
     num_samp = c11.shape[1]
@@ -233,9 +230,8 @@ def thomsen_2_c_ij(
     c66
         Elastic stiffness component c66.
     """
-    alpha, beta, gamma, delta, epsilon = cast(
-        list[npt.NDArray[np.float64]],
-        gen_utilities.dim_check_vector((alpha, beta, gamma, delta, epsilon)),
+    alpha, beta, gamma, delta, epsilon = gen_utilities.dim_check_vector(
+        (alpha, beta, gamma, delta, epsilon)
     )
 
     c33 = rho * alpha**2
