@@ -80,7 +80,8 @@ def test_run_t_matrix_with_opt_params_exp(snapshot: SnapshotAssertion, testdata:
 
 
 def test_run_t_matrix_opt_forward_model_petec(
-    snapshot: SnapshotAssertion, testdata: Path
+    snapshot: SnapshotAssertion,
+    testdata: Path,
 ):
     fname = testdata.joinpath("petec_opt_param.pkl")
     assert snapshot == run_t_matrix_forward_model_with_opt_params_petec(
