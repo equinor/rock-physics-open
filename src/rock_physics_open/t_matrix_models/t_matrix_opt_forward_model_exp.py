@@ -9,6 +9,9 @@ from rock_physics_open.equinor_utilities.optimisation_utilities import (
     load_opt_params,
     opt_param_info,
 )
+from rock_physics_open.equinor_utilities.optimisation_utilities.opt_subst_utilities import (
+    ExpOptParamsDict,
+)
 from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
 
 from .curvefit_t_matrix_exp import curvefit_t_matrix_exp
@@ -92,10 +95,11 @@ def run_t_matrix_forward_model_with_opt_params_exp(
         raise TypeError(
             f"{__file__}: incorrect type of optimal parameter input file, must come from EXP optimisation"
         )
+    opt_dict_exp = cast(ExpOptParamsDict, cast(object, opt_dict))
 
     rho_mod = (
-        (1.0 - vsh) * opt_dict["rho_carb"] * scale_val["rho_carb"]  # pyright: ignore[reportTypedDictNotRequiredAccess] | Should be there for exp
-        + vsh * opt_dict["rho_sh"] * scale_val["rho_sh"]  # pyright: ignore[reportTypedDictNotRequiredAccess] | Should be there for exp
+        (1.0 - vsh) * opt_dict_exp["rho_carb"] * scale_val["rho_carb"]
+        + vsh * opt_dict_exp["rho_sh"] * scale_val["rho_sh"]
     ) * (1.0 - phi) + phi * fl_rho
     y_shape = (phi.shape[0], 2)
 
@@ -111,8 +115,6 @@ def run_t_matrix_forward_model_with_opt_params_exp(
         ydata_shape=y_shape,
         opt_params=opt_params,
     )
-    if not isinstance(v_mod, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | kept for backwards compatibility
-        raise ValueError(f"{__file__}: no solution to forward model")
     vp_mod, vs_mod = [arr.flatten() for arr in np.split(v_mod, 2, axis=1)]
     vpvs_mod = vp_mod / vs_mod
     ai_mod = vp_mod * rho_mod

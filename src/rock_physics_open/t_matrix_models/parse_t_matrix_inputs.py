@@ -41,9 +41,9 @@ def parse_t_matrix_inputs(
     Array1D[np.float64],
     Array1D[np.float64],
     Array1D[np.float64],
+    Array2D[np.float64],
+    Array2D[np.float64],
     Array1D[np.float64],
-    Array2D[np.float64],
-    Array2D[np.float64],
     float,
     float,
     Array1D[np.float64],
@@ -303,14 +303,18 @@ def parse_t_matrix_inputs(
     alpha_shape = alpha.shape
     # First make sure that alpha and v have the same number of elements
     try:
-        alpha, v = cast(  # casting since dim_check_vector typing is incomplete
-            list[Array1D[np.float64]],
-            gen_utilities.dim_check_vector((alpha, v), force_type=np.dtype(float)),
+        alpha_flat, v_flat = (
+            cast(  # casting since dim_check_vector typing is incomplete
+                list[Array1D[np.float64]],
+                gen_utilities.dim_check_vector((alpha, v), force_type=np.dtype(float)),
+            )
         )
     except ValueError:
         raise ValueError("t-matrix inputs: {}".format(str(sys.exc_info())))
-    alpha = alpha.reshape(alpha_shape)  # pyright: ignore[reportAssignmentType] | Should be same shape as before
-    v = v.reshape(alpha_shape)  # pyright: ignore[reportAssignmentType] | Should be same shape as before
+    alpha = cast(
+        Array1D[np.float64] | Array2D[np.float64], alpha_flat.reshape(alpha_shape)
+    )
+    v = cast(Array1D[np.float64] | Array2D[np.float64], v_flat.reshape(alpha_shape))
     # If they are 2D arrays, the first dimension should match log_length
     if alpha.ndim == 2:
         if not (alpha_shape[0] == log_length or alpha_shape[0] == 1):
@@ -324,11 +328,13 @@ def parse_t_matrix_inputs(
     elif alpha.ndim == 1:
         alpha = np.tile(alpha.reshape(1, alpha_shape[0]), (log_length, 1))
         v = np.tile(v.reshape(1, alpha_shape[0]), (log_length, 1))
+    alpha = cast(Array2D[np.float64], alpha)
+    v = cast(Array2D[np.float64], v)
     # Check that the number of elements in tau matches dim 1 of alpha
     if isinstance(tau, float):
         tau = np.ones(alpha_shape) * tau
     else:
-        if not tau.ndim == 1 and tau.shape[0] == alpha.shape[1]:  # pyright: ignore[reportGeneralTypeIssues] | alpha is Array2D
+        if not (tau.ndim == 1 and tau.shape[0] == alpha.shape[1]):
             raise ValueError(
                 "t-matrix inputs: number of elements in tau is not matching number of inclusions"
             )
@@ -350,14 +356,14 @@ def parse_t_matrix_inputs(
 
     # 6: Determine case for connected/isolated and isotropic/anisotropic inclusions
     # Assume the most general case: mix of isotropic and anisotropic inclusions and connected and isolated inclusions
-    ctrl_anisotropy = 1
+    ctrl_anisotropy: Literal[0, 1, 2] = 1
     if np.all(frac_inc_ani == 0):
         ctrl_anisotropy = 0  # All isotropic
-        angle = 0
+        angle = 0.0
     elif np.all(frac_inc_ani == 1):
         ctrl_anisotropy = 2  # All anisotropic
 
-    ctrl_connected = 1
+    ctrl_connected: Literal[0, 1, 2] = 1
     # Create case based on amount of connected inclusions
     if np.all(frac_inc_con == 0):
         ctrl_connected = 0  # All isolated
@@ -373,7 +379,7 @@ def parse_t_matrix_inputs(
         phi,
         perm,
         visco,
-        alpha,  # pyright: ignore[reportReturnType] | alpha is Array1D or Array2D
+        alpha,
         v,
         tau,
         frequency,

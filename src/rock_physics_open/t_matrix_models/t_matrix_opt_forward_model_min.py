@@ -119,8 +119,6 @@ def run_t_matrix_forward_model_with_opt_params_petec(
         axis=1,
     )
     v_mod = gen_mod_routine(opt_fcn, x_data, y_shape, opt_params)
-    if not isinstance(v_mod, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | kept for backwards compatibility
-        raise ValueError(f"{__file__}: no solution to forward model")
     vp_mod, vs_mod = [arr.flatten() for arr in np.split(v_mod, 2, axis=1)]
     vpvs_mod = vp_mod / vs_mod
     ai_mod = vp_mod * rho_mod

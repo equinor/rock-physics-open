@@ -10,6 +10,9 @@ from rock_physics_open.equinor_utilities.optimisation_utilities import (
     load_opt_params,
     opt_param_info,
 )
+from rock_physics_open.equinor_utilities.optimisation_utilities.opt_subst_utilities import (
+    ExpOptParamsDict,
+)
 from rock_physics_open.equinor_utilities.various_utilities.types import Array1D
 
 from .curvefit_t_matrix_exp import curvefit_t_matrix_exp
@@ -180,10 +183,11 @@ def run_t_matrix_with_opt_params_exp(
         raise TypeError(
             f"{__file__}: incorrect type of optimal parameter input file, must come from EXP optimisation"
         )
+    opt_dict_exp = cast(ExpOptParamsDict, cast(object, opt_dict))
 
     rho_mod = (
-        (1.0 - vsh) * opt_dict["rho_carb"] * scale_val["rho_carb"]  # pyright: ignore[reportTypedDictNotRequiredAccess] | Should be there for exp
-        + vsh * opt_dict["rho_sh"] * scale_val["rho_sh"]  # pyright: ignore[reportTypedDictNotRequiredAccess] | Should be there for exp
+        (1.0 - vsh) * opt_dict_exp["rho_carb"] * scale_val["rho_carb"]
+        + vsh * opt_dict_exp["rho_sh"] * scale_val["rho_sh"]
     ) * (1.0 - phi) + phi * fl_rho_orig
 
     rho_res = rho_mod - rhob

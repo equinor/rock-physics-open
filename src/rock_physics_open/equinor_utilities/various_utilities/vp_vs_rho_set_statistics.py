@@ -69,7 +69,6 @@ def vp_vs_rho_stats(
         rho_estimated,
         set_names=estimated_set_names,
         well_names=well_names,
-        file_mode=file_mode,
     )
 
     est_frame_columns = [
@@ -138,7 +137,6 @@ def _verify(
     *args: npt.NDArray[np.float64] | list[npt.NDArray[np.float64]],
     set_names: list[str],
     well_names: list[str],
-    file_mode: Literal["a", "w"],
 ):
     """Verify that arguments are either numpy arrays or lists of numpy arrays.
 
@@ -150,8 +148,6 @@ def _verify(
         Names of the sets.
     well_names
         Names of the wells.
-    file_mode
-        File write mode.
 
     """
     # Verify that args are either numpy arrays or list of arrays
@@ -159,13 +155,9 @@ def _verify(
         if isinstance(arg, np.ndarray):
             arg = [arg]
         for this_arg in arg:
-            if not isinstance(this_arg, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | For backward compatibility
-                raise ValueError(f"{__file__}: input not numpy array: {type(arg)}")
             if np.any(np.isnan(this_arg)):
                 raise ValueError(f"{__file__}: input contains NaNs")
             if np.any(np.isinf(this_arg)):
                 raise ValueError(f"{__file__}: input contains Infs")
         if not len(arg) == len(set_names) == len(well_names):
             raise ValueError(f"{__file__}: mismatch in argument lengths")
-    if not (file_mode == "a" or file_mode == "w"):
-        raise ValueError(f'{__file__}: file_mode must be one of ["a", "w"]')  # pyright: ignore[reportUnreachable] | For backward compatibility

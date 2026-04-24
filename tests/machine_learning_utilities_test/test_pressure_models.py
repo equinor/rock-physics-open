@@ -1,4 +1,3 @@
-# ruff: noqa: UP034
 """
 Comprehensive pytest test suite for pressure sensitivity models.
 
@@ -87,7 +86,6 @@ def invalid_input_data() -> dict[str, Any]:
     """Provide various invalid input formats for testing."""
     rng = np.random.default_rng(42)
     return {
-        "wrong_type": [[1, 2, 3], [4, 5, 6]],  # List instead of ndarray
         "wrong_dimensions": np.array([1, 2, 3, 4, 5]),  # 1D instead of 2D
         "wrong_columns_exp": rng.random((10, 4)),  # 4 columns instead of 3
         "empty_array": np.empty((0, 3)),  # Empty array
@@ -121,7 +119,6 @@ class TestExponentialPressureModel:
     ):
         """Test validation with invalid input formats."""
         test_cases = [
-            ("wrong_type", "Input must be numpy ndarray."),
             ("wrong_dimensions", "Input must be \\(n,3\\)"),
             ("wrong_columns_exp", "Input must be \\(n,3\\)"),
             ("empty_array", None),  # Empty array might be valid

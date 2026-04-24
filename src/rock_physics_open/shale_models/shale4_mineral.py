@@ -1,4 +1,4 @@
-from typing import Literal, cast
+from typing import Literal, assert_never, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -119,11 +119,6 @@ def shale_model_4_mineral_dem(
         Shear wave velocity [m/s].
     rho_factor
         Ratio between modelled and observed density [ratio].
-
-    Raises
-    ------
-    ValueError
-        If mod_type is unknown.
     """
     #   tol: DEM model calculation tolerance <= Set as a hardcoded value, not
     #   found to influence the results
@@ -169,9 +164,7 @@ def shale_model_4_mineral_dem(
         )
         rho_mat = f1 * rho1 + f2 * rho2 + f3 * rho3 + f4 * rho4
     else:
-        raise ValueError(
-            f'{__file__}: unknown type: {mod_type}, should be one of "SCA", "VRH"'  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
-        )
+        assert_never(mod_type)
 
     k_mat, mu_mat, rho_mat, k_fl, rho_fl, phi, asp = cast(
         list[npt.NDArray[np.float64]],

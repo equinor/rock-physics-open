@@ -23,8 +23,8 @@ def t_matrix_porosity_c_alpha_v(
     tau: Any,
     frequency: float,
     angle: float,
-    frac_inc_con: float,
-    frac_inc_ani: float,
+    frac_inc_con: Array1D[np.float64] | float,
+    frac_inc_ani: Array1D[np.float64] | float,
 ) -> tuple[
     Array1D[np.float64],
     Array1D[np.float64],

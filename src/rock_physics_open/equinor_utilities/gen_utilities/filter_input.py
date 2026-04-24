@@ -48,8 +48,6 @@ def filter_input_log(
     type_error = "filter_input_log: unknown input data type: {}".format(type(args))
     size_error = "filter_input_log: inputs of different length"
 
-    if not isinstance(args, (list, tuple, np.ndarray, pd.DataFrame)):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-        raise ValueError(type_error)  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
     # Make sure that 'args' is iterable
     if isinstance(args, (np.ndarray, pd.DataFrame)):
         args = [args]
