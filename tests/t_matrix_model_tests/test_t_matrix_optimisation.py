@@ -1,6 +1,10 @@
+from dataclasses import dataclass
+from pathlib import Path
+
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
+import pytest
 from syrupy.assertion import SnapshotAssertion
 
 from rock_physics_open.equinor_utilities.optimisation_utilities import gen_opt_routine
@@ -12,26 +16,49 @@ from rock_physics_open.t_matrix_models.curvefit_t_matrix_min import (
     curve_fit_2_inclusion_sets,
 )
 
-from ..conftest import TESTDATA_DIR
 
-inp_df = pd.read_csv(TESTDATA_DIR / "tmatrix_test_data.csv")
+@dataclass(frozen=True)
+class TMatrixParams:
+    k_min: npt.NDArray[np.float64]
+    mu_min: npt.NDArray[np.float64]
+    rho_min: npt.NDArray[np.float64]
+    k_fl_orig: npt.NDArray[np.float64]
+    rho_fl_orig: npt.NDArray[np.float64]
+    vp: npt.NDArray[np.float64]
+    vs: npt.NDArray[np.float64]
+    rho: npt.NDArray[np.float64]
+    phi: npt.NDArray[np.float64]
+    vsh: npt.NDArray[np.float64]
+    tau: npt.NDArray[np.float64]
+    angle: npt.NDArray[np.float64]
+    perm: npt.NDArray[np.float64]
+    visco: npt.NDArray[np.float64]
+    freq: npt.NDArray[np.float64]
+    def_vp_vs_ratio: npt.NDArray[np.float64]
 
-k_min = inp_df["K_MIN"].to_numpy() * 1.0e9
-mu_min = inp_df["MU_MIN"].to_numpy() * 1.0e9
-rho_min = g_cc_to_kg_m3(inp_df["RHO_MIN"].to_numpy())
-k_fl_orig = inp_df["K_FL"].to_numpy() * 1.0e9
-rho_fl_orig = g_cc_to_kg_m3(inp_df["RHO_FL"].to_numpy())
-vp = inp_df["VP"].to_numpy()
-vs = inp_df["VS"].to_numpy()
-rho = g_cc_to_kg_m3(inp_df["RHOB"].to_numpy())
-phi = inp_df["PHIT"].to_numpy()
-vsh = inp_df["VSH"].to_numpy()
-tau = 1e-7 * np.ones_like(phi)
-angle = 45 * np.ones_like(phi)
-perm = 100.0 * np.ones_like(phi)
-visco = 100.0 * np.ones_like(phi)
-freq = 1000.0 * np.ones_like(phi)
-def_vp_vs_ratio = 1.8 * np.ones_like(phi)
+
+@pytest.fixture
+def params(testdata: Path) -> TMatrixParams:
+    inp_df = pd.read_csv(testdata / "tmatrix_test_data.csv")
+    phi = inp_df["PHIT"].to_numpy()
+    return TMatrixParams(
+        k_min=inp_df["K_MIN"].to_numpy() * 1.0e9,
+        mu_min=inp_df["MU_MIN"].to_numpy() * 1.0e9,
+        rho_min=g_cc_to_kg_m3(inp_df["RHO_MIN"].to_numpy()),
+        k_fl_orig=inp_df["K_FL"].to_numpy() * 1.0e9,
+        rho_fl_orig=g_cc_to_kg_m3(inp_df["RHO_FL"].to_numpy()),
+        vp=inp_df["VP"].to_numpy(),
+        vs=inp_df["VS"].to_numpy(),
+        rho=g_cc_to_kg_m3(inp_df["RHOB"].to_numpy()),
+        phi=phi,
+        vsh=inp_df["VSH"].to_numpy(),
+        tau=1e-7 * np.ones_like(phi),
+        angle=45 * np.ones_like(phi),
+        perm=100.0 * np.ones_like(phi),
+        visco=100.0 * np.ones_like(phi),
+        freq=1000.0 * np.ones_like(phi),
+        def_vp_vs_ratio=1.8 * np.ones_like(phi),
+    )
 
 
 """
@@ -100,21 +127,21 @@ def test_optimisation_part(snapshot_approx: SnapshotAssertion):
     assert snapshot_approx == opt_params
 
 
-def test_t_matrix_opt_params_petec(snapshot: SnapshotAssertion):
+def test_t_matrix_opt_params_petec(snapshot: SnapshotAssertion, params: TMatrixParams):
     x_data = np.stack(
         (
-            phi,
-            k_min,
-            mu_min,
-            rho_min,
-            k_fl_orig,
-            rho_fl_orig,
-            angle,
-            perm,
-            visco,
-            tau,
-            freq,
-            def_vp_vs_ratio,
+            params.phi,
+            params.k_min,
+            params.mu_min,
+            params.rho_min,
+            params.k_fl_orig,
+            params.rho_fl_orig,
+            params.angle,
+            params.perm,
+            params.visco,
+            params.tau,
+            params.freq,
+            params.def_vp_vs_ratio,
         ),
         axis=1,
     )
@@ -123,19 +150,19 @@ def test_t_matrix_opt_params_petec(snapshot: SnapshotAssertion):
     assert snapshot == curve_fit_2_inclusion_sets(x_data, *par)
 
 
-def test_t_matrix_opt_params_exp(snapshot: SnapshotAssertion):
+def test_t_matrix_opt_params_exp(snapshot: SnapshotAssertion, params: TMatrixParams):
     x_data = np.stack(
         (
-            phi,
-            vsh,
-            k_fl_orig,
-            rho_fl_orig,
-            angle,
-            perm,
-            visco,
-            tau,
-            freq,
-            def_vp_vs_ratio,
+            params.phi,
+            params.vsh,
+            params.k_fl_orig,
+            params.rho_fl_orig,
+            params.angle,
+            params.perm,
+            params.visco,
+            params.tau,
+            params.freq,
+            params.def_vp_vs_ratio,
         ),
         axis=1,
     )
