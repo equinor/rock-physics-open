@@ -6,7 +6,7 @@ from syrupy.assertion import SnapshotAssertion
 from rock_physics_open.equinor_utilities.various_utilities import vp_vs_rho_stats
 
 
-def test_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
+def test_vp_vs_rho_stats(snapshot: SnapshotAssertion, testdata: Path):
     rng = np.random.default_rng(123456)
     vp_obs = rng.uniform(low=0.0, high=1.0, size=100)
     vs_obs = rng.uniform(low=0.0, high=1.0, size=100)
@@ -14,7 +14,7 @@ def test_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
     vp_est = rng.uniform(low=0.0, high=1.0, size=100)
     vs_est = rng.uniform(low=0.0, high=1.0, size=100)
     rho_est = rng.uniform(low=0.0, high=1.0, size=100)
-    fname = str(data_dir / "vp_vs_rho_stats.csv")
+    fname = str(testdata / "vp_vs_rho_stats.csv")
     file_open_mode = "w"
     disp_res = False
     vp_vs_rho_stats(
@@ -33,7 +33,7 @@ def test_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
     assert snapshot == Path(fname).read_text().strip()
 
 
-def test_multi_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
+def test_multi_vp_vs_rho_stats(snapshot: SnapshotAssertion, testdata: Path):
     rng = np.random.default_rng(123456)
     vp_obs = [rng.uniform(low=0.0, high=1.0, size=100)] * 3
     vs_obs = [rng.uniform(low=0.0, high=1.0, size=100)] * 3
@@ -43,7 +43,7 @@ def test_multi_vp_vs_rho_stats(data_dir: Path, snapshot: SnapshotAssertion):
     rho_est = [rng.uniform(low=0.0, high=1.0, size=100)] * 3
     set_names = ["pytest_1", "pytest_2", "pytest_3"]
     well_names = ["pytest_well_1", "pytest_well_2", "pytest_well_3"]
-    fname = str(data_dir / "multi_vp_vs_rho_stats.csv")
+    fname = str(testdata / "multi_vp_vs_rho_stats.csv")
     file_open_mode = "w"
     disp_res = False
     vp_vs_rho_stats(

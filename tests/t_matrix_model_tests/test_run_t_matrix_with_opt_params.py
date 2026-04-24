@@ -31,9 +31,10 @@ pressure = np.array([20.0e6, 22.0e6])
 
 
 def test_run_t_matrix_with_opt_params_petec(
-    data_dir: Path, snapshot: SnapshotAssertion
+    snapshot: SnapshotAssertion,
+    testdata: Path,
 ):
-    fname = data_dir.joinpath("petec_opt_param.pkl")
+    fname = testdata.joinpath("petec_opt_param.pkl")
     assert snapshot == run_t_matrix_with_opt_params_petec(
         min_k=k_min,
         min_mu=mu_min,
@@ -56,8 +57,8 @@ def test_run_t_matrix_with_opt_params_petec(
     )
 
 
-def test_run_t_matrix_with_opt_params_exp(data_dir: Path, snapshot: SnapshotAssertion):
-    fname = data_dir.joinpath("exp_opt_param.pkl")
+def test_run_t_matrix_with_opt_params_exp(snapshot: SnapshotAssertion, testdata: Path):
+    fname = testdata.joinpath("exp_opt_param.pkl")
     assert snapshot == run_t_matrix_with_opt_params_exp(
         fl_k_orig=k_fl_orig,
         fl_rho_orig=rho_fl_orig,
@@ -79,9 +80,10 @@ def test_run_t_matrix_with_opt_params_exp(data_dir: Path, snapshot: SnapshotAsse
 
 
 def test_run_t_matrix_opt_forward_model_petec(
-    data_dir: Path, snapshot: SnapshotAssertion
+    snapshot: SnapshotAssertion,
+    testdata: Path,
 ):
-    fname = data_dir.joinpath("petec_opt_param.pkl")
+    fname = testdata.joinpath("petec_opt_param.pkl")
     assert snapshot == run_t_matrix_forward_model_with_opt_params_petec(
         min_k=k_min,
         min_mu=mu_min,
@@ -99,9 +101,9 @@ def test_run_t_matrix_opt_forward_model_petec(
 
 
 def test_run_t_matrix_opt_forward_model_exp(
-    data_dir: Path, snapshot: SnapshotAssertion
+    snapshot: SnapshotAssertion, testdata: Path
 ):
-    fname = data_dir.joinpath("exp_opt_param.pkl")
+    fname = testdata.joinpath("exp_opt_param.pkl")
     assert snapshot == run_t_matrix_forward_model_with_opt_params_exp(
         fl_k=k_fl_orig,
         fl_rho=rho_fl_orig,
