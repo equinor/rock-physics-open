@@ -1,4 +1,4 @@
-from typing import Literal, cast
+from typing import Literal, assert_never, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -92,8 +92,6 @@ def reflectivity(
     elif model == "SmithGidlow":
         refl_coef = std_functions.smith_gidlow(vp, vs, rho, theta_, k_)
     else:
-        raise ValueError(  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
-            f'{__file__}: unknown model: {model}, should be one of "AkiRichards", "SmithGidlow"'
-        )
+        assert_never(model)
 
     return refl_coef, idx_inp

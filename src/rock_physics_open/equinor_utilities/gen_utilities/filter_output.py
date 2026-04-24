@@ -49,21 +49,11 @@ def filter_output(
         logs.loc[idx] = inp_df
         return logs
 
-    if not isinstance(inp_log, (list, tuple, np.ndarray, pd.DataFrame)):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-        raise ValueError(  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
-            "filter_output: unknown input data type: {}".format(type(inp_log))
-        )
-    if not isinstance(idx_inp, (list, np.ndarray)):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-        raise ValueError(  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
-            "filter_output: unknown filter array data type: {}".format(type(idx_inp))
-        )
-
     # Make iterable in case of single input
     if isinstance(inp_log, (np.ndarray, pd.DataFrame)):
         inp_log = [inp_log]
 
-    if isinstance(idx_inp, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-        idx_inp_ = [idx_inp]
+    idx_inp_ = [idx_inp]
 
     # Possible to simplify?
     if len(idx_inp_) != len(inp_log):
@@ -80,7 +70,7 @@ def filter_output(
     for this_idx, this_log in zip(idx_inp_, inp_log):
         if isinstance(this_log, np.ndarray):
             return_logs.append(_expand_array(this_idx, this_log))
-        elif isinstance(this_log, pd.DataFrame):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
+        else:
             return_logs.append(_expand_df(this_idx, this_log))
 
     return return_logs

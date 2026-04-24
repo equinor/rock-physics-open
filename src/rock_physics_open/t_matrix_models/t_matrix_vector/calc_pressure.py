@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, cast
 
 import numpy as np
 
@@ -95,7 +95,7 @@ def calc_pressure_vec(
 
     def _new_values(
         k: Array4D[np.float64],
-        sum_k: Array2D[np.float64],
+        sum_k: Array1D[np.float64],
         a: Array2D[np.float64],
         v: Array2D[np.float64],
         d_p: float,
@@ -148,7 +148,7 @@ def calc_pressure_vec(
         frac_ani=frac_ani,
     )
     # Find the sum in the eq. 21 Jakobsen and Johansen 2005
-    sum_kd = 0.0
+    sum_kd: Array1D[np.float64] = np.zeros(v_iso.shape[0])
     if ctrl != 2 and kd_eff_isolated is not None:
         count_isolated = kd_eff_isolated.shape[3]
         for j in range(count_isolated):
@@ -171,7 +171,7 @@ def calc_pressure_vec(
     if ctrl != 2 and kd_eff_isolated is not None:
         v_n_isolated, alpha_n_isolated, _, _ = _new_values(
             k=kd_eff_isolated,
-            sum_k=sum_kd,  # pyright: ignore[reportArgumentType] | sum_kd is Array2D after the loop
+            sum_k=sum_kd,
             a=alpha_iso,
             v=v_iso,
             d_p=d_p,
@@ -182,7 +182,7 @@ def calc_pressure_vec(
     if ctrl != 0 and kd_eff_connected is not None:
         v_n_connected, alpha_n_connected, tau_n_out, gamma_n_out = _new_values(
             k=kd_eff_connected,
-            sum_k=sum_kd,  # pyright: ignore[reportArgumentType] | sum_kd is Array2D after the loop
+            sum_k=sum_kd,
             a=alpha_con,
             v=v_con,
             d_p=d_p,
@@ -190,11 +190,21 @@ def calc_pressure_vec(
             g=gamma,
         )
 
-    return (  # pyright: ignore[reportReturnType] | #TODO: This should be fixed properly
-        alpha_n_connected,
-        v_n_connected,
-        alpha_n_isolated,
-        v_n_isolated,
-        tau_n_out,
-        gamma_n_out,
+    return cast(
+        tuple[
+            Array2D[np.float64],
+            Array2D[np.float64],
+            Array2D[np.float64],
+            Array2D[np.float64],
+            Array1D[np.float64],
+            Array2D[np.float64],
+        ],
+        (
+            alpha_n_connected,
+            v_n_connected,
+            alpha_n_isolated,
+            v_n_isolated,
+            tau_n_out,
+            gamma_n_out,
+        ),
     )

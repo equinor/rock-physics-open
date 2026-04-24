@@ -52,7 +52,7 @@ def calc_z_vec(
     """
     i2_i2, log_length, alpha_length = check_and_tile(s0, td)
 
-    sum_z = 0.0
+    sum_z = np.zeros((log_length, 6, 6), dtype="complex128")
     z = np.zeros((log_length, 6, 6, alpha_length), dtype="complex128")
     z_bar = np.zeros((log_length, 6, 6, alpha_length), dtype="complex128")
 
@@ -67,14 +67,14 @@ def calc_z_vec(
             s0,
             i2_i2,
             s0,
-            sum_z,  # pyright: ignore[reportArgumentType] | sum_z is 3D array after summation
+            sum_z,
         )
         z_bar[:, :, :, j] = array_matrix_mult(
             td_bar[:, :, :, j],
             s0,
             i2_i2,
             s0,
-            sum_z,  # pyright: ignore[reportArgumentType] | sum_z is 3D array after summation
+            sum_z,
         )
 
     return z, z_bar

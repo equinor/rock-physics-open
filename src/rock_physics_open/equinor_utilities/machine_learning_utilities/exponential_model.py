@@ -69,8 +69,6 @@ class ExponentialPressureModel(BasePressureModel):
         ValueError
             If input format is invalid.
         """
-        if not isinstance(inp_arr, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-            raise ValueError("Input must be numpy ndarray.")  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
         if inp_arr.ndim != 2 or inp_arr.shape[1] != 3:
             raise ValueError(
                 "Input must be (n,3): [velocity, p_eff_in_situ, p_eff_depleted]"

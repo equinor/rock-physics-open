@@ -41,8 +41,8 @@ class TMatrixCallable(Protocol):
         tau: Any,
         frequency: float,
         angle: float,
-        frac_inc_con: Array1D[np.float64],
-        frac_inc_ani: Array1D[np.float64],
+        frac_inc_con: Array1D[np.float64] | float,
+        frac_inc_ani: Array1D[np.float64] | float,
     ) -> tuple[
         Array1D[np.float64],
         Array1D[np.float64],

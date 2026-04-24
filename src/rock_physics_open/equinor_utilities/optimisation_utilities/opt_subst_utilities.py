@@ -2,7 +2,7 @@ import os
 import pickle
 import sys
 from pathlib import Path
-from typing import Any, Literal, Required, TypedDict, cast
+from typing import Any, Literal, Required, TypedDict, assert_never, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -185,6 +185,20 @@ class OptParamsDict(TypedDict, total=False):
     phi_c: float
 
 
+class ExpOptParamsDict(TypedDict):
+    """Fully-typed view of ``OptParamsDict`` for the ``exp`` optimisation variant."""
+
+    well_name: str
+    opt_ver: OptType
+    opt_vec: npt.NDArray[np.float64]
+    k_carb: float
+    mu_carb: float
+    rho_carb: float
+    k_sh: float
+    mu_sh: float
+    rho_sh: float
+
+
 class ParameterTranslationDict(TypedDict):
     opt_ver: str
     no_incl_sets: str
@@ -249,11 +263,6 @@ def save_opt_params(
         File to save results to, by default 'opt_params.pkl'.
     well_name
         Name of the well which is used in optimisation, by default 'Unknown well'.
-
-    Raises
-    ------
-    ValueError
-        If unknown optimisation opt_type.
     """
     # Save the optimal parameters with info
     if opt_type == "min":  # optimisation with mineral input from well
@@ -310,9 +319,7 @@ def save_opt_params(
             "opt_vec": opt_params,
         }
     else:
-        raise ValueError(  # pyright: ignore[reportUnreachable] # kept for backward compatibility
-            "save_opt_params: unknown optimisation opt_type: {}".format(opt_type)
-        )
+        assert_never(opt_type)
 
     with open(file_name, "wb") as file_out:
         pickle.dump(opt_param_dict, file_out)

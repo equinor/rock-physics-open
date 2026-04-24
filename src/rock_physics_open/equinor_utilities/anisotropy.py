@@ -48,11 +48,6 @@ def c_ij_2_c_factors(
     c66
             All 1-dimensional of same length.
     """
-    if not isinstance(cij, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance]
-        try:  # pyright: ignore[reportUnreachable]
-            cij = np.array(cij, dtype=float)  # pyright: ignore[reportUnreachable]
-        except ValueError:
-            print("Input data can't be transformed into a NumPy array")  # pyright: ignore[reportUnreachable]
     try:
         num_samp = int(cij.size / 36)
         cij = cij.reshape((6, 6, num_samp))
@@ -156,11 +151,6 @@ def c_ij_2_thomsen(
             Thomsen's parameters.
     """
     # C matrix should be 6x6
-    if not isinstance(c, np.ndarray):  # pyright: ignore[reportUnnecessaryIsInstance]
-        try:  # pyright: ignore[reportUnreachable]
-            c = np.array(c, dtype=float)  # pyright: ignore[reportUnreachable]
-        except ValueError:
-            print("Input data can't be transformed into a NumPy array")  # pyright: ignore[reportUnreachable]
     try:
         num_samp = int(c.size / 36)
         c = c.reshape((6, 6, num_samp))

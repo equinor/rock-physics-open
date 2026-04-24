@@ -36,7 +36,6 @@ def velocity_vti_angles_vec(
     if not (
         c_eff.ndim == 3
         and rho_eff.ndim == 1
-        and isinstance(angle, (float, int))  # pyright: ignore[reportUnnecessaryIsInstance] | kept for backwards compatibility
         and (c_eff.shape[0] == rho_eff.shape[0] and c_eff.shape[1] == c_eff.shape[2])
     ):
         raise ValueError("velocity_vti_angles: inconsistencies in input shapes")

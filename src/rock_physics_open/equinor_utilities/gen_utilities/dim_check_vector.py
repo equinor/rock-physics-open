@@ -50,13 +50,9 @@ def dim_check_vector(
     Raises
     ------
     ValueError
-        If input type is not supported.
+        If `force_type` conversion fails or if inputs have incompatible lengths.
     """
     single_types = (np.ndarray, pd.DataFrame)
-    iterable_types = (list, tuple)
-    allowed_types = single_types + iterable_types
-    if not isinstance(args, allowed_types):  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-        raise ValueError("dim_check_vector: unknown input type: {}".format(type(args)))  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
 
     # Single array or dataframe is just returned
     if isinstance(args, single_types):

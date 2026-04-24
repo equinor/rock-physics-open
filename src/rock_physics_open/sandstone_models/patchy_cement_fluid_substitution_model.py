@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, assert_never
 from warnings import warn
 
 import numpy as np
@@ -438,7 +438,7 @@ def _handle_exceptions_part_1(
     elif phi_below_zero == "disregard":
         pass
     else:
-        raise ValueError('unknown argument for parameter "phi_below_zero"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
+        assert_never(phi_below_zero)
 
     #  Handling of case 2:
     idx2 = phi_vec > phi_c_const
@@ -448,7 +448,7 @@ def _handle_exceptions_part_1(
     elif phi_above_phi_c == "disregard":
         pass
     else:
-        raise ValueError('unknown argument for parameter "phi_above_phi_c"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
+        assert_never(phi_above_phi_c)
 
     # Handling of case 3:
     idx3 = np.logical_or(k_sat > k_min, mu > mu_min)
@@ -459,7 +459,7 @@ def _handle_exceptions_part_1(
     elif k_sat_above_k_min == "disregard":
         pass
     else:
-        raise ValueError('unknown argument for parameter "k_sat_above_k_min"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
+        assert_never(k_sat_above_k_min)
     return np.any(np.vstack((idx1, idx2, idx3)), axis=0)
 
 
@@ -503,7 +503,7 @@ def _handle_exceptions_part_2(
     elif below_lower_bound == "disregard":
         idx5 = np.logical_or(idx5k, idx5mu)
     else:
-        raise ValueError('unknown argument for parameter "below_lower_bound"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
+        assert_never(below_lower_bound)
 
     # Handling of case 6:
     if above_upper_bound == "snap":
@@ -521,7 +521,7 @@ def _handle_exceptions_part_2(
             np.greater(mu, mu_up, where=~idx_nan, out=None),
         )
     else:
-        raise ValueError('unknown argument for parameter "above_upper_bound"')  # pyright: ignore[reportUnreachable] | Kept for backward compatibility
+        assert_never(above_upper_bound)
 
     # Exception for all cases 1-6:
     return np.any(np.vstack((idx, idx5, idx6, idx_nan)), axis=0)

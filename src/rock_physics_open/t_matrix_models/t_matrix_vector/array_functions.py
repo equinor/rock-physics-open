@@ -47,7 +47,7 @@ def array_matrix_mult(
     Raises
     ------
     ValueError
-        If input is not a list or tuple or if there is a mismatch in input shape/dimension.
+        If there is a mismatch in input shape/dimension.
     """
     if len(args) == 0:
         raise ValueError(f"{__name__}: no input arguments provided")
@@ -56,11 +56,7 @@ def array_matrix_mult(
 
     arg_shape: list[tuple[int, ...]] = []
     for i in range(len(args)):
-        if not (
-            isinstance(args[i], np.ndarray)  # pyright: ignore[reportUnnecessaryIsInstance] | kept for backwards compatibility
-            and args[i].ndim == 3
-            and args[i].shape[1] == args[i].shape[2]
-        ):
+        if not (args[i].ndim == 3 and args[i].shape[1] == args[i].shape[2]):
             raise ValueError(
                 f"{__name__}: mismatch in inputs variables dimension/shape"
             )

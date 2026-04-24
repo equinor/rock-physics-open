@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import numpy.typing as npt
 
@@ -6,7 +8,7 @@ NULL_CLASS = 0
 
 def gen_class_stats(
     obs: npt.NDArray[np.float64],
-    class_val: npt.NDArray[np.int64],
+    class_val: npt.NDArray[Any],
 ) -> tuple[
     npt.NDArray[np.float64],
     npt.NDArray[np.float64],
@@ -51,10 +53,7 @@ def gen_class_stats(
     """
     n, m = obs.shape
     # Find number of classes. If class_val input is not integer, raise an exception
-    if not (
-        isinstance(class_val, np.ndarray)  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-        and issubclass(class_val.dtype.type, np.integer)  # pyright: ignore[reportUnnecessaryIsInstance] | Kept for backward compatibility
-    ):
+    if not issubclass(class_val.dtype.type, np.integer):
         raise ValueError(f"{__file__}: class values are not discrete numbers")
 
     class_id, class_counts = np.unique(class_val, return_counts=True)
