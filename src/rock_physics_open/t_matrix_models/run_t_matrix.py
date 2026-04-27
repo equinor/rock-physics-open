@@ -283,11 +283,9 @@ def run_t_matrix(
             # arrays from calc_pressure_vec when their branch is skipped by
             # ctrl_connected; pick the populated alpha here.
             if ctrl_connected == 0:
-                v_con = np.zeros_like(v_iso)
                 alpha = alpha_iso
             elif ctrl_connected == 2:
                 alpha = alpha_con
-                v_iso = np.zeros_like(v_con)
             else:
                 alpha = alpha_con
             # Don't divide by zero

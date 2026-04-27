@@ -161,16 +161,10 @@ def calc_pressure_vec(
             sum_kd = sum_kd + v_con[:, j] * np.sum(
                 kd_eff_connected[:, 0:3, 0:3, j], axis=(1, 2)
             )
-    # Find the new concentration of inclusion. Initialise outputs to zero
-    # arrays matching the input shapes so that branches skipped by ``ctrl``
-    # still satisfy the non-optional return type. Callers rely on ``ctrl`` to
-    # know which outputs are meaningful.
-    alpha_n_isolated = np.zeros_like(alpha_iso)
-    alpha_n_connected = np.zeros_like(alpha_con)
-    v_n_isolated = np.zeros_like(v_iso)
-    v_n_connected = np.zeros_like(v_con)
-    gamma_n_out = np.zeros_like(gamma)
-    tau_n_out = np.zeros_like(tau)
+    # Find the new concentration of inclusion. Branches skipped by ``ctrl``
+    # are filled with zero arrays of the matching input shape so that the
+    # declared non-optional return type is honoured. Callers rely on
+    # ``ctrl`` to know which outputs are meaningful.
     if ctrl != 2 and kd_eff_isolated is not None:
         v_n_isolated, alpha_n_isolated, _, _ = _new_values(
             k=kd_eff_isolated,
@@ -181,6 +175,9 @@ def calc_pressure_vec(
             t=tau,
             g=gamma,
         )
+    else:
+        alpha_n_isolated = np.zeros_like(alpha_iso)
+        v_n_isolated = np.zeros_like(v_iso)
 
     if ctrl != 0 and kd_eff_connected is not None:
         v_n_connected, alpha_n_connected, tau_n_out, gamma_n_out = _new_values(
@@ -192,6 +189,11 @@ def calc_pressure_vec(
             t=tau,
             g=gamma,
         )
+    else:
+        alpha_n_connected = np.zeros_like(alpha_con)
+        v_n_connected = np.zeros_like(v_con)
+        tau_n_out = np.zeros_like(tau)
+        gamma_n_out = np.zeros_like(gamma)
 
     return (
         alpha_n_connected,
