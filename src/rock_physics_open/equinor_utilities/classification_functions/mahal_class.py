@@ -12,7 +12,7 @@ def mahal_class(
     class_cov: npt.NDArray[np.float64],
     class_id: npt.NDArray[np.int64],
     thresh: float = np.inf,
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+) -> tuple[npt.NDArray[np.int64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Mahalanobis classification routine. All data points are assigned a class, unless a threshold is set.
 
