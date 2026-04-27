@@ -1,47 +1,16 @@
 import warnings
 
 import numpy as np
+from syrupy.assertion import SnapshotAssertion
 
 from rock_physics_open.equinor_utilities.std_functions import moduli, velocity
 
 
-def test_moduli():
+def test_moduli(snapshot: SnapshotAssertion):
     vp = np.linspace(0.8, 1.2, 11) * 3500.0
     vs = np.linspace(0.8, 1.2, 11) * 1200.0
     rho = np.ones(11) * 2650.0
-    k, mu = moduli(vp, vs, rho)
-    k_ref = np.array(
-        [
-            17.51968,
-            19.3154472,
-            21.1988128,
-            23.1697768,
-            25.2283392,
-            27.3745,
-            29.6082592,
-            31.9296168,
-            34.3385728,
-            36.8351272,
-            39.41928,
-        ]
-    )
-    mu_ref = np.array(
-        [
-            2.44224,
-            2.6925696,
-            2.9551104,
-            3.2298624,
-            3.5168256,
-            3.816,
-            4.1273856,
-            4.4509824,
-            4.7867904,
-            5.1348096,
-            5.49504,
-        ]
-    )
-    np.testing.assert_almost_equal(k / 1.0e9, k_ref)
-    np.testing.assert_almost_equal(mu / 1.0e9, mu_ref)
+    assert snapshot == moduli(vp, vs, rho)
 
 
 def test_velocity():

@@ -1,10 +1,11 @@
 import numpy as np
 from numpy.random import default_rng
+from syrupy.assertion import SnapshotAssertion
 
 from rock_physics_open.equinor_utilities.classification_functions import poly_class
 
 
-def test_poly_class():
+def test_poly_class(snapshot: SnapshotAssertion):
     rg = default_rng(234769238476)
     obs = rg.random((11, 2))
     class_poly = np.array(
@@ -33,6 +34,4 @@ def test_poly_class():
         ]
     )
     class_id = np.array([1, 2, 3])
-    poly_class_arr = poly_class(obs, class_poly, class_id)
-    poly_class_ref = np.array([1, 3, 1, 2, 2, 1, 3, 2, 0, 2, 1])
-    np.testing.assert_equal(poly_class_arr, poly_class_ref)
+    assert snapshot == poly_class(obs, class_poly, class_id)

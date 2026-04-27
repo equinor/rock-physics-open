@@ -1,0 +1,21 @@
+# serializer version: 1
+# name: test_reflectivity_AR_ok_inputs
+  tuple(
+    '''
+      [6.80500489e-03 2.89607511e-03 7.36323924e-03 -1.66389857e-03
+       -5.31919121e-03 -1.14692281e-02 5.92466123e-03 -3.00647610e-02
+       1.54510484e-02 1.43082372e-02 1.43082372e-02]
+    ''',
+    '[ True  True  True  True  True  True  True  True  True  True  True]',
+  )
+# ---
+# name: test_reflectivity_SG_ok_inputs
+  tuple(
+    '''
+      [4.10671014e-03 3.33106408e-03 1.20659510e-02 -4.12071197e-03
+       -2.40950197e-03 -1.65877546e-02 8.20893553e-03 -3.89886085e-02
+       2.07100889e-02 1.45036513e-02 1.45036513e-02]
+    ''',
+    '[ True  True  True  True  True  True  True  True  True  True  True]',
+  )
+# ---
