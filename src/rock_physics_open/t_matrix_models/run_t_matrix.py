@@ -279,7 +279,9 @@ def run_t_matrix(
             # As mentioned: assume that there is no distinction between alpha_con and alpha_iso, that could only
             # happen if they differed from the start
 
-            # v_con, alpha_con or v_iso, alpha_iso can be returned as None from calc_pressure_vec
+            # v_con, alpha_con or v_iso, alpha_iso are returned as zero
+            # arrays from calc_pressure_vec when their branch is skipped by
+            # ctrl_connected; pick the populated alpha here.
             if ctrl_connected == 0:
                 v_con = np.zeros_like(v_iso)
                 alpha = alpha_iso
