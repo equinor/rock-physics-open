@@ -12,3 +12,6 @@ jobs:
 
   test:
     uses: ./.github/workflows/test.yaml
+
+  notebooks:
+    uses: ./.github/workflows/notebooks.yaml
