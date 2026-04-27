@@ -34,7 +34,6 @@ def test_run_t_matrix_with_opt_params_petec(
     snapshot: SnapshotAssertion,
     testdata: Path,
 ):
-    fname = testdata.joinpath("petec_opt_param.pkl")
     assert snapshot == run_t_matrix_with_opt_params_petec(
         min_k=k_min,
         min_mu=mu_min,
@@ -52,13 +51,12 @@ def test_run_t_matrix_with_opt_params_petec(
         visco=visco,
         tau=tau,
         freq=freq,
-        f_name=fname,
+        f_name=testdata / "petec_opt_param.pkl",
         fluid_sub=True,
     )
 
 
 def test_run_t_matrix_with_opt_params_exp(snapshot: SnapshotAssertion, testdata: Path):
-    fname = testdata.joinpath("exp_opt_param.pkl")
     assert snapshot == run_t_matrix_with_opt_params_exp(
         fl_k_orig=k_fl_orig,
         fl_rho_orig=rho_fl_orig,
@@ -74,7 +72,7 @@ def test_run_t_matrix_with_opt_params_exp(snapshot: SnapshotAssertion, testdata:
         visco=visco,
         tau=tau,
         freq=freq,
-        f_name=fname,
+        f_name=testdata / "exp_opt_param.pkl",
         fluid_sub=True,
     )
 
@@ -83,7 +81,6 @@ def test_run_t_matrix_opt_forward_model_petec(
     snapshot: SnapshotAssertion,
     testdata: Path,
 ):
-    fname = testdata.joinpath("petec_opt_param.pkl")
     assert snapshot == run_t_matrix_forward_model_with_opt_params_petec(
         min_k=k_min,
         min_mu=mu_min,
@@ -96,14 +93,13 @@ def test_run_t_matrix_opt_forward_model_petec(
         visco=visco,
         tau=tau,
         freq=freq,
-        f_name=fname,
+        f_name=testdata / "petec_opt_param.pkl",
     )
 
 
 def test_run_t_matrix_opt_forward_model_exp(
     snapshot: SnapshotAssertion, testdata: Path
 ):
-    fname = testdata.joinpath("exp_opt_param.pkl")
     assert snapshot == run_t_matrix_forward_model_with_opt_params_exp(
         fl_k=k_fl_orig,
         fl_rho=rho_fl_orig,
@@ -114,5 +110,5 @@ def test_run_t_matrix_opt_forward_model_exp(
         visco=visco,
         tau=tau,
         freq=freq,
-        f_name=fname,
+        f_name=testdata / "exp_opt_param.pkl",
     )
