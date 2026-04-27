@@ -134,7 +134,8 @@ docstring-code-format = true
 "*.ipynb" = ["E402", "E501"]
 
 [tool.pytest.ini_options]
-addopts = ["--color=yes", "--strict-markers"]
+addopts = ["--color=yes", "--strict-markers", "--import-mode=importlib"]
+pythonpath = ["tests"]
 
 [tool.basedpyright]
 pythonVersion = "3.11"
