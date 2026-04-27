@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.random import default_rng
+from syrupy.assertion import SnapshotAssertion
 
 from rock_physics_open.equinor_utilities.std_functions import brie, multi_wood, wood
 
@@ -13,22 +14,16 @@ rho_gas = np.array([210, 210, 210])
 rho_brine = np.array([1005, 1005, 1005])
 
 
-def test_wood():
-    k, rho = wood(s_gas, k_gas, rho_gas, k_brine, rho_brine)
-    k_ref = np.array([0.25e6, 2.8e9, 2.8e9])
-    rho_ref = np.array([210, 1005, 1005])
-    np.testing.assert_almost_equal(k, k_ref)
-    np.testing.assert_almost_equal(rho, rho_ref)
+def test_wood(snapshot: SnapshotAssertion):
+    assert snapshot == wood(s_gas, k_gas, rho_gas, k_brine, rho_brine)
 
 
-def test_brie():
+def test_brie(snapshot: SnapshotAssertion):
     e = 1.5
-    k = brie(s_gas, k_gas, s_brine, k_brine, s_oil, k_oil, e)
-    k_ref = np.array([0.25e6, 2.8e9, 0.9e9])
-    np.testing.assert_almost_equal(k, k_ref)
+    assert snapshot == brie(s_gas, k_gas, s_brine, k_brine, s_oil, k_oil, e)
 
 
-def test_wood_brie_mix():
+def test_wood_brie_mix(snapshot: SnapshotAssertion):
     rg = default_rng(12345)
     s_gas = 0.5 * rg.random(11)
     s_oil = 0.5 * rg.random(11)
@@ -39,38 +34,7 @@ def test_wood_brie_mix():
     e = 1.7
     k_w = wood(s_gas, k_gas, np.ones_like(s_gas), k_brine, np.ones_like(s_gas))[0]
     k_b = brie(s_gas, k_gas, s_brine, k_brine, s_oil, k_oil, e)
-    k_w_ref = np.array(
-        [
-            2197857.3032863,
-            1577741.8284602,
-            626980.6039708,
-            739237.2282665,
-            1277944.8143517,
-            1501669.3287616,
-            835514.1581449,
-            2675283.4430605,
-            743080.5661045,
-            530843.4103878,
-            2012865.2583938,
-        ]
-    )
-    k_b_ref = np.array(
-        [
-            1.2081004,
-            1.3510999,
-            1.6787997,
-            1.2305812,
-            1.111577,
-            1.3090595,
-            1.4636728,
-            1.4097729,
-            1.5565275,
-            1.5423466,
-            2.1396782,
-        ]
-    )
-    np.testing.assert_almost_equal(k_w, k_w_ref)
-    np.testing.assert_almost_equal(k_b / 1e9, k_b_ref)
+    assert snapshot == (k_w, k_b)
 
 
 s_gi = 0.0

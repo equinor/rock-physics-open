@@ -1,4 +1,4 @@
-default_stages: [pre-commit]
+default_stages: [ pre-commit ]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -15,6 +15,7 @@ repos:
       - id: check-json
         exclude: ".devcontainer|.vscode"
       - id: trailing-whitespace
+        exclude: __snapshots__
       - id: end-of-file-fixer
 
   - repo: local
