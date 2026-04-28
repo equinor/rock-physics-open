@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.0.0](https://github.com/equinor/rock-physics-open/compare/v0.6.1...v1.0.0) (2026-04-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* resolve pyright ignores for first-party code
+* remove snapshot utilities, replace with `syrupy`
+* **t_matrix_models:** remove unused rho_fluid parameter from carbonate_pressure_model
+* remove unused parameters
+
+### Features
+
+* add temperature and psi conversion functions to units module ([6011292](https://github.com/equinor/rock-physics-open/commit/6011292d3c2966107dc28b9ddd1064afe01442e4))
+* add units module with conversion functions from rock-physics ([7d52300](https://github.com/equinor/rock-physics-open/commit/7d523004fd9dd77a7072a3d2b9b370614b991537))
+
+
+### Bug Fixes
+
+* **classification_functions:** correct dtype annotations for class IDs ([782e641](https://github.com/equinor/rock-physics-open/commit/782e64194de0b36596f5d747c6831ce4816d92c0)), closes [#148](https://github.com/equinor/rock-physics-open/issues/148)
+* **classification:** correct poly_class type annotations ([ed774c5](https://github.com/equinor/rock-physics-open/commit/ed774c5a35267324d80809bd639345cb1b3755a6))
+* **t_matrix_models:** avoid mutating pressure inputs in carbonate_pressure_model ([25941e4](https://github.com/equinor/rock-physics-open/commit/25941e4c14b244e3966c2e55fbd8fb886d7e8459)), closes [#141](https://github.com/equinor/rock-physics-open/issues/141)
+* **t_matrix_models:** drop cast in calc_pressure_vec return ([6e5c179](https://github.com/equinor/rock-physics-open/commit/6e5c179b5f0511b0613207fa46a18953ee139e7f))
+
+
+### Documentation
+
+* standardize docstrings to NumPy convention and add pydoclint ([fd8bd3a](https://github.com/equinor/rock-physics-open/commit/fd8bd3a3d788b8e3ac5f0fa669d5cfd67b2f32be)), closes [#53](https://github.com/equinor/rock-physics-open/issues/53)
+
+
+### Code Refactoring
+
+* remove unused parameters ([54d0be6](https://github.com/equinor/rock-physics-open/commit/54d0be6dcbb9cd370097105ff396c448ef16704e))
+* resolve pyright ignores for first-party code ([78a222f](https://github.com/equinor/rock-physics-open/commit/78a222fcb4b397e2bd0d05609d2705b3127adf83))
+* **t_matrix_models:** remove unused rho_fluid parameter from carbonate_pressure_model ([8e9aab8](https://github.com/equinor/rock-physics-open/commit/8e9aab841eeacd43c2c7944d7bbc077c535126e1)), closes [#144](https://github.com/equinor/rock-physics-open/issues/144)
+
+
+### Tests
+
+* remove snapshot utilities, replace with `syrupy` ([a68beef](https://github.com/equinor/rock-physics-open/commit/a68beef25750076236813d7ef36cde3a14b68136))
+
 ## [0.6.1](https://github.com/equinor/rock-physics-open/compare/v0.6.0...v0.6.1) (2026-03-11)
 
 
