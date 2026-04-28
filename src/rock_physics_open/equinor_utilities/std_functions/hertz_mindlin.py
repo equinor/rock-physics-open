@@ -5,10 +5,10 @@ import numpy.typing as npt
 def hertz_mindlin(
     k: npt.NDArray[np.float64],
     mu: npt.NDArray[np.float64],
-    phi_c: npt.NDArray[np.float64],
+    phi_c: npt.NDArray[np.float64] | float,
     p: npt.NDArray[np.float64],
     shear_red: npt.NDArray[np.float64] | float,
-    coord: npt.NDArray[np.float64] | None = None,
+    coord: npt.NDArray[np.float64] | float | None = None,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Hertz-Mindlin Pressure-induced moduli increase at critical porosity.

@@ -1,15 +1,36 @@
-from typing import cast
+from typing import cast, overload
 
 import numpy as np
+import numpy.typing as npt
 
 from rock_physics_open.equinor_utilities.various_utilities.types import ArrayAnyDOrFloat
 
 
+@overload
 def moduli(
-    vp: ArrayAnyDOrFloat,
-    vs: ArrayAnyDOrFloat,
-    rhob: ArrayAnyDOrFloat,
-) -> tuple[ArrayAnyDOrFloat, ArrayAnyDOrFloat]:
+    vp: npt.NDArray[np.float64],
+    vs: npt.NDArray[np.float64] | float,
+    rhob: npt.NDArray[np.float64] | float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]: ...
+@overload
+def moduli(
+    vp: npt.NDArray[np.float64] | float,
+    vs: npt.NDArray[np.float64],
+    rhob: npt.NDArray[np.float64] | float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]: ...
+@overload
+def moduli(
+    vp: npt.NDArray[np.float64] | float,
+    vs: npt.NDArray[np.float64] | float,
+    rhob: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]: ...
+@overload
+def moduli(vp: float, vs: float, rhob: float) -> tuple[float, float]: ...
+def moduli(
+    vp: npt.NDArray[np.float64] | float,
+    vs: npt.NDArray[np.float64] | float,
+    rhob: npt.NDArray[np.float64] | float,
+) -> tuple[npt.NDArray[np.float64] | float, npt.NDArray[np.float64] | float]:
     """
     Calculate isotropic moduli from velocity and density.
 
