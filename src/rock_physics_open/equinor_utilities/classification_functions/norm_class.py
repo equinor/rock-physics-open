@@ -11,7 +11,7 @@ def norm_class(
     prior_prob: npt.NDArray[np.float64],
     class_id: npt.NDArray[np.int64],
     thresh: float = np.inf,
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+) -> tuple[npt.NDArray[np.int64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Normal distribution classification routine.
 

@@ -7,9 +7,9 @@ NULL_CLASS = 0
 def lin_class(
     obs: npt.NDArray[np.float64],
     class_mean: npt.NDArray[np.float64],
-    class_id: npt.NDArray[np.float64],
+    class_id: npt.NDArray[np.int64],
     thresh: float = np.inf,
-) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
+) -> tuple[npt.NDArray[np.int64], npt.NDArray[np.float64]]:
     """
     Linear classification routine. All data points are assigned a class, unless a threshold is set.
 

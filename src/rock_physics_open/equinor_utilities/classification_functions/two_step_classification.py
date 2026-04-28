@@ -17,7 +17,7 @@ def gen_two_step_class_stats(
     npt.NDArray[np.float64],
     npt.NDArray[np.int64],
     npt.NDArray[np.int64],
-    npt.NDArray[np.float64],
+    npt.NDArray[np.int64],
 ]:
     """
     The observations are an n x m array, where n is the number of observations and m is the number of variables.
