@@ -1,16 +1,34 @@
 version: 2
+
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/" # checks workflow files in ".github/workflows"
+    directory: "/"
+    groups:
+      ci:
+        patterns:
+          - "*"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "uv"
     directory: "/"
-    schedule:
-      interval: "monthly"
     groups:
       dev:
         dependency-type: "development"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    groups:
+      pre-commit:
         patterns:
           - "*"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
