@@ -1,49 +1,70 @@
 default_stages: [ pre-commit ]
+default_install_hook_types: [ pre-commit, commit-msg ]
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.4.0
     hooks:
-      - id: check-ast
-        language_version: python3.11
-      - id: debug-statements
-      - id: check-merge-conflict
+      - id: conventional-pre-commit
+        name: "Validate: using conventional commit message"
+        stages: [ commit-msg ]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
       - id: detect-private-key
+        name: "Validate: no committed private keys"
+      - id: check-merge-conflict
+        name: "Validate: no merge conflict markers"
+      - id: debug-statements
+        name: "Validate: no debug statements"
       - id: check-case-conflict
-      - id: check-toml
-      - id: check-yaml
-      - id: check-json
-        exclude: ".devcontainer|.vscode"
+        name: "Validate: no case conflicting filenames"
       - id: trailing-whitespace
+        name: "Validate: no trailing whitespace"
         exclude: __snapshots__
+      - id: mixed-line-ending
+        name: "Validate: no mixed line endings"
       - id: end-of-file-fixer
+        name: "Validate: files end with single newline"
+      - id: name-tests-test
+        name: "Validate: correct filenames for tests"
+        args: [ --pytest-test-first ]
+        exclude: "tests/(data|fixtures)"
+      - id: check-toml
+        name: "Check: parse TOML files"
+      - id: check-yaml
+        name: "Check: parse YAML files"
+      - id: check-json
+        name: "Check: parse JSON files"
+        exclude: ".devcontainer"
 
   - repo: local
     hooks:
-      - id: ruff
+      - id: ruff-check
         name: "Python: lint"
         entry: uv run ruff check --fix
-        language: system
         files: .*\.py$
+        language: system
         pass_filenames: false
 
       - id: ruff-format
         name: "Python: format"
         entry: uv run ruff format
+        files: .*\.py$
         language: system
         pass_filenames: false
-        files: .*\.py$
 
       - id: pydoclint
-        name: "Python: docstring lint"
+        name: "Python: docstrings"
         entry: uv run pydoclint src tests
+        files: .*\.py$
         language: system
         pass_filenames: false
-        files: .*\.py$
 
       - id: basedpyright
         name: "Python: static type checking"
         entry: uv run basedpyright
+        files: .*\.py$
         language: system
         pass_filenames: false
-        files: .*\.py$
