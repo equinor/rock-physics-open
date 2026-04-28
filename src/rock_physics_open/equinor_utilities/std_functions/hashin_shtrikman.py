@@ -7,10 +7,10 @@ from rock_physics_open.equinor_utilities.gen_utilities import dim_check_vector
 
 
 def hashin_shtrikman(
-    k1: npt.NDArray[np.float64],
-    mu1: npt.NDArray[np.float64],
-    k2: npt.NDArray[np.float64],
-    mu2: npt.NDArray[np.float64],
+    k1: npt.NDArray[np.float64] | float,
+    mu1: npt.NDArray[np.float64] | float,
+    k2: npt.NDArray[np.float64] | float,
+    mu2: npt.NDArray[np.float64] | float,
     f: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
@@ -45,10 +45,10 @@ def hashin_shtrikman(
 
 
 def hashin_shtrikman_average(
-    k1: npt.NDArray[np.float64],
-    mu1: npt.NDArray[np.float64],
-    k2: npt.NDArray[np.float64],
-    mu2: npt.NDArray[np.float64],
+    k1: npt.NDArray[np.float64] | float,
+    mu1: npt.NDArray[np.float64] | float,
+    k2: npt.NDArray[np.float64] | float,
+    mu2: npt.NDArray[np.float64] | float,
     f: npt.NDArray[np.float64],
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
