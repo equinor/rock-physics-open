@@ -224,7 +224,6 @@ def carbon_dioxide_pressure(
     absolute_temperature: npt.NDArray[np.float64],
     density: npt.NDArray[np.float64],
     d_density: Literal[0, 1] = ...,
-    d_temperature: Literal[0, 1, 2] = ...,
     isentropic: bool = ...,
 ) -> npt.NDArray[np.float64]: ...
 
@@ -234,7 +233,6 @@ def carbon_dioxide_pressure(
     absolute_temperature: npt.NDArray[np.float64],
     density: npt.NDArray[np.float64],
     d_density: Literal[2],
-    d_temperature: Literal[0, 1, 2] = ...,
     isentropic: bool = ...,
 ) -> None: ...
 
@@ -243,7 +241,6 @@ def carbon_dioxide_pressure(
     absolute_temperature: npt.NDArray[np.float64],
     density: npt.NDArray[np.float64],
     d_density: Literal[0, 1, 2] = 0,
-    d_temperature: Literal[0, 1, 2] = 0,
     isentropic: bool = False,
 ) -> npt.NDArray[np.float64] | None:
     """
@@ -257,24 +254,15 @@ def carbon_dioxide_pressure(
         CO2 density (kg / m^3).
     d_density
         Degree of derivation wrt. density.
-    d_temperature
-        Degree of derivation wrt. temperature.
     isentropic
         Correction for isentropic conditions. Relevant primarily for isentropic bulk modulus
 
     Returns
     -------
     Result.
-
-    Raises
-    ------
-    ValueError
-        If d_temperature must be 0, but was {d_temperature}.
     """
     tau = CO2_CRITICAL_TEMPERATURE / absolute_temperature
     delta = density / CO2_CRITICAL_DENSITY
-    if d_temperature != 0:
-        raise ValueError(f"d_temperature must be 0, but was {d_temperature}")
     if d_density == 0:
         return pa_to_mpa(
             density
