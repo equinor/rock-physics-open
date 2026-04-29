@@ -1,5 +1,5 @@
 from importlib.resources import as_file, files
-from typing import Any, Literal, overload
+from typing import Any, Literal
 
 import numpy as np
 import numpy.typing as npt
@@ -219,32 +219,12 @@ def co2_residual_helmholtz_energy(
     return res
 
 
-@overload
 def carbon_dioxide_pressure(
     absolute_temperature: npt.NDArray[np.float64],
     density: npt.NDArray[np.float64],
-    d_density: Literal[0, 1] = ...,
-    isentropic: bool = ...,
-) -> npt.NDArray[np.float64]: ...
-
-
-@overload
-def carbon_dioxide_pressure(
-    absolute_temperature: npt.NDArray[np.float64],
-    density: npt.NDArray[np.float64],
-    d_density: Literal[2],
-    isentropic: bool = ...,
-) -> None: ...
-
-
-def carbon_dioxide_pressure(
-    absolute_temperature: npt.NDArray[np.float64],
-    density: npt.NDArray[np.float64],
-    d_density: Literal[0, 1, 2] = 0,
-    isentropic: bool = False,
-) -> npt.NDArray[np.float64] | None:
+) -> npt.NDArray[np.float64]:
     """
-    CO2 pressure (MPa) as given by Table 3 of Span & Wagner [2].
+    CO2 pressure as given by Table 3 of Span & Wagner [2].
 
     Parameters
     ----------
@@ -252,37 +232,20 @@ def carbon_dioxide_pressure(
         Temperature in K.
     density
         CO2 density (kg / m^3).
-    d_density
-        Degree of derivation wrt. density.
-    isentropic
-        Correction for isentropic conditions. Relevant primarily for isentropic bulk modulus
 
     Returns
     -------
-    Result.
+    CO2 pressure [MPa]
     """
     tau = CO2_CRITICAL_TEMPERATURE / absolute_temperature
     delta = density / CO2_CRITICAL_DENSITY
-    if d_density == 0:
-        return pa_to_mpa(
-            density
-            * CO2_GAS_CONSTANT
-            * absolute_temperature
-            * (
-                1
-                + delta
-                * co2_residual_helmholtz_energy(
-                    delta=delta,
-                    tau=tau,
-                    dd=1,
-                    dt=0,
-                )
-            )
-        )
-    if d_density == 1:
-        first = (
-            2
-            * delta
+    return pa_to_mpa(
+        density
+        * CO2_GAS_CONSTANT
+        * absolute_temperature
+        * (
+            1
+            + delta
             * co2_residual_helmholtz_energy(
                 delta=delta,
                 tau=tau,
@@ -290,47 +253,78 @@ def carbon_dioxide_pressure(
                 dt=0,
             )
         )
-        second = delta**2 * co2_residual_helmholtz_energy(
+    )
+
+
+def carbon_dioxide_pressure_isentropic(
+    absolute_temperature: npt.NDArray[np.float64],
+    density: npt.NDArray[np.float64],
+) -> npt.NDArray[np.float64]:
+    """
+    CO2 pressure as given by Table 3 of Span & Wagner [2]. Relevant primarily for isentropic bulk modulus calculations.
+
+    Parameters
+    ----------
+    absolute_temperature
+        Temperature in K.
+    density
+        CO2 density (kg / m^3).
+
+    Returns
+    -------
+    CO2 pressure [MPa]
+    """
+    tau = CO2_CRITICAL_TEMPERATURE / absolute_temperature
+    delta = density / CO2_CRITICAL_DENSITY
+
+    first = (
+        2
+        * delta
+        * co2_residual_helmholtz_energy(
             delta=delta,
             tau=tau,
-            dd=2,
+            dd=1,
             dt=0,
         )
-        if isentropic is False:
-            third = 0
-        else:
-            # See Table 3 of Span & Wagner (speed of sound)
-            nom = (
-                1
-                + delta
-                * co2_residual_helmholtz_energy(
-                    delta=delta,
-                    tau=tau,
-                    dd=1,
-                    dt=0,
-                )
-                - delta
-                * tau
-                * co2_residual_helmholtz_energy(
-                    delta=delta,
-                    tau=tau,
-                    dd=1,
-                    dt=1,
-                )
-            ) ** 2
-            den = tau**2 * (
-                co2_helmholtz_energy(
-                    delta=delta,
-                    tau=tau,
-                    dd=0,
-                    dt=2,
-                )
-            )
-            third = -nom / den
-        return pa_to_mpa(
-            absolute_temperature * CO2_GAS_CONSTANT * (1 + first + second + third)
+    )
+    second = delta**2 * co2_residual_helmholtz_energy(
+        delta=delta,
+        tau=tau,
+        dd=2,
+        dt=0,
+    )
+
+    # See Table 3 of Span & Wagner (speed of sound)
+    nom = (
+        1
+        + delta
+        * co2_residual_helmholtz_energy(
+            delta=delta,
+            tau=tau,
+            dd=1,
+            dt=0,
         )
-    return None
+        - delta
+        * tau
+        * co2_residual_helmholtz_energy(
+            delta=delta,
+            tau=tau,
+            dd=1,
+            dt=1,
+        )
+    ) ** 2
+    den = tau**2 * (
+        co2_helmholtz_energy(
+            delta=delta,
+            tau=tau,
+            dd=0,
+            dt=2,
+        )
+    )
+    third = -nom / den
+    return pa_to_mpa(
+        absolute_temperature * CO2_GAS_CONSTANT * (1 + first + second + third)
+    )
 
 
 def saturated_liquid_density(
@@ -719,10 +713,8 @@ def carbon_dioxide_bulk_modulus(
     density: npt.NDArray[np.float64],
 ) -> npt.NDArray[np.float64]:
     """Isentropic bulk modulus, derived from the expression for speed of sound in Table 3 of Span & Wagner."""
-    d_pressure = carbon_dioxide_pressure(
+    d_pressure = carbon_dioxide_pressure_isentropic(
         absolute_temperature=absolute_temperature,
         density=density,
-        d_density=1,
-        isentropic=True,
     )
     return mpa_to_pa(density * d_pressure)
