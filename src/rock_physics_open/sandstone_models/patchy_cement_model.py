@@ -161,7 +161,7 @@ def patchy_cement_model_weight(
         shear_red=shear_red,
     )
 
-    k_up, mu_up = constant_cement_model_dry(
+    k_up, mu_up, _ = constant_cement_model_dry(
         k_min=k_min,
         mu_min=mu_min,
         k_cem=k_cem,
@@ -171,7 +171,6 @@ def patchy_cement_model_weight(
         phi_c=phi_c,
         n=n,
         shear_red=shear_red,
-        return_k_zero=False,
         extrapolate_to_max_phi=True,
     )
 
@@ -411,7 +410,7 @@ def patchy_cement_model_dry(
         shear_red=shear_red,
     )
 
-    k_up, mu_up = constant_cement_model_dry(
+    k_up, mu_up, _ = constant_cement_model_dry(
         k_min=k_min,
         mu_min=mu_min,
         k_cem=k_cem,
@@ -422,7 +421,6 @@ def patchy_cement_model_dry(
         n=n,
         shear_red=shear_red,
         extrapolate_to_max_phi=True,
-        return_k_zero=False,
     )
 
     # Special case for the constant cement model that represents the mean of the data

@@ -223,7 +223,7 @@ def patchy_cement_pressure_fluid_substitution(
     )
 
     # Upper bounds for estimation of weight W
-    k_up, mu_up = constant_cement_model_dry(
+    k_up, mu_up, _ = constant_cement_model_dry(
         k_min=k_min,
         mu_min=mu_min,
         k_cem=k_cem,
@@ -234,7 +234,6 @@ def patchy_cement_pressure_fluid_substitution(
         n=n,
         shear_red=shear_red,
         extrapolate_to_max_phi=False,
-        return_k_zero=False,
     )
 
     # Handling of samples that violate the assumptions of the Patchy Cement
