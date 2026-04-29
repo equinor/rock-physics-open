@@ -582,11 +582,10 @@ def array_carbon_dioxide_density(
     pressure = np.asarray(pressure)
     bounds = _determine_density_bounds(absolute_temperature, pressure, force_vapor)
     iv = _find_initial_density_values(bounds, absolute_temperature, pressure)
-    opt = scipy.optimize.newton(  # pyright: ignore[reportCallIssue, reportUnknownVariableType]
-        lambda x: carbon_dioxide_pressure(absolute_temperature, x) - pressure,  # pyright: ignore[reportArgumentType]
+    opt_root = scipy.optimize.newton(
+        lambda x: carbon_dioxide_pressure(absolute_temperature, x) - pressure,
         x0=iv,
         maxiter=10,
-        full_output=True,
     )
     # scipy.optimize.newton may not always converge. We need to determine which of the elements of the solution are
     #  invalid. The opt.converged variable does not seem to suffice, so we perform separate checks. First, check that
@@ -594,7 +593,7 @@ def array_carbon_dioxide_density(
     invalid = ~np.isclose(
         carbon_dioxide_pressure(
             absolute_temperature=absolute_temperature,
-            density=opt.root,  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType]
+            density=opt_root,
         ),
         pressure,
         atol=1e-5,
@@ -603,16 +602,16 @@ def array_carbon_dioxide_density(
 
     # Next, check if the solution is anywhere out of bounds (since newton does not support brackets), and check for nan
     # values.
-    invalid |= (  # pyright: ignore[reportUnknownVariableType]
-        (opt.root < bounds[:, 0]) | (opt.root > bounds[:, 1]) | np.isnan(opt.root)  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    invalid |= (
+        (opt_root < bounds[:, 0]) | (opt_root > bounds[:, 1]) | np.isnan(opt_root)
     )
 
     # Finally, use the robust density method to determine the invalid results
-    sol = opt.root  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+    sol = opt_root
     sol[invalid] = carbon_dioxide_density(
         absolute_temperature[invalid], pressure[invalid], force_vapor=force_vapor
     )
-    return sol  # pyright: ignore[reportUnknownVariableType]
+    return sol
 
 
 def _calculate_carbon_dioxide_density(

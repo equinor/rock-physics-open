@@ -1,7 +1,7 @@
 import pickle
 import sys
 from pathlib import Path
-from typing import Any, Literal, Required, TypedDict, assert_never, cast
+from typing import Any, Literal, Required, TypedDict, assert_never
 
 import numpy as np
 import numpy.typing as npt
@@ -17,7 +17,6 @@ def gen_opt_routine(
     x_init: npt.NDArray[np.float64],
     low_bound: npt.NDArray[np.float64],
     high_bound: npt.NDArray[np.float64],
-    **opt_kwargs: Any,
 ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """
     Run optimisation with the given opt_function in curve_fit.
@@ -38,8 +37,6 @@ def gen_opt_routine(
         parameter low bound
     high_bound
         parameter high bound
-    **opt_kwargs
-        optional meta-parameters to the optimisation function
 
     Returns
     -------
@@ -57,18 +54,14 @@ def gen_opt_routine(
         step fails.
     """
     try:
-        opt_params, _ = cast(
-            tuple[npt.NDArray[np.float64], Any],
-            curve_fit(
-                opt_function,
-                x_data_orig,
-                y_data.flatten("F"),
-                x_init,
-                bounds=(low_bound, high_bound),
-                method="trf",
-                loss="soft_l1",
-                **opt_kwargs,
-            ),
+        opt_params, _ = curve_fit(
+            opt_function,
+            x_data_orig,
+            y_data.flatten("F"),
+            x_init,
+            bounds=(low_bound, high_bound),
+            method="trf",
+            loss="soft_l1",
         )
 
     except ValueError:
