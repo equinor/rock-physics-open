@@ -1,7 +1,7 @@
 import ctypes
-import os
 import platform
 import re
+import subprocess
 from typing import Any
 
 import numpy as np
@@ -30,15 +30,25 @@ def set_ternary_figure(
         pix_x = ctypes.windll.gdi32.GetDeviceCaps(dc, HORZRES)
         pix_y = ctypes.windll.gdi32.GetDeviceCaps(dc, VERTRES)
     elif platform.system() == "Linux":
-        f = os.popen("xrandr | grep '*'")
-        matches = re.findall(r"\d+", f.read())
+        output = subprocess.run(
+            "xrandr | grep '*'",
+            shell=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        matches = re.findall(r"\d+", output)
         if len(matches) >= 2:
             pix_x, pix_y = np.array(matches, dtype=int)[0:2]
         else:
             pix_x, pix_y = 1920, 1080
     elif platform.system() == "Darwin":
-        f = os.popen("system_profiler SPDisplaysDataType | grep Resolution")
-        matches = re.findall(r"\d+", f.read())
+        output = subprocess.run(
+            "system_profiler SPDisplaysDataType | grep Resolution",
+            shell=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        matches = re.findall(r"\d+", output)
         if len(matches) >= 2:
             pix_x, pix_y = np.array(matches, dtype=int)[0:2]
         else:
