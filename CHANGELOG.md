@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/equinor/rock-physics-open/compare/v1.0.0...v1.0.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* **std_functions:** broaden type signatures to accept scalar inputs ([e4169fa](https://github.com/equinor/rock-physics-open/commit/e4169fac2edd4709ceb37fcfc078ecfdd0d06d26)), closes [#168](https://github.com/equinor/rock-physics-open/issues/168) [#169](https://github.com/equinor/rock-physics-open/issues/169) [#170](https://github.com/equinor/rock-physics-open/issues/170)
+* **ternary_plots:** replace deprecated os.popen with subprocess.run ([e8994df](https://github.com/equinor/rock-physics-open/commit/e8994dfdf11cc214539d5a8d8349899871319fcb))
+
 ## [1.0.0](https://github.com/equinor/rock-physics-open/compare/v0.6.1...v1.0.0) (2026-04-28)
 
 
