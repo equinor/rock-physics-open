@@ -11,9 +11,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.11", "3.12", "3.13", "3.14" ]
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
-        module-resolution: [ "uv.lock" ]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        module-resolution: ["uv.lock"]
         # to ensure the "most outdated" versions still work
         include:
           - os: windows-latest
@@ -36,11 +36,10 @@ jobs:
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: ${{ matrix.python-version }}
-          enable-cache: true
-          cache-suffix: ${{ matrix.module-resolution }}
+          enable-cache: false
 
       - name: Install dependencies
         run: uv sync ${{ matrix.module-resolution == 'uv.lock' && '--locked' || '--resolution=lowest-direct' }}
 
-      - name: pytest
-        run: uv run pytest
+      - name: Run pytest
+        run: uv run --no-sync pytest
