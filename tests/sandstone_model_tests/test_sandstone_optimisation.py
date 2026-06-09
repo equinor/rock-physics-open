@@ -56,8 +56,8 @@ def params(testdata: Path) -> SandstoneOptParams:
 
 def test_friable_optimisation(
     snapshot: SnapshotAssertion,
-    testdata: Path,
     params: SandstoneOptParams,
+    tmp_path: Path,
 ):
     assert snapshot == friable_model_optimisation(
         k_min=params.k_min,
@@ -70,14 +70,14 @@ def test_friable_optimisation(
         vp=params.vp,
         vs=params.vs,
         rhob=params.rhob,
-        file_out_str=str(testdata / "friable_model_optimisation.pkl"),
+        file_out_str=str(tmp_path / "friable_model_optimisation.pkl"),
     )
 
 
 def test_constant_cement_optimisation(
     snapshot: SnapshotAssertion,
-    testdata: Path,
     params: SandstoneOptParams,
+    tmp_path: Path,
 ):
     assert snapshot == constant_cement_model_optimisation(
         k_min=params.k_min,
@@ -92,14 +92,14 @@ def test_constant_cement_optimisation(
         vp=params.vp,
         vs=params.vs,
         rhob=params.rhob,
-        file_out_str=str(testdata / "constant_cement_model_optimisation.pkl"),
+        file_out_str=str(tmp_path / "constant_cement_model_optimisation.pkl"),
     )
 
 
 def test_patchy_cement_optimisation(
     snapshot: SnapshotAssertion,
-    testdata: Path,
     params: SandstoneOptParams,
+    tmp_path: Path,
 ):
     assert snapshot == patchy_cement_model_optimisation(
         k_min=params.k_min,
@@ -116,5 +116,5 @@ def test_patchy_cement_optimisation(
         vs=params.vs,
         rhob=params.rhob,
         phi_c=params.phi_c,
-        file_out_str=str(testdata / "patchy_cement_model_optimisation.pkl"),
+        file_out_str=str(tmp_path / "patchy_cement_model_optimisation.pkl"),
     )
