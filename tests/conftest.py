@@ -2,4 +2,5 @@
 pytest_plugins = [
     "fixtures.snapshot",
     "fixtures.testdata",
+    "fixtures.tmatrix_parameters",
 ]

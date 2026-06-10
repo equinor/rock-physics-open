@@ -9,10 +9,9 @@ from rock_physics_open.equinor_utilities.optimisation_utilities import (
 
 def test_opt_param_to_ascii_petec(
     snapshot: SnapshotAssertion,
-    testdata: Path,
+    tmatrix_parameters_petec: Path,
     tmp_path: Path,
 ):
-    tmatrix_parameters_petec = testdata / "petec_opt_param_test.pkl"
     output_ascii_file = tmp_path / "petec_opt_param.txt"
     opt_param_to_ascii(
         tmatrix_parameters_petec,
@@ -24,10 +23,9 @@ def test_opt_param_to_ascii_petec(
 
 def test_opt_param_to_ascii_exp(
     snapshot: SnapshotAssertion,
-    testdata: Path,
+    tmatrix_parameters_exp: Path,
     tmp_path: Path,
 ):
-    tmatrix_parameters_exp: Path = testdata / "exp_opt_param_test.pkl"
     output_ascii_file = tmp_path / "exp_opt_param.txt"
     opt_param_to_ascii(
         tmatrix_parameters_exp,
