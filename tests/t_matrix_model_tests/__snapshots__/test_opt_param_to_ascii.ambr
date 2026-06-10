@@ -2,26 +2,24 @@
 # name: test_opt_param_to_ascii_exp
   '''
   Optimisation version: Exploration type optimisation
-  Angle of symmetry plane [°]:  25.3779
-  Fraction of anisotropic inclusions:  0.3561
-  Fraction of connected inclusions:  0.0028
-  Optimal aspect ratios for inclusion sets:  [0.99354368 0.01810085]
-  Ratio of volume for inclusion sets:  [0.90320226 0.09679774]
-  Matrix (carbonate) bulk modulus [Pa]:  55945124675.2165
-  Matrix (carbonate) shear modulus [Pa]:  31872182465.5415
-  Matrix (carbonate) density [kg/m^3]:  2651.4431
-  Mud/shale bulk modulus [Pa]:  34990844749.9047
-  Mud/shale shear modulus [Pa]:  19999986346.6430
-  Mud/shale density [kg/m^3]:  2500.0000
+  Fraction of anisotropic inclusions:  0.0000
+  Fraction of connected inclusions:  0.4199
+  Optimal aspect ratios for inclusion sets:  [0.62382444 0.05358042]
+  Ratio of volume for inclusion sets:  [0.61545994 0.38454006]
+  Matrix (carbonate) bulk modulus [Pa]:  70768418030.9470
+  Matrix (carbonate) shear modulus [Pa]:  30778780360.6217
+  Matrix (carbonate) density [kg/m^3]:  2650.0000
+  Mud/shale bulk modulus [Pa]:  10530423231.3994
+  Mud/shale shear modulus [Pa]:  19999390878.1525
+  Mud/shale density [kg/m^3]:  2503.1908
   '''
 # ---
 # name: test_opt_param_to_ascii_petec
   '''
   Optimisation version: PETEC (Mineral input) optimisation
-  Angle of symmetry plane [°]:  26.8954
-  Fraction of anisotropic inclusions:  0.9922
-  Fraction of connected inclusions:  0.0000
-  Optimal aspect ratios for inclusion sets:  [0.9998867 0.0181   ]
-  Ratio of volume for inclusion sets:  [0.95030486 0.04969514]
+  Fraction of anisotropic inclusions:  0.0000
+  Fraction of connected inclusions:  0.9970
+  Optimal aspect ratios for inclusion sets:  [0.50054538 0.05497138]
+  Ratio of volume for inclusion sets:  [0.50009148 0.49990852]
   '''
 # ---
