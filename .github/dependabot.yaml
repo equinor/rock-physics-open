@@ -5,8 +5,7 @@ updates:
     directory: "/"
     groups:
       ci:
-        patterns:
-          - "*"
+        patterns: ["*"]
     schedule:
       interval: "monthly"
     cooldown:
@@ -15,8 +14,13 @@ updates:
   - package-ecosystem: "uv"
     directory: "/"
     groups:
+      prod:
+        dependency-type: "production"
       dev:
         dependency-type: "development"
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
     schedule:
       interval: "monthly"
     cooldown:
@@ -26,8 +30,7 @@ updates:
     directory: "/"
     groups:
       pre-commit:
-        patterns:
-          - "*"
+        patterns: ["*"]
     schedule:
       interval: "monthly"
     cooldown:

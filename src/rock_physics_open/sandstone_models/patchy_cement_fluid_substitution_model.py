@@ -57,34 +57,10 @@ def patchy_cement_pressure_fluid_substitution(
     npt.NDArray[np.float64],
 ]:
     """
-    Patchy cement model, developed by Per Avseth and Norunn Skjei.
+    Patchy cement fluid and pressure substitution model.
 
-    A sandstone model in which part of the matrix is pressure sensitive, and part is cemented.
-
-    Control parameters with default value:
-    model_type = 'weight': A sample by sample weight between cemented (upper) and friable (lower) bound are calculated.
-        The alternative is 'cement_fraction', in which the weights are calculated from one constant cement model
-
-    phi_below_zero='disregard': Values with negative porosity will either have their value snapped to zero ('snap')
-    or the input value will be returned ('disregard'). These option should give the same
-    result.
-
-    phi_above_phi_c = 'disregard':	Values with porosity above critical porosity will either have their values snapped
-    to critical porosity ('snap') or the input value will be returned ('disregard').
-
-    k_sat_above_k_min='disregard': Values with saturated bulk modulus above the mineral bulk modulus will have their
-    value snapped to the mineral modulus ('snap') or the input value will be returned ('disregard').
-
-    above_upper_bound='snap': 	Values with moduli above upper bound will either be snapped to upper bound ('snap')
-    or the input value will be returned ('disregard').
-
-    below_lower_bound='disregard': Values with moduli below lower bound will either be snapped to lower bound ('snap')
-    or the input value returned ('disregard').
-
-    Comment
-    -------
-    Based on program by Norunn Skjei.
-    Translated to Python by Harald Flesche.
+    This sandstone model combines a pressure-sensitive frame and a cemented frame,
+    then performs fluid substitution and effective-pressure substitution.
 
     Parameters
     ----------
@@ -93,21 +69,21 @@ def patchy_cement_pressure_fluid_substitution(
     mu_min
         Mineral shear modulus [Pa].
     rho_min
-        Mineral density [kg/m^3]
+        Mineral density [kg/m³]
     k_cem
         Sandstone cement bulk modulus [Pa].
     mu_cem
         Sandstone cement shear modulus [Pa].
     rho_cem
-        Cement density [kg/m^3]
+        Cement density [kg/m³]
     k_fl_old
         Initial fluid bulk modulus for sandstone fluid [Pa].
     rho_fl_old
-        Initial fluid bulk density for sandstone fluid [kg/m^3].
+        Initial fluid bulk density for sandstone fluid [kg/m³].
     k_fl_new
         Substituted fluid bulk modulus for sandstone fluid [Pa].
     rho_fl_new
-        Substituted fluid bulk density for sandstone fluid [kg/m^3].
+        Substituted fluid bulk density for sandstone fluid [kg/m³].
     phi
         Total porosity [fraction].
     p_eff_old
@@ -119,13 +95,13 @@ def patchy_cement_pressure_fluid_substitution(
     vs_old
         Initial s-wave velocity [m/s].
     rho_b_old
-        Initial bulk density [kg/m^3].
+        Initial bulk density [kg/m³].
     p_eff_low
         Lower bound effective pressure [Pa].
     frac_cem_up
         Upper bound cement volume fraction [fraction].
     frac_cem
-        frac_cem_up
+        Cement volume fraction [fraction].
     shear_red
         Shear reduction factor for sandstone [fraction].
     phi_c
@@ -135,17 +111,30 @@ def patchy_cement_pressure_fluid_substitution(
     n
         Coordination number [unitless].
     model_type
-        Version of model, either 'weight' or 'cement_fraction'
+        Weighting mode. Use `"weight"` for sample-wise interpolation between
+        upper and lower bounds, or `"cement_fraction"` for interpolation based
+        on one constant cement model.
     phi_below_zero
-        Control for handling of negative porosity samples.
+        Handling of negative porosity samples. Use `"snap"` to set porosity to
+        zero, or `"disregard"` to return input values for those samples.
     phi_above_phi_c
-        Control for handling of porosity samples above critical porosity.
+        Handling of porosity values above critical porosity. Use `"snap"` to
+        set porosity to `phi_c`, or `"disregard"` to return input values for
+        those samples.
     k_sat_above_k_min
-        Control for handling of bulk modulus samples above mineral bulk modulus.
+        Handling of samples where saturated bulk modulus exceeds mineral bulk
+        modulus (or saturated shear modulus exceeds mineral shear modulus). Use
+        `"snap"` to set the mineral moduli equal to the (higher) saturated
+        moduli (i.e. ``k_min ← k_sat`` and ``mu_min ← mu_sat``), or
+        `"disregard"` to return input values for those samples.
     above_upper_bound
-        Control for handling of samples above the upper bound.
+        Handling of samples with moduli above the upper bound. Use `"snap"` to
+        clamp to the upper bound, or `"disregard"` to return input values for
+        those samples.
     below_lower_bound
-        Control for handling of samples below the lower bound.
+        Handling of samples with moduli below the lower bound. Use `"snap"` to
+        clamp to the lower bound, or `"disregard"` to return input values for
+        those samples.
 
     Returns
     -------
@@ -154,21 +143,27 @@ def patchy_cement_pressure_fluid_substitution(
     vs_new
         Saturated S-velocity after fluid and pressure substitution [m/s].
     rho_b_new
-        Saturated density after fluid and pressure substitution [kg/m^3].
+        Saturated density after fluid and pressure substitution [kg/m³].
     ai_new
-        Saturated acoustic impedance after fluid and pressure substitution [kg/m^3 x m/s].
+        Saturated acoustic impedance after fluid and pressure substitution [kg/m³ x m/s].
     vpvs_new
         Saturated Vp/Vs ratio after fluid and pressure substitution [unitless].
-    k_sat_new
-        New saturated rock bulk modulus [Pa].
-    mu_new
-        New shear modulus [Pa].
-    wk
+    w_k
         Weight for k between upper and lower bound.
-    wmu
+    w_mu
         Weight for mu between upper and lower bound.
     idx_valid
         Boolean mask of samples where fluid substitution is performed.
+    vp_res
+        P-wave velocity for the pressure-only substitution case [m/s].
+    vs_res
+        S-wave velocity for the pressure-only substitution case [m/s].
+    rho_res
+        Bulk density for the pressure-only substitution case [kg/m³].
+
+    Notes
+    -----
+    Developed by Per Avseth and Norunn Skjei, and translated to Python by Harald Flesche.
     """
     # Original saturated bulk and shear modulus
     k_sat_old, mu_old = std_functions.moduli(vp=vp_old, vs=vs_old, rhob=rho_b_old)

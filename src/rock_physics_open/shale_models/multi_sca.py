@@ -14,40 +14,29 @@ def multi_sca(
     npt.NDArray[np.float64],
     npt.NDArray[np.float64],
 ]:
-    """SCA - Effective elastic moduli using Berryman's Self-Consistent (Coherent Potential Approximation) method.
+    """Estimate effective elastic moduli using a multi-phase SCA formulation.
 
-    -----------------------------------------------
+    Uses Berryman's self-consistent (coherent potential approximation) method.
+    Inputs are provided as repeated groups per phase in this order:
+    `(k, mu, rho, asp, frac)`.
 
-    Inputs for each phase:
+    For each phase tuple:
+    - `k` is mineral bulk modulus [Pa].
+    - `mu` is mineral shear modulus [Pa].
+    - `rho` is mineral density [kg/m³].
+    - `asp` is inclusion aspect ratio [ratio].
+    - `frac` is the phase fraction in the matrix [fraction].
 
-    k:      mineral bulk modulus [Pa]
-
-    mu:     mineral shear modulus [Pa]
-
-    rho:    mineral density [kg/m^3]
-
-    asp:    aspect ratio for inclusions [ratio]
-
-    frac:   fraction of matrix that is made up of this mineral [fraction]
-
-    Additional inputs:
-
-    tol:    tolerance parameter (scalar) [unitless]
-
-    The sum of all fractions must add to one, and it will be normalised to one if it differs.
-
-    =======================================================
-
-    Based on function by T. Mukerji, SRB, Stanford University, 1994.
-
-    Ported to Python by Harald Flesche, Equinor 2015.
+    The sum of all phase fractions must be 1.0 for each sample. If it differs,
+    the fractions are normalized internally before iteration.
 
     Parameters
     ----------
     *args
-        List or tuple containing multiples of elastic properties as explained above, all numpy arrays.
+        Repeated phase-property arrays in the order `(k, mu, rho, asp, frac)`
+        for each phase.
     tol
-        Tolerance for the SCA iterations.
+        Scalar tolerance parameter for the SCA iterations [unitless].
 
     Returns
     -------
@@ -56,8 +45,12 @@ def multi_sca(
     mu_sc
         Effective shear modulus [Pa].
     rhob
-        Effective density [kg/m^3].
+        Effective density [kg/m³].
 
+    Notes
+    -----
+    Based on a function by T. Mukerji (SRB, Stanford University, 1994) and
+    ported to Python by Harald Flesche (Equinor, 2015).
     """
     if len(args) % 5 != 0:
         raise ValueError(
