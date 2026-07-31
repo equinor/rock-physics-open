@@ -387,8 +387,10 @@ from typing import ParamSpec
 
 _P = ParamSpec("_P")
 
+
 def float_vectorize(f: Callable[_P, float]) -> Callable[_P, npt.NDArray[np.float64]]:
     return np.vectorize(f, otypes=[float])
+
 
 @float_vectorize
 def _calculate_carbon_dioxide_density(
@@ -396,8 +398,7 @@ def _calculate_carbon_dioxide_density(
     pressure: npt.NDArray[np.float64],
     force_vapor: bool | Literal["auto"] = "auto",
     raise_error: bool = True,
-) -> float:
-    ...
+) -> float: ...
 ```
 
 **New code:**
@@ -408,8 +409,8 @@ def _calculate_carbon_dioxide_density_scalar(
     pressure: float,
     force_vapor: bool | Literal["auto"] = "auto",
     raise_error: bool = True,
-) -> float:
-    ...
+) -> float: ...
+
 
 _calculate_carbon_dioxide_density = np.vectorize(
     _calculate_carbon_dioxide_density_scalar, otypes=[float]

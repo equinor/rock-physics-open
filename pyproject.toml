@@ -76,16 +76,16 @@ Changelog = "https://github.com/equinor/rock-physics-open/blob/main/CHANGELOG.md
 [dependency-groups]
 # Pinned to exact versions for consistent dev environments
 dev = [
-    "basedpyright==1.39.8",
+    "basedpyright==1.39.9",
     "matplotlib-stubs == 0.3.11",
     "pandas-stubs==3.0.3.260530",
-    "pre-commit==4.6.0",
-    "pydoclint==0.8.7",
+    "pre-commit==4.6.1",
+    "pydoclint==0.9.1",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
-    "ruff==0.15.19",
+    "ruff==0.16.0",
     "scipy-stubs==1.17.1.5",
-    "syrupy==5.3.2",
+    "syrupy==5.5.3",
 ]
 
 [tool.ruff]
