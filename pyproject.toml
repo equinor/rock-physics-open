@@ -58,13 +58,13 @@ dynamic = ["version"]
 # - the first version that supports Python 3.11
 # - the first version that supports a feature we require
 dependencies = [
-    "numpy >= 1.23.3",
-    "pandas >= 2.0.0",
-    "matplotlib >= 3.6.0",
-    "scipy >= 1.10.0",
-    "scikit-learn >= 1.2.0",
-    "tmatrix ~= 1.2.0",
-    "typing-extensions >= 4.7.0",
+    "numpy>=1.23.3",
+    "pandas>=2.0.0",
+    "matplotlib>=3.6.0",
+    "scipy>=1.10.0",
+    "scikit-learn>=1.2.0",
+    "tmatrix>=1.2.0",
+    "typing-extensions>=4.7.0",
 ]
 
 
